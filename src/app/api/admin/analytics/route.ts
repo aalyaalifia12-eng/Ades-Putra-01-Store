@@ -60,7 +60,7 @@ export async function GET() {
           if (!productStats[item.product_id]) {
             productStats[item.product_id] = {
               name: item.name,
-              category: item.category,
+              category: item.category || 'sepatu',
               qty: 0,
               revenue: 0,
               image: item.image_url,
