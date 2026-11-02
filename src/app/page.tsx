@@ -204,7 +204,7 @@ export default function ResponsiveAppRoot() {
   const handleVipUpgraded = (updatedUser: User) => {
     setCurrentUser(updatedUser);
     localStorage.setItem('ades_user', JSON.stringify(updatedUser));
-    showToast('🎉 Selamat! Cashback 50.000 Poin Koin Member telah masuk ke saldo Anda!');
+    showToast('🎉 Selamat! Anda resmi jadi VIP Member! Bonus Gratis Ongkir & Cashback 10% telah aktif!');
   };
 
   return (
@@ -285,7 +285,7 @@ export default function ResponsiveAppRoot() {
                       </span>
                     </div>
                     <p className="text-xs text-amber-100 leading-tight mt-0.5">
-                      Daftar sekarang &amp; dapatkan bonus <b>🪙 50.000 Poin Koin Member</b> + <b>Cashback 10%</b> di setiap belanja, ekstra diskon, dan garansi retur size!
+                      Daftar sekarang &amp; dapatkan <b>🚚 Bonus Gratis Ongkir</b> + <b>Cashback 10%</b> di setiap belanja, ekstra diskon, dan garansi retur size!
                     </p>
                   </div>
                 </div>

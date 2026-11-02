@@ -248,7 +248,7 @@ const initialUsers: User[] = [
     id: 'user-admin',
     name: 'Administrator Ades Store',
     email: 'admin@adesstore01.com',
-    phone: '081234567890',
+    phone: '082126468980',
     role: 'ADMIN',
     isVip: true,
     memberPoints: 999999,

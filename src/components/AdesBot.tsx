@@ -141,7 +141,7 @@ export default function AdesBot({
       else if (lower.includes('vip') || lower.includes('member') || lower.includes('poin') || lower.includes('koin')) {
         botResponse =
           `👑 **Program VIP Membership Ades Store 01 (Rp 50.000)**:\n` +
-          `• Langsung dapat **50.000 Poin Koin Member** (1 Poin = Rp 1, bisa langsung dipakai potong belanja).\n` +
+          `• Langsung dapat **🚚 Bonus Gratis Ongkir** + **⚡ Cashback 10% Koin Member**.\n` +
           `• Diskon ekstra 10% setiap transaksi.\n` +
           `• Garansi bebas ongkir tukar ukuran (size exchange) 7 hari!`;
         botOptions = ['👑 Gabung VIP Sekarang', 'Lihat Katalog'];

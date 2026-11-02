@@ -140,7 +140,7 @@ export default function HeroBanner({
                 className="px-5 py-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 border border-amber-400/40 text-amber-300 font-extrabold text-xs sm:text-sm transition-all flex items-center space-x-2"
               >
                 <Crown className="w-4 h-4 text-amber-400" />
-                <span>Gabung VIP (Cashback 50k Koin)</span>
+                <span>Gabung VIP (Bonus Gratis Ongkir)</span>
               </button>
             </div>
 
@@ -426,7 +426,7 @@ export default function HeroBanner({
               </span>
             </div>
             <p className="text-xs text-slate-600 mt-0.5">
-              Daftar sekarang dan langsung terima saldo <b>🪙 50.000 Poin Koin Member</b> (bisa langsung dipotong saat checkout), diskon spesial 10%, serta garansi bebas ongkir tukar size!
+              Daftar sekarang dan langsung dapatkan <b>🚚 Bonus Gratis Ongkir</b> ke seluruh Indonesia, Cashback 10% koin belanja, diskon spesial 10%, serta garansi bebas ongkir tukar size!
             </p>
           </div>
         </div>

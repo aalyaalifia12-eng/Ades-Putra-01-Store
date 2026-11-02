@@ -59,7 +59,7 @@ export default function CustomerNavbar({
           onClick={onOpenVipModal}
           className="text-amber-300 hover:text-white font-extrabold text-[10px] flex-shrink-0 ml-1 underline decoration-amber-400"
         >
-          Klaim VIP 50k &rarr;
+          Klaim VIP (Gratis Ongkir) &rarr;
         </button>
       </div>
 

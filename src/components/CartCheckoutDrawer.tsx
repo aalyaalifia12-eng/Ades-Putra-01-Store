@@ -18,6 +18,7 @@ import {
   Crown,
   ExternalLink,
   MessageCircle,
+  Copy,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CartItem, User, CourierOption, Order } from '@/types';
@@ -56,6 +57,7 @@ export default function CartCheckoutDrawer({
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'QRIS'>('QRIS');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [copiedDana, setCopiedDana] = useState(false);
 
   // Autofill from user profile when opened
   useEffect(() => {
@@ -93,8 +95,9 @@ export default function CartCheckoutDrawer({
   // Final Total
   const grandTotal = Math.max(0, subtotal - vipDiscount - pointsUsed + shippingCost);
 
-  // WhatsApp Admin phone number
-  const ADMIN_WHATSAPP_NUMBER = '6281234567890'; // Ades Store 01 Admin
+  // WhatsApp Admin & DANA payment details
+  const ADMIN_WHATSAPP_NUMBER = '6282126468980'; // Ades Store 01 (+62 821-2646-8980)
+  const ADMIN_DANA_NUMBER = '0821-2646-8980'; // Akun DANA Resmi Ades Store 01
 
   // Generate WhatsApp Order Message
   const generateWhatsAppMessage = () => {
@@ -258,16 +261,79 @@ export default function CartCheckoutDrawer({
                 </div>
               </div>
 
-              {/* QRIS Code if QRIS */}
+              {/* QRIS & DANA Payment Box */}
               {completedOrder.payment_method === 'QRIS' && (
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-2">
-                  <p className="text-xs font-bold text-slate-700">Scan QRIS Instan Ades Store 01</p>
-                  <div className="w-36 h-36 bg-white p-2 rounded-xl shadow-xs border border-slate-200 mx-auto flex items-center justify-center">
-                    <QrCode className="w-28 h-28 text-slate-800" />
+                <div className="bg-gradient-to-b from-sky-50 via-white to-slate-50 p-4 rounded-2xl border border-sky-200 text-center space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-sky-600 text-white text-[10px] font-black uppercase shadow-xs">
+                      <span>DANA / QRIS RESMI</span>
+                    </div>
+                    <span className="text-[10px] text-sky-800 font-bold bg-sky-100 px-2 py-0.5 rounded-md">
+                      Real-Time Verifikasi
+                    </span>
                   </div>
-                  <p className="text-[11px] text-slate-500">
-                    Buka GoPay, OVO, ShopeePay, Dana, atau Mobile Banking untuk membayar
-                  </p>
+
+                  <div>
+                    <h4 className="text-xs font-black text-slate-900 uppercase">
+                      Scan QR Barcode DANA / QRIS
+                    </h4>
+                    <p className="text-[11px] text-slate-500">
+                      Scan QR di bawah via DANA, BCA Mobile, GoPay, OVO, ShopeePay, atau Bank mana saja
+                    </p>
+                  </div>
+
+                  {/* QR Barcode DANA 0821-2646-8980 */}
+                  <div className="relative w-44 h-44 bg-white p-3 rounded-2xl shadow-md border-2 border-sky-300 mx-auto flex flex-col items-center justify-center">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://link.dana.id/m/082126468980`}
+                      alt="QR Barcode DANA 0821-2646-8980"
+                      className="w-36 h-36 object-contain"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="px-1.5 py-0.5 rounded bg-white shadow-md border border-sky-400">
+                        <span className="text-[9px] font-black text-sky-600 uppercase">DANA</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Nomor DANA dengan tombol salin */}
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between text-left">
+                    <div>
+                      <span className="text-[9px] uppercase font-bold text-slate-400 block leading-tight">
+                        Nomor Akun DANA:
+                      </span>
+                      <span className="text-sm font-black text-slate-900 font-mono">
+                        {ADMIN_DANA_NUMBER}
+                      </span>
+                      <span className="text-[9px] text-slate-500 block">
+                        A/N Ades Store 01
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText('082126468980');
+                        setCopiedDana(true);
+                        setTimeout(() => setCopiedDana(false), 2500);
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition-all shadow-xs flex items-center space-x-1"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>{copiedDana ? 'Tersalin ✓' : 'Salin No'}</span>
+                    </button>
+                  </div>
+
+                  {/* Tombol Buka Aplikasi DANA */}
+                  <a
+                    href="https://link.dana.id/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 rounded-xl bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-800 font-extrabold text-xs flex items-center justify-center space-x-1.5 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Buka Aplikasi DANA Langsung</span>
+                  </a>
                 </div>
               )}
 
