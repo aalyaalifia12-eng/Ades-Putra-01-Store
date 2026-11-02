@@ -14,6 +14,8 @@ import {
   Sparkles,
   LogOut,
   Save,
+  Package,
+  ChevronRight,
 } from 'lucide-react';
 import { User } from '@/types';
 
@@ -24,6 +26,7 @@ interface UserProfileModalProps {
   onUpdateUser: (updated: User) => void;
   onLogout: () => void;
   onOpenVipModal: () => void;
+  onOpenOrders?: () => void;
 }
 
 const AVATAR_PRESETS = [
@@ -56,6 +59,7 @@ export default function UserProfileModal({
   onUpdateUser,
   onLogout,
   onOpenVipModal,
+  onOpenOrders,
 }: UserProfileModalProps) {
   if (!isOpen || !currentUser) return null;
 
@@ -261,6 +265,31 @@ export default function UserProfileModal({
               </span>
             </p>
           </div>
+
+          {/* Quick Shortcut to My Orders (6 Tabs) */}
+          {onOpenOrders && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenOrders();
+              }}
+              className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-slate-900 to-zinc-900 text-white hover:from-slate-800 hover:to-zinc-800 transition-all flex items-center justify-between shadow-sm group"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-xs">
+                  <Package className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <p className="font-black text-xs text-white">Pesanan Saya</p>
+                  <p className="text-[10px] text-zinc-400">
+                    Semua, Perlu Dibayar, Dikirim, Selesai, Retur
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-1 transition-transform" />
+            </button>
+          )}
 
           {/* Form Detail Profil */}
           <form onSubmit={handleSave} className="space-y-3">

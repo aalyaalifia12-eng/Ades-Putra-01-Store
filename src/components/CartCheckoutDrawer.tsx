@@ -19,6 +19,7 @@ import {
   ExternalLink,
   MessageCircle,
   Copy,
+  Package,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CartItem, User, CourierOption, Order } from '@/types';
@@ -35,6 +36,7 @@ interface CartCheckoutDrawerProps {
   currentUser: User | null;
   onOrderSuccess: (order: Order, remainingPoints: number) => void;
   onOpenVipModal: () => void;
+  onOpenMyOrders?: (tab?: 'semua' | 'perlu_dibayar' | 'untuk_dikirim') => void;
 }
 
 export default function CartCheckoutDrawer({
@@ -47,6 +49,7 @@ export default function CartCheckoutDrawer({
   currentUser,
   onOrderSuccess,
   onOpenVipModal,
+  onOpenMyOrders,
 }: CartCheckoutDrawerProps) {
   // Checkout Form States
   const [recipientName, setRecipientName] = useState(currentUser?.name || 'Alya Alifia');
@@ -344,6 +347,22 @@ export default function CartCheckoutDrawer({
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>Kirim Bukti / Konfirmasi ke WhatsApp Admin</span>
+              </button>
+
+              {/* View Order History & Tracking */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (onOpenMyOrders && completedOrder) {
+                    onOpenMyOrders(completedOrder.payment_method === 'QRIS' ? 'perlu_dibayar' : 'untuk_dikirim');
+                  }
+                  setCompletedOrder(null);
+                  onClose();
+                }}
+                className="w-full py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center justify-center space-x-2 shadow-md transition-all"
+              >
+                <Package className="w-4 h-4 text-amber-400" />
+                <span>Lihat Pesanan Saya &amp; Lacak Status</span>
               </button>
 
               <button

@@ -9,6 +9,7 @@ import ProductDetailModal from '@/components/ProductDetailModal';
 import CartCheckoutDrawer from '@/components/CartCheckoutDrawer';
 import VipModal from '@/components/VipModal';
 import UserProfileModal from '@/components/UserProfileModal';
+import MyOrdersModal, { OrderTab } from '@/components/MyOrdersModal';
 import AdesBot from '@/components/AdesBot';
 import { Product, CartItem, User, Order } from '@/types';
 import { Crown, Tag, Truck, RotateCcw, CheckCircle } from 'lucide-react';
@@ -33,6 +34,11 @@ export default function ResponsiveAppRoot() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  // Orders State (Persisted in localStorage with 6 status tabs)
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
+  const [initialOrdersTab, setInitialOrdersTab] = useState<OrderTab>('semua');
+
   // Modal States
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isVipModalOpen, setIsVipModalOpen] = useState(false);
@@ -46,7 +52,7 @@ export default function ResponsiveAppRoot() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Load User & Cart on startup
+  // Load User, Cart & Orders on startup
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem('ades_user');
@@ -57,6 +63,48 @@ export default function ResponsiveAppRoot() {
       const savedCart = localStorage.getItem('ades_cart');
       if (savedCart) {
         setCart(JSON.parse(savedCart));
+      }
+
+      const savedOrders = localStorage.getItem('ades_orders');
+      if (savedOrders) {
+        setOrders(JSON.parse(savedOrders));
+      } else {
+        // Initial Realistic Demo Order (Perlu Dibayar via DANA 0821-2646-8980)
+        const initialOrder: Order = {
+          id: 'ord-demo-01',
+          order_number: 'ADES-20261102-8980',
+          customer_name: 'Alya Alifia',
+          customer_phone: '082126468980',
+          shipping_address: 'Jl. Malioboro No. 45, Gedong Tengen, Kota Yogyakarta, D.I. Yogyakarta 55271',
+          shipping_courier: 'J&T Express',
+          payment_method: 'QRIS',
+          payment_status: 'PENDING',
+          order_status: 'MENUNGGU_PEMBAYARAN',
+          subtotal: 189000,
+          discount_amount: 0,
+          shipping_cost: 12000,
+          points_used: 0,
+          vip_discount: 0,
+          total_amount: 201000,
+          notes: 'Warna Hitam Putih size 41 ya min',
+          items: [
+            {
+              id: 'item-demo-1',
+              product_id: 'prod-sneakers-1',
+              name: 'Ades Sneaker Urban Pro Neo',
+              price: 189000,
+              quantity: 1,
+              size: '41',
+              color: 'Hitam Putih',
+              image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&auto=format&fit=crop&q=80',
+              subtotal: 189000,
+            },
+          ],
+          created_at: new Date().toISOString(),
+          tracking_number: 'JT-82126468980-ID',
+        };
+        setOrders([initialOrder]);
+        localStorage.setItem('ades_orders', JSON.stringify([initialOrder]));
       }
     } catch (e) {
       console.error(e);
@@ -198,7 +246,58 @@ export default function ResponsiveAppRoot() {
       setCurrentUser(updatedUser);
       localStorage.setItem('ades_user', JSON.stringify(updatedUser));
     }
+    // Prepend new order to list & persist
+    setOrders((prev) => {
+      const updated = [order, ...prev];
+      localStorage.setItem('ades_orders', JSON.stringify(updated));
+      return updated;
+    });
     fetchProducts();
+  };
+
+  const handleConfirmReceived = (orderId: string) => {
+    setOrders((prev) => {
+      const updated = prev.map((o) =>
+        o.id === orderId ? { ...o, order_status: 'SELESAI' as const } : o
+      );
+      localStorage.setItem('ades_orders', JSON.stringify(updated));
+      return updated;
+    });
+    showToast('✓ Pesanan berhasil diselesaikan! Silakan beri ulasan bintang 5.');
+  };
+
+  const handleSubmitReview = (orderId: string, rating: number, review: string) => {
+    setOrders((prev) => {
+      const updated = prev.map((o) =>
+        o.id === orderId
+          ? { ...o, is_reviewed: true, user_rating: rating, user_review: review }
+          : o
+      );
+      localStorage.setItem('ades_orders', JSON.stringify(updated));
+      return updated;
+    });
+
+    // Reward +2.000 member coin points for 5-star review!
+    if (currentUser) {
+      const updatedUser = {
+        ...currentUser,
+        memberPoints: (currentUser.memberPoints || 0) + 2000,
+      };
+      setCurrentUser(updatedUser);
+      localStorage.setItem('ades_user', JSON.stringify(updatedUser));
+    }
+    showToast('⭐ Terima kasih atas bintang 5! Bonus +2.000 Koin ditambahkan ke akun Anda!');
+  };
+
+  const handleRequestReturn = (orderId: string, reason: string) => {
+    setOrders((prev) => {
+      const updated = prev.map((o) =>
+        o.id === orderId ? { ...o, order_status: 'RETUR' as const, return_reason: reason } : o
+      );
+      localStorage.setItem('ades_orders', JSON.stringify(updated));
+      return updated;
+    });
+    showToast('📦 Pengajuan retur size dicatat. Silakan hubungi WhatsApp admin toko.');
   };
 
   const handleVipUpgraded = (updatedUser: User) => {
@@ -253,9 +352,14 @@ export default function ResponsiveAppRoot() {
             <CustomerNavbar
               currentUser={currentUser}
               cartCount={cart.reduce((s, i) => s + i.qty, 0)}
+              ordersCount={orders.length}
               onOpenCart={() => setIsCartOpen(true)}
               onOpenVipModal={() => setIsVipModalOpen(true)}
               onOpenProfile={() => setIsProfileModalOpen(true)}
+              onOpenOrders={() => {
+                setInitialOrdersTab('semua');
+                setIsOrdersModalOpen(true);
+              }}
               onLogout={handleLogout}
               onSwitchToLogin={() => setCurrentScreen('customer_login')}
               searchQuery={searchQuery}
@@ -285,7 +389,7 @@ export default function ResponsiveAppRoot() {
                       </span>
                     </div>
                     <p className="text-xs text-amber-100 leading-tight mt-0.5">
-                      Daftar sekarang &amp; dapatkan <b>🚚 Bonus Gratis Ongkir</b> + <b>Cashback 10%</b> di setiap belanja, ekstra diskon, dan garansi retur size!
+                      Daftar sekarang &amp; dapatkan <b>🚚 Bonus Gratis Ongkir</b> + <b>Bonus Sambutan Langsung 50.000 Koin Member</b> + <b>Cashback 10%</b> di setiap belanja, ekstra diskon, dan garansi retur size!
                     </p>
                   </div>
                 </div>
@@ -429,6 +533,10 @@ export default function ResponsiveAppRoot() {
           setIsCartOpen(false);
           setIsVipModalOpen(true);
         }}
+        onOpenMyOrders={(tab = 'semua') => {
+          setInitialOrdersTab(tab as OrderTab);
+          setIsOrdersModalOpen(true);
+        }}
       />
 
       {/* VIP Modal (Rp50.000 via QRIS with instant 50.000 Coins) */}
@@ -453,6 +561,22 @@ export default function ResponsiveAppRoot() {
           setIsProfileModalOpen(false);
           setIsVipModalOpen(true);
         }}
+        onOpenOrders={() => {
+          setIsProfileModalOpen(false);
+          setInitialOrdersTab('semua');
+          setIsOrdersModalOpen(true);
+        }}
+      />
+
+      {/* Pesanan Saya Modal (Semua, Perlu Dibayar, Untuk Dikirim, Akan Diterima, Untuk Diulas, Pengembalian) */}
+      <MyOrdersModal
+        isOpen={isOrdersModalOpen}
+        onClose={() => setIsOrdersModalOpen(false)}
+        orders={orders}
+        initialTab={initialOrdersTab}
+        onConfirmReceived={handleConfirmReceived}
+        onSubmitReview={handleSubmitReview}
+        onRequestReturn={handleRequestReturn}
       />
 
       {/* Floating AI Shopping Assistant (AdesBot) */}

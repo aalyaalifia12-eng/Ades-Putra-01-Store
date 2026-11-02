@@ -48,9 +48,10 @@ export interface User {
 }
 
 export interface OrderItem {
+  id?: string;
   product_id: string;
   name: string;
-  category: ProductCategory;
+  category?: ProductCategory;
   size?: number | string;
   color?: string;
   price: number;
@@ -64,15 +65,17 @@ export type OrderStatus =
   | 'DIPROSES'
   | 'DIKIRIM'
   | 'SELESAI'
-  | 'BATAL';
+  | 'BATAL'
+  | 'RETUR';
 
 export interface Order {
   id: string;
   order_number: string;
-  customer_id: string;
+  customer_id?: string;
   customer_name: string;
   customer_phone: string;
-  customer_address: string;
+  customer_address?: string;
+  shipping_address?: string;
   items: OrderItem[];
   subtotal: number;
   shipping_courier: CourierOption;
@@ -83,6 +86,13 @@ export interface Order {
   payment_method: 'COD' | 'QRIS';
   payment_status: 'PENDING' | 'PAID';
   order_status: OrderStatus;
+  tracking_number?: string;
+  notes?: string;
+  discount_amount?: number;
+  return_reason?: string;
+  is_reviewed?: boolean;
+  user_rating?: number;
+  user_review?: string;
   created_at: string;
 }
 

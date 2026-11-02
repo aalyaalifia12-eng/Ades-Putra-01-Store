@@ -10,15 +10,18 @@ import {
   Search,
   LogOut,
   LogIn,
+  Package,
 } from 'lucide-react';
 import { User as UserType } from '@/types';
 
 interface CustomerNavbarProps {
   currentUser: UserType | null;
   cartCount: number;
+  ordersCount?: number;
   onOpenCart: () => void;
   onOpenVipModal: () => void;
   onOpenProfile?: () => void;
+  onOpenOrders?: () => void;
   onLogout: () => void;
   onSwitchToLogin?: () => void;
   searchQuery: string;
@@ -30,9 +33,11 @@ interface CustomerNavbarProps {
 export default function CustomerNavbar({
   currentUser,
   cartCount,
+  ordersCount = 0,
   onOpenCart,
   onOpenVipModal,
   onOpenProfile,
+  onOpenOrders,
   onLogout,
   onSwitchToLogin,
   searchQuery,
@@ -136,6 +141,21 @@ export default function CustomerNavbar({
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-black flex items-center justify-center shadow-xs">
                   {cartCount}
+                </span>
+              )}
+            </button>
+
+            {/* My Orders Button */}
+            <button
+              onClick={onOpenOrders}
+              className="relative flex items-center space-x-1 px-2 py-1.5 rounded-xl border border-slate-200 hover:border-red-400 bg-white text-slate-800 transition-all shadow-2xs group"
+              title="Pesanan Saya (Semua, Perlu Dibayar, Untuk Dikirim, Akan Diterima, Untuk Diulas, Retur)"
+            >
+              <Package className="w-4 h-4 text-slate-700 group-hover:text-red-600" />
+              <span className="hidden md:inline text-xs font-black">Pesanan</span>
+              {ordersCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-amber-500 text-slate-950 text-[9px] font-black flex items-center justify-center shadow-2xs">
+                  {ordersCount}
                 </span>
               )}
             </button>
