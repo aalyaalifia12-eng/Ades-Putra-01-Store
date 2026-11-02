@@ -121,7 +121,7 @@ export default function UserProfileModal({
           {/* User Avatar & Identity Header */}
           <div className="flex items-center space-x-4 pt-4">
             <div className="relative group">
-              <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-lg bg-zinc-800">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-lg bg-zinc-800">
                 <img
                   src={avatarUrl}
                   alt={name}

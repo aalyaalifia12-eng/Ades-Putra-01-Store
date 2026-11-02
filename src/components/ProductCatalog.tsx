@@ -89,7 +89,7 @@ export default function ProductCatalog({
 
       {/* Product Cards Grid: Responsive Mobile 2-Columns to Desktop 4-Columns */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
-        {filtered.map((product) => {
+        {filtered.map((product, index) => {
           const isOutOfStock = product.stock <= 0;
           const displayPrice = product.promo_price || product.original_price;
           const discountAmt = product.promo_price
