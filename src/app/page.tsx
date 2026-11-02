@@ -8,6 +8,7 @@ import ProductCatalog from '@/components/ProductCatalog';
 import ProductDetailModal from '@/components/ProductDetailModal';
 import CartCheckoutDrawer from '@/components/CartCheckoutDrawer';
 import VipModal from '@/components/VipModal';
+import UserProfileModal from '@/components/UserProfileModal';
 import AdesBot from '@/components/AdesBot';
 import { Product, CartItem, User, Order } from '@/types';
 import { Crown, Tag, Truck, RotateCcw, CheckCircle } from 'lucide-react';
@@ -35,6 +36,7 @@ export default function ResponsiveAppRoot() {
   // Modal States
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isVipModalOpen, setIsVipModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -223,7 +225,6 @@ export default function ResponsiveAppRoot() {
       {currentScreen === 'landing' && (
         <VisualPromoLanding
           onOpenCustomerLogin={handleOpenCustomerLogin}
-          onExploreAsGuest={handleGuestLogin}
         />
       )}
 
@@ -235,7 +236,6 @@ export default function ResponsiveAppRoot() {
           <div className="w-full max-w-md shadow-2xl rounded-3xl overflow-hidden border border-zinc-800">
             <LoginScreen
               onLoginSuccess={handleLoginSuccess}
-              onGuestLogin={handleGuestLogin}
               onBackToLanding={handleBackToLanding}
             />
           </div>
@@ -255,6 +255,7 @@ export default function ResponsiveAppRoot() {
               cartCount={cart.reduce((s, i) => s + i.qty, 0)}
               onOpenCart={() => setIsCartOpen(true)}
               onOpenVipModal={() => setIsVipModalOpen(true)}
+              onOpenProfile={() => setIsProfileModalOpen(true)}
               onLogout={handleLogout}
               onSwitchToLogin={() => setCurrentScreen('customer_login')}
               searchQuery={searchQuery}
@@ -265,7 +266,7 @@ export default function ResponsiveAppRoot() {
 
             {/* Main Content Responsive max-w-6xl */}
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-5 space-y-5">
-              {/* VIP Membership Banner (Rp 50.000 via QRIS with instant 50.000 coins) */}
+              {/* VIP Membership Banner (Rp 50.000 via QRIS with instant 50.000 coins + 10% Cashback) */}
               <div
                 onClick={() => setIsVipModalOpen(true)}
                 className="cursor-pointer bg-gradient-to-r from-amber-500 via-amber-600 to-red-600 rounded-3xl p-4 sm:p-5 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 transition-transform hover:scale-[1.005] active:scale-[0.99]"
@@ -280,11 +281,11 @@ export default function ResponsiveAppRoot() {
                         Program VIP Membership Berbayar (Rp 50.000 via QRIS)
                       </h4>
                       <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-white text-red-600">
-                        100% Cashback
+                        Cashback 10%
                       </span>
                     </div>
                     <p className="text-xs text-amber-100 leading-tight mt-0.5">
-                      Daftar sekarang &amp; langsung dapatkan <b>🪙 50.000 Poin Koin Member</b> (potong belanja langsung), ekstra diskon 10%, dan garansi retur size!
+                      Daftar sekarang &amp; dapatkan bonus <b>🪙 50.000 Poin Koin Member</b> + <b>Cashback 10%</b> di setiap belanja, ekstra diskon, dan garansi retur size!
                     </p>
                   </div>
                 </div>
@@ -436,6 +437,22 @@ export default function ResponsiveAppRoot() {
         onClose={() => setIsVipModalOpen(false)}
         currentUser={currentUser}
         onVipUpgraded={handleVipUpgraded}
+      />
+
+      {/* User Profile Modal (Foto, Nama, WhatsApp, Email, Alamat, Koin & Status VIP) */}
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        currentUser={currentUser}
+        onUpdateUser={(updated) => {
+          setCurrentUser(updated);
+          localStorage.setItem('ades_user', JSON.stringify(updated));
+        }}
+        onLogout={handleLogout}
+        onOpenVipModal={() => {
+          setIsProfileModalOpen(false);
+          setIsVipModalOpen(true);
+        }}
       />
 
       {/* Floating AI Shopping Assistant (AdesBot) */}

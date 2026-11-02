@@ -15,13 +15,12 @@ import { User as UserType } from '@/types';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: UserType) => void;
-  onGuestLogin: () => void;
+  onGuestLogin?: () => void;
   onBackToLanding: () => void;
 }
 
 export default function LoginScreen({
   onLoginSuccess,
-  onGuestLogin,
   onBackToLanding,
 }: LoginScreenProps) {
   const [identifier, setIdentifier] = useState('');
@@ -215,24 +214,6 @@ export default function LoginScreen({
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
-
-        {/* Divider */}
-        <div className="relative flex items-center justify-center py-1">
-          <div className="border-t border-zinc-800 w-full" />
-          <span className="bg-slate-900 px-3 text-[10px] font-black uppercase tracking-wider text-zinc-500 absolute">
-            atau
-          </span>
-        </div>
-
-        {/* Guest Alternative */}
-        <button
-          type="button"
-          onClick={onGuestLogin}
-          className="w-full py-3 rounded-2xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 font-black text-xs tracking-wide flex items-center justify-center space-x-2 transition-all hover:border-zinc-500"
-        >
-          <ShoppingBag className="w-4 h-4 text-amber-400" />
-          <span>Belanja Sekarang (Tamu)</span>
-        </button>
       </main>
 
       {/* Footer */}

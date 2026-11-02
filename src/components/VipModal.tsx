@@ -179,10 +179,10 @@ export default function VipModal({
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] font-black uppercase bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full shadow-2xs">
-                    100% Balik Modal
+                    Cashback 10%
                   </span>
                   <p className="text-[11px] text-amber-800 font-bold mt-1">
-                    Dapat 50.000 Koin!
+                    Bonus 50k Koin!
                   </p>
                 </div>
               </div>
@@ -195,10 +195,24 @@ export default function VipModal({
                   </div>
                   <div>
                     <h5 className="font-extrabold text-xs text-slate-900">
-                      Cashback Langsung 50.000 Poin Koin Member
+                      Cashback 10% Koin Member di Setiap Belanja
                     </h5>
                     <p className="text-[11px] text-slate-500 mt-0.5">
-                      1 Poin = Rp 1. Saldo 50.000 koin langsung masuk dan dapat dipotong tanpa batas minimal belanja!
+                      Dapatkan pengembalian 10% dalam bentuk koin belanja di setiap order yang langsung bisa dipakai untuk potongan harga order berikutnya!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3 p-3 rounded-2xl border border-slate-100 bg-slate-50/50">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">
+                    <Crown className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div>
+                    <h5 className="font-extrabold text-xs text-slate-900">
+                      Bonus Sambutan Langsung 50.000 Koin Member
+                    </h5>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      1 Poin = Rp 1. Saldo 50.000 koin langsung masuk ke akun Anda saat aktivasi VIP selesai!
                     </p>
                   </div>
                 </div>

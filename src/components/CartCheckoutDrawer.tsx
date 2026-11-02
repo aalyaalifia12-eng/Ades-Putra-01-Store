@@ -50,12 +50,21 @@ export default function CartCheckoutDrawer({
   // Checkout Form States
   const [recipientName, setRecipientName] = useState(currentUser?.name || 'Alya Alifia');
   const [recipientPhone, setRecipientPhone] = useState(currentUser?.phone || '081298765432');
-  const [recipientAddress, setRecipientAddress] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState(currentUser?.address || '');
   const [selectedCourier, setSelectedCourier] = useState<CourierOption>('J&T Express');
   const [useMemberPoints, setUseMemberPoints] = useState<boolean>(true);
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'QRIS'>('QRIS');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Autofill from user profile when opened
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.name) setRecipientName(currentUser.name);
+      if (currentUser.phone) setRecipientPhone(currentUser.phone);
+      if (currentUser.address) setRecipientAddress(currentUser.address);
+    }
+  }, [currentUser, isOpen]);
 
   // Success completed order state
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);

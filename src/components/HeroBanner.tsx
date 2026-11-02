@@ -422,7 +422,7 @@ export default function HeroBanner({
                 Program VIP Membership Berbayar (Hanya Rp 50.000)
               </h3>
               <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-amber-500 text-white">
-                100% Cashback
+                Cashback 10%
               </span>
             </div>
             <p className="text-xs text-slate-600 mt-0.5">

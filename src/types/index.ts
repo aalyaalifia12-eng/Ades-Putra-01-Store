@@ -16,6 +16,9 @@ export interface Product {
   image_url: string;
   description: string;
   is_featured?: boolean;
+  rating?: number; // e.g. 4.9
+  review_count?: number; // e.g. 128
+  sold_count?: number; // e.g. 240
   created_at: string;
   updated_at?: string;
 }
@@ -38,6 +41,8 @@ export interface User {
   role: 'ADMIN' | 'CUSTOMER';
   isVip: boolean;
   memberPoints: number; // 1 point = Rp 1
+  avatar_url?: string;
+  address?: string;
   vipJoinedAt?: string;
   created_at: string;
 }

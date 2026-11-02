@@ -18,6 +18,7 @@ interface CustomerNavbarProps {
   cartCount: number;
   onOpenCart: () => void;
   onOpenVipModal: () => void;
+  onOpenProfile?: () => void;
   onLogout: () => void;
   onSwitchToLogin?: () => void;
   searchQuery: string;
@@ -31,6 +32,7 @@ export default function CustomerNavbar({
   cartCount,
   onOpenCart,
   onOpenVipModal,
+  onOpenProfile,
   onLogout,
   onSwitchToLogin,
   searchQuery,
@@ -138,15 +140,27 @@ export default function CustomerNavbar({
               )}
             </button>
 
-            {/* User Profile / Exit / Switch Screen Button */}
-            <div>
+            {/* User Profile Button with Photo & Info */}
+            <div className="flex items-center space-x-1">
               {currentUser && !isGuest ? (
                 <button
-                  onClick={onLogout}
-                  className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-colors"
-                  title="Keluar Akun"
+                  onClick={onOpenProfile}
+                  className="flex items-center space-x-1.5 p-1 sm:px-2.5 sm:py-1 rounded-xl border border-slate-200 hover:border-red-400 bg-white transition-all shadow-2xs group"
+                  title="Buka Profil Saya & Pengaturan Alamat"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <div className="w-6 h-6 rounded-full overflow-hidden border border-slate-300 bg-slate-100 flex-shrink-0">
+                    <img
+                      src={
+                        currentUser.avatar_url ||
+                        'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=150&auto=format&fit=crop&q=80'
+                      }
+                      alt={currentUser.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className="hidden sm:inline text-xs font-bold text-slate-800 max-w-[90px] truncate group-hover:text-red-600">
+                    {currentUser.name}
+                  </span>
                 </button>
               ) : (
                 <button

@@ -12,12 +12,11 @@ import {
 
 interface VisualPromoLandingProps {
   onOpenCustomerLogin: () => void;
-  onExploreAsGuest: () => void;
+  onExploreAsGuest?: () => void;
 }
 
 export default function VisualPromoLanding({
   onOpenCustomerLogin,
-  onExploreAsGuest,
 }: VisualPromoLandingProps) {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-black via-zinc-950 to-slate-950 text-white flex flex-col justify-between selection:bg-red-600 selection:text-white relative overflow-x-hidden">
@@ -145,26 +144,19 @@ export default function VisualPromoLanding({
               </p>
             </div>
 
-            {/* Tombol Aksi Langsung Naik Rapi Setelah Teks Deskripsi (NOL Box Alamat Toko Fisik) */}
-            <div className="space-y-3 pt-2">
-              {/* Tombol 1: MASUK / LOGIN */}
+            {/* Tombol Aksi Masuk / Login Pelanggan */}
+            <div className="pt-2">
               <button
                 onClick={onOpenCustomerLogin}
-                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-xl shadow-red-600/40 flex items-center justify-center space-x-2 transition-all transform hover:scale-[1.01] active:scale-[0.98]"
+                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-black text-sm uppercase tracking-wider shadow-xl shadow-red-600/40 flex items-center justify-center space-x-2.5 transition-all transform hover:scale-[1.01] active:scale-[0.98]"
               >
-                <LogIn className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>MASUK / LOGIN</span>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                <LogIn className="w-5 h-5" />
+                <span>MASUK / LOGIN PELANGGAN</span>
+                <ArrowRight className="w-5 h-5" />
               </button>
-
-              {/* Tombol 2: BELANJA SEKARANG (TAMU) */}
-              <button
-                onClick={onExploreAsGuest}
-                className="w-full py-4 px-6 rounded-2xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-100 font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg flex items-center justify-center space-x-2 transition-all hover:border-zinc-500 active:scale-[0.98]"
-              >
-                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-                <span>BELANJA SEKARANG (TAMU)</span>
-              </button>
+              <p className="text-[11px] text-zinc-400 text-center font-medium mt-2">
+                Masuk dengan WhatsApp / Email untuk mulai belanja &amp; nikmati koin promo
+              </p>
             </div>
           </div>
 
