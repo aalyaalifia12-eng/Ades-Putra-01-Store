@@ -1,0 +1,670 @@
+{
+  "users": [
+    {
+      "id": "user-admin",
+      "name": "Administrator Ades Store",
+      "email": "admin@adesstore01.com",
+      "phone": "081234567890",
+      "role": "ADMIN",
+      "isVip": true,
+      "memberPoints": 999999,
+      "avatar_url": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80",
+      "shipping_address": "Gedung Pusat Ades Store 01, D.I. Yogyakarta",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "user-alya",
+      "name": "Alya Alifia",
+      "email": "alya@customer.com",
+      "phone": "081298765432",
+      "role": "CUSTOMER",
+      "isVip": true,
+      "memberPoints": 50000,
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "shipping_address": "Apartemen Mataram City Tower A Lt. 8, Jl. Palagan Tentara Pelajar, Sleman, D.I. Yogyakarta 55581",
+      "vipJoinedAt": "2026-10-25T10:00:00.000Z",
+      "created_at": "2026-10-25T09:30:00.000Z"
+    },
+    {
+      "id": "user-budi",
+      "name": "Budi Santoso",
+      "email": "budi@customer.com",
+      "phone": "085712345678",
+      "role": "CUSTOMER",
+      "isVip": false,
+      "memberPoints": 0,
+      "avatar_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
+      "shipping_address": "Jl. Solo Km 8 No. 12, Sleman, D.I. Yogyakarta 55281",
+      "created_at": "2026-10-28T14:15:00.000Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-sep-01",
+      "category": "sepatu",
+      "name": "Ades Aerocushion White Sneakers Kasual",
+      "sku": "ADES-SNK-01",
+      "barcode": "8991001001011",
+      "original_price": 389000,
+      "promo_price": 279000,
+      "cost_price": 160000,
+      "sizes": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "colors": [
+        "Putih Bersih",
+        "Putih Aksen Sage",
+        "Putih Aksen Navy"
+      ],
+      "stock": 45,
+      "min_stock_alert": 8,
+      "image_url": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80",
+      "description": "Sneakers putih klasik dengan sol insole memory foam ultra-empuk. Anti-pegal untuk kuliah, jalan santai, maupun ngantor kasual seharian.",
+      "is_featured": true,
+      "is_new": true,
+      "average_rating": 4.9,
+      "reviews_count": 14,
+      "reviews": [
+        {
+          "id": "rev-01",
+          "product_id": "prod-sep-01",
+          "order_id": "ord-101",
+          "user_id": "user-budi",
+          "user_name": "Budi Santoso",
+          "rating": 5,
+          "comment": "Sepatu sangat empuk dan pas di kaki size 41. Desain bersih cocok buat ngantor!",
+          "created_at": "2026-10-28T09:00:00.000Z"
+        },
+        {
+          "id": "rev-02",
+          "product_id": "prod-sep-01",
+          "order_id": "ord-sample-01",
+          "user_id": "user-sample",
+          "user_name": "Dewi Lestari",
+          "rating": 5,
+          "comment": "Pengiriman instan kilat, insole empuk banget gak bikin pegal jalan jauh.",
+          "created_at": "2026-10-29T14:30:00.000Z"
+        }
+      ],
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-sep-02",
+      "category": "sepatu",
+      "name": "Ades Chunky Retro Platform Sneaker Black-Pink",
+      "sku": "ADES-SNK-02",
+      "barcode": "8991001001028",
+      "original_price": 429000,
+      "promo_price": 319000,
+      "cost_price": 185000,
+      "sizes": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+      ],
+      "colors": [
+        "Hitam Pink Pastel",
+        "All Black",
+        "Cream Beige"
+      ],
+      "stock": 28,
+      "min_stock_alert": 6,
+      "image_url": "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&auto=format&fit=crop&q=80",
+      "description": "Sepatu platform retro gaya Korea dengan sol tebal 4.5cm yang menambah tinggi seketika dan tetap sangat ringan digunakan.",
+      "is_featured": true,
+      "is_new": true,
+      "average_rating": 4.8,
+      "reviews_count": 9,
+      "reviews": [
+        {
+          "id": "rev-03",
+          "product_id": "prod-sep-02",
+          "order_id": "ord-sample-02",
+          "user_id": "user-sample-2",
+          "user_name": "Siti Rahma",
+          "rating": 5,
+          "comment": "Sol platform tebal tapi super enteng dipake seharian ke kampus.",
+          "created_at": "2026-10-30T10:15:00.000Z"
+        }
+      ],
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-sep-03",
+      "category": "sepatu",
+      "name": "Ades Urban Runner Cloud-Walk Breathable",
+      "sku": "ADES-SNK-03",
+      "barcode": "8991001001035",
+      "original_price": 359000,
+      "promo_price": 269000,
+      "cost_price": 150000,
+      "sizes": [
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "colors": [
+        "Abu-Abu Mist",
+        "Hitam Karbon",
+        "Navy Blue"
+      ],
+      "stock": 35,
+      "min_stock_alert": 8,
+      "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80",
+      "description": "Sepatu lari dan aktivitas outdoor dengan sirkulasi udara jaring breathable. Outsole karet cengkeram anti-selip.",
+      "is_featured": false,
+      "is_new": false,
+      "average_rating": 4.7,
+      "reviews_count": 11,
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-sep-04",
+      "category": "sepatu",
+      "name": "Ades Classic Penny Loafer Leather Formal Tan",
+      "sku": "ADES-LFR-01",
+      "barcode": "8991001001042",
+      "original_price": 399000,
+      "promo_price": 299000,
+      "cost_price": 170000,
+      "sizes": [
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "colors": [
+        "Tan Cokelat",
+        "Hitam Mengkilap"
+      ],
+      "stock": 18,
+      "min_stock_alert": 5,
+      "image_url": "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=800&auto=format&fit=crop&q=80",
+      "description": "Loafer kulit sintetis premium dengan siluet rapi elegan. Cocok untuk acara formal, semi-formal, dan pertemuan bisnis.",
+      "is_featured": false,
+      "is_new": true,
+      "average_rating": 4.9,
+      "reviews_count": 6,
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-sep-05",
+      "category": "sepatu",
+      "name": "Ades Grace Pointy Block Heels 5cm Nude Velvet",
+      "sku": "ADES-HLS-01",
+      "barcode": "8991001001059",
+      "original_price": 349000,
+      "promo_price": 249000,
+      "cost_price": 130000,
+      "sizes": [
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "colors": [
+        "Nude Beige",
+        "Hitam Velvet",
+        "Soft Lavender"
+      ],
+      "stock": 22,
+      "min_stock_alert": 5,
+      "image_url": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop&q=80",
+      "description": "Sepatu hak tahu 5cm dengan bantalan insole busa ekstra tebal. Ujung runcing flattering membuat kaki terlihat jenjang.",
+      "is_featured": false,
+      "is_new": false,
+      "average_rating": 4.8,
+      "reviews_count": 15,
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-san-01",
+      "category": "sandal",
+      "name": "Ades CloudSlide Puffy Double Strap Sandal",
+      "sku": "ADES-SND-01",
+      "barcode": "8992002002011",
+      "original_price": 189000,
+      "promo_price": 129000,
+      "cost_price": 65000,
+      "sizes": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+      ],
+      "colors": [
+        "Putih Lilac",
+        "Hitam Doff",
+        "Sage Green",
+        "Kuning Mustard"
+      ],
+      "stock": 60,
+      "min_stock_alert": 10,
+      "image_url": "https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=800&auto=format&fit=crop&q=80",
+      "description": "Sandal slide empuk dengan bahan EVA elastis tahan air. Tali strap ganda yang fleksibel dan ergonomis untuk jalan santai di rumah maupun hangout.",
+      "is_featured": true,
+      "is_new": true,
+      "average_rating": 5,
+      "reviews_count": 26,
+      "reviews": [
+        {
+          "id": "rev-04",
+          "product_id": "prod-san-01",
+          "order_id": "ord-102",
+          "user_id": "user-alya",
+          "user_name": "Alya Alifia",
+          "rating": 5,
+          "comment": "Sandal slide paling empuk yang pernah saya beli! Warna putih lilac-nya cantik banget.",
+          "created_at": "2026-10-29T12:00:00.000Z"
+        }
+      ],
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-san-02",
+      "category": "sandal",
+      "name": "Ades Explorer Outdoor Trail Sandal Gunung Pro",
+      "sku": "ADES-SND-02",
+      "barcode": "8992002002028",
+      "original_price": 249000,
+      "promo_price": 179000,
+      "cost_price": 90000,
+      "sizes": [
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "colors": [
+        "All Black",
+        "Army Green",
+        "Navy Tan"
+      ],
+      "stock": 30,
+      "min_stock_alert": 6,
+      "image_url": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&auto=format&fit=crop&q=80",
+      "description": "Sandal gunung tali webbing kokoh dengan sol bergerigi anti-licin di bebatuan basah. Awet dan siap diajak bertualang outdoor.",
+      "is_featured": false,
+      "is_new": false,
+      "average_rating": 4.8,
+      "reviews_count": 17,
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-san-03",
+      "category": "sandal",
+      "name": "Ades Minimalist Bohemian Strap Flat Sandal",
+      "sku": "ADES-SND-03",
+      "barcode": "8992002002035",
+      "original_price": 199000,
+      "promo_price": 139000,
+      "cost_price": 70000,
+      "sizes": [
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "colors": [
+        "Caramel Cokelat",
+        "Putih Gading",
+        "Hitam"
+      ],
+      "stock": 20,
+      "min_stock_alert": 5,
+      "image_url": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop&q=80",
+      "description": "Sandal flat tali silang gaya bohemian aesthetic. Ringan dan cocok dipadukan dengan gaun pantai atau celana kulot.",
+      "is_featured": false,
+      "is_new": false,
+      "average_rating": 4.6,
+      "reviews_count": 8,
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-tas-01",
+      "category": "tas",
+      "name": "Ades Milano Quilted Crossbody Chain Sling Bag",
+      "sku": "ADES-BAG-01",
+      "barcode": "8993003003011",
+      "original_price": 329000,
+      "promo_price": 229000,
+      "cost_price": 110000,
+      "sizes": [
+        0
+      ],
+      "colors": [
+        "Hitam Emas",
+        "Krem Nude",
+        "Sage Green"
+      ],
+      "stock": 25,
+      "min_stock_alert": 5,
+      "image_url": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=80",
+      "description": "Tas selempang quilted bertekstur mewah dengan tali rantai emas titanium. Muat handphone ukuran besar, dompet lipat, dan pouch makeup.",
+      "is_featured": true,
+      "is_new": true,
+      "average_rating": 4.9,
+      "reviews_count": 21,
+      "reviews": [
+        {
+          "id": "rev-05",
+          "product_id": "prod-tas-01",
+          "order_id": "ord-102",
+          "user_id": "user-alya",
+          "user_name": "Alya Alifia",
+          "rating": 5,
+          "comment": "Rantai tasnya tebal dan gak luntur. Jahitan quilted sangat presisi, berasa tas jutaan!",
+          "created_at": "2026-10-29T12:10:00.000Z"
+        }
+      ],
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-tas-02",
+      "category": "tas",
+      "name": "Ades Daily Canvas Tote Bag Laptop Friendly (14 Inch)",
+      "sku": "ADES-BAG-02",
+      "barcode": "8993003003028",
+      "original_price": 219000,
+      "promo_price": 149000,
+      "cost_price": 75000,
+      "sizes": [
+        0
+      ],
+      "colors": [
+        "Off-White Kanvas",
+        "Hitam Tebal",
+        "Khaki"
+      ],
+      "stock": 38,
+      "min_stock_alert": 8,
+      "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=80",
+      "description": "Tote bag kanvas drill tebal dengan kompartemen busa khusus laptop 14 inci serta resleting utama anti-copet.",
+      "is_featured": true,
+      "is_new": true,
+      "average_rating": 4.8,
+      "reviews_count": 18,
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-tas-03",
+      "category": "tas",
+      "name": "Ades Urban Sleek Waterproof Commuter Backpack",
+      "sku": "ADES-BAG-03",
+      "barcode": "8993003003035",
+      "original_price": 419000,
+      "promo_price": 299000,
+      "cost_price": 160000,
+      "sizes": [
+        0
+      ],
+      "colors": [
+        "Matte Black",
+        "Dark Grey Charcoal"
+      ],
+      "stock": 14,
+      "min_stock_alert": 4,
+      "image_url": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&auto=format&fit=crop&q=80",
+      "description": "Ransel tahan air dengan slot laptop hingga 15.6 inci, port USB eksternal, dan bantalan punggung ergonomis anti-keringat.",
+      "is_featured": false,
+      "is_new": false,
+      "average_rating": 4.9,
+      "reviews_count": 12,
+      "created_at": "2026-11-02T11:48:08.482Z"
+    },
+    {
+      "id": "prod-tas-04",
+      "category": "tas",
+      "name": "Ades Croco Baguette Shoulder Bag 90s Chic",
+      "sku": "ADES-BAG-04",
+      "barcode": "8993003003042",
+      "original_price": 279000,
+      "promo_price": 189000,
+      "cost_price": 90000,
+      "sizes": [
+        0
+      ],
+      "colors": [
+        "Espresso Cokelat",
+        "Hitam Glossy",
+        "Burgundy Wine"
+      ],
+      "stock": 19,
+      "min_stock_alert": 5,
+      "image_url": "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=800&auto=format&fit=crop&q=80",
+      "description": "Shoulder bag motif emboss croco ala tren 90-an. Nyaman disandang di bahu dan langsung elevate gaya OOTD kasual Anda.",
+      "is_featured": false,
+      "is_new": true,
+      "average_rating": 4.7,
+      "reviews_count": 10,
+      "created_at": "2026-11-02T11:48:08.482Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-101",
+      "order_number": "ADES-ORD-20261027-001",
+      "customer_id": "user-budi",
+      "customer_name": "Budi Santoso",
+      "customer_phone": "085712345678",
+      "customer_address": "Jl. Solo Km 8 No. 12, Sleman, D.I. Yogyakarta",
+      "items": [
+        {
+          "product_id": "prod-sep-01",
+          "name": "Ades Aerocushion White Sneakers Kasual",
+          "category": "sepatu",
+          "size": 41,
+          "color": "Putih Bersih",
+          "price": 279000,
+          "quantity": 1,
+          "subtotal": 279000,
+          "image_url": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "subtotal": 279000,
+      "shipping_courier": "J&T Express",
+      "shipping_cost": 15000,
+      "points_used": 0,
+      "vip_discount": 0,
+      "total_amount": 294000,
+      "payment_method": "QRIS",
+      "payment_status": "PAID",
+      "order_status": "SELESAI",
+      "reviews": {
+        "prod-sep-01": {
+          "rating": 5,
+          "comment": "Sepatu sangat empuk dan pas di kaki size 41. Desain bersih cocok buat ngantor!",
+          "created_at": "2026-10-28T09:00:00.000Z"
+        }
+      },
+      "created_at": "2026-10-27T08:30:00.000Z"
+    },
+    {
+      "id": "ord-102",
+      "order_number": "ADES-ORD-20261028-002",
+      "customer_id": "user-alya",
+      "customer_name": "Alya Alifia",
+      "customer_phone": "081298765432",
+      "customer_address": "Apartemen Mataram City Tower A Lt. 8, Yogyakarta",
+      "items": [
+        {
+          "product_id": "prod-tas-01",
+          "name": "Ades Milano Quilted Crossbody Chain Sling Bag",
+          "category": "tas",
+          "size": "One Size",
+          "color": "Hitam Emas",
+          "price": 229000,
+          "quantity": 1,
+          "subtotal": 229000,
+          "image_url": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=80"
+        },
+        {
+          "product_id": "prod-san-01",
+          "name": "Ades CloudSlide Puffy Double Strap Sandal",
+          "category": "sandal",
+          "size": 38,
+          "color": "Putih Lilac",
+          "price": 129000,
+          "quantity": 1,
+          "subtotal": 129000,
+          "image_url": "https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "subtotal": 358000,
+      "shipping_courier": "GOTO (Instant)",
+      "shipping_cost": 25000,
+      "points_used": 20000,
+      "vip_discount": 35800,
+      "total_amount": 327200,
+      "payment_method": "QRIS",
+      "payment_status": "PAID",
+      "order_status": "SELESAI",
+      "reviews": {
+        "prod-tas-01": {
+          "rating": 5,
+          "comment": "Rantai tasnya tebal dan gak luntur. Jahitan quilted sangat presisi, berasa tas jutaan!",
+          "created_at": "2026-10-29T12:10:00.000Z"
+        }
+      },
+      "created_at": "2026-10-28T11:45:00.000Z"
+    },
+    {
+      "id": "ord-103",
+      "order_number": "ADES-ORD-20261029-003",
+      "customer_id": "user-budi",
+      "customer_name": "Budi Santoso",
+      "customer_phone": "085712345678",
+      "customer_address": "Jl. Solo Km 8 No. 12, Sleman, D.I. Yogyakarta",
+      "items": [
+        {
+          "product_id": "prod-sep-02",
+          "name": "Ades Chunky Retro Platform Sneaker Black-Pink",
+          "category": "sepatu",
+          "size": 39,
+          "color": "Cream Beige",
+          "price": 319000,
+          "quantity": 1,
+          "subtotal": 319000,
+          "image_url": "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "subtotal": 319000,
+      "shipping_courier": "JNE",
+      "shipping_cost": 16000,
+      "points_used": 0,
+      "vip_discount": 0,
+      "total_amount": 335000,
+      "payment_method": "COD",
+      "payment_status": "PENDING",
+      "order_status": "DIPROSES",
+      "created_at": "2026-10-29T14:20:00.000Z"
+    },
+    {
+      "id": "ord-104",
+      "order_number": "ADES-ORD-20261031-004",
+      "customer_id": "user-alya",
+      "customer_name": "Alya Alifia",
+      "customer_phone": "081298765432",
+      "customer_address": "Apartemen Mataram City Tower A Lt. 8, Yogyakarta",
+      "items": [
+        {
+          "product_id": "prod-tas-02",
+          "name": "Ades Daily Canvas Tote Bag Laptop Friendly (14 Inch)",
+          "category": "tas",
+          "size": "One Size",
+          "color": "Off-White Kanvas",
+          "price": 149000,
+          "quantity": 1,
+          "subtotal": 149000,
+          "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "subtotal": 149000,
+      "shipping_courier": "Ninja Xpress",
+      "shipping_cost": 13000,
+      "points_used": 10000,
+      "vip_discount": 14900,
+      "total_amount": 137100,
+      "payment_method": "QRIS",
+      "payment_status": "PAID",
+      "order_status": "DIKIRIM",
+      "created_at": "2026-10-31T16:10:00.000Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev-01",
+      "product_id": "prod-sep-01",
+      "order_id": "ord-101",
+      "user_id": "user-budi",
+      "user_name": "Budi Santoso",
+      "rating": 5,
+      "comment": "Sepatu sangat empuk dan pas di kaki size 41. Desain bersih cocok buat ngantor!",
+      "created_at": "2026-10-28T09:00:00.000Z"
+    },
+    {
+      "id": "rev-02",
+      "product_id": "prod-sep-01",
+      "order_id": "ord-sample-01",
+      "user_id": "user-sample",
+      "user_name": "Dewi Lestari",
+      "rating": 5,
+      "comment": "Pengiriman instan kilat, insole empuk banget gak bikin pegal jalan jauh.",
+      "created_at": "2026-10-29T14:30:00.000Z"
+    },
+    {
+      "id": "rev-03",
+      "product_id": "prod-sep-02",
+      "order_id": "ord-sample-02",
+      "user_id": "user-sample-2",
+      "user_name": "Siti Rahma",
+      "rating": 5,
+      "comment": "Sol platform tebal tapi super enteng dipake seharian ke kampus.",
+      "created_at": "2026-10-30T10:15:00.000Z"
+    },
+    {
+      "id": "rev-04",
+      "product_id": "prod-san-01",
+      "order_id": "ord-102",
+      "user_id": "user-alya",
+      "user_name": "Alya Alifia",
+      "rating": 5,
+      "comment": "Sandal slide paling empuk yang pernah saya beli! Warna putih lilac-nya cantik banget.",
+      "created_at": "2026-10-29T12:00:00.000Z"
+    },
+    {
+      "id": "rev-05",
+      "product_id": "prod-tas-01",
+      "order_id": "ord-102",
+      "user_id": "user-alya",
+      "user_name": "Alya Alifia",
+      "rating": 5,
+      "comment": "Rantai tasnya tebal dan gak luntur. Jahitan quilted sangat presisi, berasa tas jutaan!",
+      "created_at": "2026-10-29T12:10:00.000Z"
+    }
+  ],
+  "meta": {
+    "last_order_counter": 4,
+    "last_order_date": "20261102"
+  }
+}

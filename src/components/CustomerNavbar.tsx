@@ -1,0 +1,201 @@
+'use client';
+
+import React from 'react';
+import {
+  ShoppingBag,
+  Sparkles,
+  Coins,
+  Crown,
+  User,
+  Search,
+  LogOut,
+  LogIn,
+} from 'lucide-react';
+import { User as UserType } from '@/types';
+
+interface CustomerNavbarProps {
+  currentUser: UserType | null;
+  cartCount: number;
+  onOpenCart: () => void;
+  onOpenVipModal: () => void;
+  onLogout: () => void;
+  onSwitchToLogin?: () => void;
+  searchQuery: string;
+  setSearchQuery: (q: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (cat: string) => void;
+}
+
+export default function CustomerNavbar({
+  currentUser,
+  cartCount,
+  onOpenCart,
+  onOpenVipModal,
+  onLogout,
+  onSwitchToLogin,
+  searchQuery,
+  setSearchQuery,
+  selectedCategory,
+  setSelectedCategory,
+}: CustomerNavbarProps) {
+  const isVip = currentUser?.isVip || false;
+  const memberPoints = currentUser?.memberPoints || 0;
+  const isGuest = !currentUser || currentUser.id === 'guest';
+
+  return (
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+      {/* Top Banner: Promo Ticker */}
+      <div className="bg-black text-white text-[10px] font-bold py-1 px-3 text-center tracking-wide flex items-center justify-between border-b border-red-950/60">
+        <div className="flex items-center space-x-1.5 truncate">
+          <Sparkles className="w-3 h-3 text-red-500 flex-shrink-0" />
+          <span className="font-extrabold text-red-500">Ades Store 01:</span>
+          <span className="text-zinc-300 truncate">
+            Diskon s/d 30% + Garansi Retur Size!
+          </span>
+        </div>
+        <button
+          onClick={onOpenVipModal}
+          className="text-amber-300 hover:text-white font-extrabold text-[10px] flex-shrink-0 ml-1 underline decoration-amber-400"
+        >
+          Klaim VIP 50k &rarr;
+        </button>
+      </div>
+
+      {/* Main Responsive Bar */}
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          {/* Logo & Store Branding */}
+          <div className="flex items-center space-x-2">
+            <div className="h-9 w-9 rounded-xl bg-white p-0.5 border border-slate-200 shadow-xs flex items-center justify-center overflow-hidden flex-shrink-0">
+              <img
+                src="/logo.png"
+                alt="Ades Store 01"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div>
+              <div className="flex items-center space-x-1.5">
+                <span className="font-black text-base text-slate-900 tracking-tight leading-none">
+                  Ades Store <span className="text-red-600">01</span>
+                </span>
+                {/* Status Badge */}
+                {isVip ? (
+                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-2xs">
+                    <Crown className="w-2.5 h-2.5 text-amber-100" />
+                    <span>VIP</span>
+                  </span>
+                ) : !isGuest ? (
+                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-emerald-600 text-white shadow-2xs">
+                    <User className="w-2.5 h-2.5" />
+                    <span>Member</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                    <span>Tamu</span>
+                  </span>
+                )}
+              </div>
+              <p className="text-[9px] text-slate-400 font-medium leading-none mt-0.5">
+                Langkah Nyaman, Gaya Maksimal
+              </p>
+            </div>
+          </div>
+
+          {/* Right Action Icons & VIP Widget */}
+          <div className="flex items-center space-x-1.5">
+            {/* Indikator Pojok Kanan Atas: Widget Saldo Poin Member (Real-time) */}
+            <div
+              onClick={onOpenVipModal}
+              className={`cursor-pointer flex items-center space-x-1.5 px-2 py-1 rounded-xl border transition-all shadow-2xs ${
+                isVip
+                  ? 'bg-gradient-to-r from-amber-50 to-amber-100/90 border-amber-300 text-amber-950 hover:border-amber-400'
+                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+              }`}
+              title="Status Poin Member — Klik untuk klaim / tambah poin VIP"
+            >
+              <span className="text-xs">🪙</span>
+              <div className="text-left">
+                <span className="text-[8px] uppercase tracking-wider font-extrabold text-amber-900 block leading-none">
+                  Poin
+                </span>
+                <p className="font-black text-[11px] text-amber-950 leading-tight">
+                  {memberPoints.toLocaleString('id-ID')}
+                </p>
+              </div>
+            </div>
+
+            {/* Cart Button */}
+            <button
+              onClick={onOpenCart}
+              className="relative p-2 rounded-xl border border-slate-200 hover:border-red-400 bg-white text-slate-700 transition-all shadow-2xs"
+              title="Keranjang Belanja"
+            >
+              <ShoppingBag className="w-4 h-4 text-slate-800" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-black flex items-center justify-center shadow-xs">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
+            {/* User Profile / Exit / Switch Screen Button */}
+            <div>
+              {currentUser && !isGuest ? (
+                <button
+                  onClick={onLogout}
+                  className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-colors"
+                  title="Keluar Akun"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={onSwitchToLogin || onLogout}
+                  className="px-2.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[10px] font-black transition-colors flex items-center space-x-1 shadow-xs"
+                  title="Masuk Akun Member"
+                >
+                  <LogIn className="w-3 h-3" />
+                  <span>Masuk</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Search Bar Input */}
+        <div className="relative w-full">
+          <input
+            type="text"
+            placeholder="Cari sepatu (size 36-43), sandal, tas..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white"
+          />
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+        </div>
+
+        {/* Category Navigation Pills */}
+        <div className="flex items-center space-x-1.5 overflow-x-auto pb-0.5 pt-0.5 scrollbar-none">
+          {[
+            { id: 'all', label: 'Semua Koleksi' },
+            { id: 'sepatu', label: '👟 Sepatu (Size 36-43)' },
+            { id: 'sandal', label: '🩴 Sandal' },
+            { id: 'tas', label: '👜 Aneka Tas' },
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-3 py-1 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all ${
+                selectedCategory === cat.id
+                  ? 'bg-red-600 text-white shadow-xs shadow-red-600/30'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </header>
+  );
+}
