@@ -12,7 +12,8 @@ export interface DatabaseSchema {
   };
 }
 
-const DB_DIR = path.join(process.cwd(), 'data');
+const IS_SERVERLESS = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === 'production');
+const DB_DIR = IS_SERVERLESS ? '/tmp' : path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DB_DIR, 'ades_database.json');
 const DB_TMP_FILE = path.join(DB_DIR, 'ades_database.tmp.json');
 
@@ -435,26 +436,60 @@ export function getDb(): DatabaseSchema {
     return inMemoryDb;
   }
 
-  if (!fs.existsSync(DB_DIR)) {
-    fs.mkdirSync(DB_DIR, { recursive: true });
+  // 1. Try reading from writable DB_FILE (e.g. /tmp in Vercel or local data dir)
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const content = fs.readFileSync(DB_FILE, 'utf-8');
+      inMemoryDb = JSON.parse(content);
+      return inMemoryDb!;
+    }
+  } catch (err) {
+    console.warn('[DB] Failed reading DB_FILE:', (err as Error).message);
   }
 
-  // Always reset to initial fashion database for Ades Store 01
+  // 2. Try reading from project seed file if available
+  try {
+    const seedFile = path.join(process.cwd(), 'data', 'ades_database.json');
+    if (fs.existsSync(seedFile)) {
+      const content = fs.readFileSync(seedFile, 'utf-8');
+      inMemoryDb = JSON.parse(content);
+      // Try writing to DB_FILE (/tmp) for persistence across invocations in same container
+      try {
+        if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
+        fs.writeFileSync(DB_FILE, content, 'utf-8');
+      } catch {}
+      return inMemoryDb!;
+    }
+  } catch (err) {
+    console.warn('[DB] Failed reading project seed file:', (err as Error).message);
+  }
+
+  // 3. Fallback to initial fashion database in memory
   const initial = getInitialDatabase();
-  fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
   inMemoryDb = initial;
+  try {
+    if (!fs.existsSync(DB_DIR)) {
+      fs.mkdirSync(DB_DIR, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('[DB] Operating in-memory (disk write bypassed):', (err as Error).message);
+  }
   return inMemoryDb;
 }
 
 function saveDbAtomically(data: DatabaseSchema): void {
-  if (!fs.existsSync(DB_DIR)) {
-    fs.mkdirSync(DB_DIR, { recursive: true });
-  }
-
-  const jsonStr = JSON.stringify(data, null, 2);
-  fs.writeFileSync(DB_TMP_FILE, jsonStr, 'utf-8');
-  fs.renameSync(DB_TMP_FILE, DB_FILE);
   inMemoryDb = data;
+  try {
+    if (!fs.existsSync(DB_DIR)) {
+      fs.mkdirSync(DB_DIR, { recursive: true });
+    }
+    const jsonStr = JSON.stringify(data, null, 2);
+    fs.writeFileSync(DB_TMP_FILE, jsonStr, 'utf-8');
+    fs.renameSync(DB_TMP_FILE, DB_FILE);
+  } catch (err) {
+    console.warn('[DB] Atomic save to disk skipped, updated in-memory:', (err as Error).message);
+  }
 }
 
 export async function runInTransaction<T>(
