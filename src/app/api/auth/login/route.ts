@@ -8,21 +8,33 @@ export async function POST(request: Request) {
 
     const db = getDb();
     const loginId = (identifier || email || phone || '').toLowerCase().trim();
+    const cleanDigits = loginId.replace(/[^0-9]/g, '');
 
     // Administrator Login
     if (role === 'admin' || body.portal === 'admin') {
-      if (
-        (loginId === 'admin@adesstore01.com' || loginId === 'admin' || loginId === '081234567890') &&
-        (password === 'admin123' || password === '0101')
-      ) {
+      const isValidAdminId =
+        loginId === 'admin@adesstore01.com' ||
+        loginId === 'admin' ||
+        loginId === 'ades' ||
+        cleanDigits === '082126468980' ||
+        cleanDigits === '6282126468980' ||
+        cleanDigits === '081234567890';
+
+      const isValidPassword =
+        password === 'admin123' ||
+        password === '0101' ||
+        password === 'ades01' ||
+        password === 'admin';
+
+      if (isValidAdminId && isValidPassword) {
         const adminUser = db.users.find((u) => u.role === 'ADMIN');
         return NextResponse.json({
           success: true,
           user: adminUser || {
             id: 'user-admin',
-            name: 'Administrator Ades Store 01',
+            name: 'Alya Alifia (Owner Ades Store 01)',
             email: 'admin@adesstore01.com',
-            phone: '081234567890',
+            phone: '082126468980',
             role: 'ADMIN',
             isVip: true,
             memberPoints: 999999,
