@@ -13,6 +13,7 @@ import {
   Package,
 } from 'lucide-react';
 import { User as UserType } from '@/types';
+import { PRODUCT_CATEGORIES } from '@/lib/categories';
 
 interface CustomerNavbarProps {
   currentUser: UserType | null;
@@ -200,34 +201,43 @@ export default function CustomerNavbar({
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Cari sepatu (size 36-43), sandal, tas..."
+            placeholder="Cari sepatu pria/wanita, tas sekolah TK-SMA, buku, sepatu gunung..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white"
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all"
           />
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
         </div>
 
-        {/* Category Navigation Pills */}
-        <div className="flex items-center space-x-1.5 overflow-x-auto pb-0.5 pt-0.5 scrollbar-none">
-          {[
-            { id: 'all', label: 'Semua Koleksi' },
-            { id: 'sepatu', label: '👟 Sepatu (Size 36-43)' },
-            { id: 'sandal', label: '🩴 Sandal' },
-            { id: 'tas', label: '👜 Aneka Tas' },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all ${
-                selectedCategory === cat.id
-                  ? 'bg-red-600 text-white shadow-xs shadow-red-600/30'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+        {/* Category Navigation Pills (Lengkap 16 Kategori) */}
+        <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 pt-0.5 scrollbar-none">
+          {PRODUCT_CATEGORIES.map((cat) => {
+            const isSelected = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center space-x-1.5 ${
+                  isSelected
+                    ? 'bg-red-600 text-white shadow-sm shadow-red-600/40 ring-1 ring-red-400'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80'
+                }`}
+                title={cat.description}
+              >
+                <span>{cat.icon}</span>
+                <span>{cat.shortName}</span>
+                {cat.badge && (
+                  <span
+                    className={`text-[8px] uppercase px-1 py-0.2 rounded-full font-black ${
+                      isSelected ? 'bg-white text-red-600' : 'bg-red-100 text-red-700'
+                    }`}
+                  >
+                    {cat.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
     </header>

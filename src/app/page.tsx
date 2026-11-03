@@ -10,6 +10,7 @@ import CartCheckoutDrawer from '@/components/CartCheckoutDrawer';
 import VipModal from '@/components/VipModal';
 import UserProfileModal from '@/components/UserProfileModal';
 import MyOrdersModal, { OrderTab } from '@/components/MyOrdersModal';
+import PromoAdsBanner from '@/components/PromoAdsBanner';
 import AdesBot from '@/components/AdesBot';
 import { Product, CartItem, User, Order } from '@/types';
 import { Crown, Tag, Truck, RotateCcw, CheckCircle } from 'lucide-react';
@@ -370,6 +371,14 @@ export default function ResponsiveAppRoot() {
 
             {/* Main Content Responsive max-w-6xl */}
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-5 space-y-5">
+              {/* Iklan Promo Beranda: Spesial Ramadhan Diskon 20% & Back to School */}
+              <PromoAdsBanner
+                onSelectCategory={(catId) => {
+                  setSelectedCategory(catId);
+                  showToast(`Menampilkan kategori: ${catId.replace(/_/g, ' ')}`);
+                }}
+                onOpenVipModal={() => setIsVipModalOpen(true)}
+              />
               {/* VIP Membership Banner (Rp 50.000 via QRIS with instant 50.000 coins + 10% Cashback) */}
               <div
                 onClick={() => setIsVipModalOpen(true)}
@@ -409,7 +418,7 @@ export default function ResponsiveAppRoot() {
                     Katalog Resmi Ades Store 01
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Koleksi Sepatu (Size 36-43), Sandal Slide Empuk, dan Tas Fashion
+                    Koleksi Lengkap 16 Kategori: Sepatu Pria &amp; Wanita, Bayi, Anak, Sekolah, Tas TK-SMA, Dompet, Gunung &amp; Buku
                   </p>
                 </div>
                 <span className="text-xs font-bold text-slate-400">

@@ -34,9 +34,14 @@ export default function ProductDetailModal({
   onDirectCheckout,
   onOpenSizeAssistant,
 }: ProductDetailModalProps) {
-  const isBag = product.category === 'tas';
-  const availableSizes = isBag ? ['One Size'] : product.sizes || [38, 39, 40];
-  const [selectedSize, setSelectedSize] = useState<number | string>(availableSizes[0] || 39);
+  const isFootwear = product.category.startsWith('sepatu');
+  const availableSizes: (number | string)[] =
+    product.sizes && product.sizes.length > 0
+      ? product.sizes
+      : isFootwear
+      ? [38, 39, 40, 41, 42]
+      : ['All Size'];
+  const [selectedSize, setSelectedSize] = useState<number | string>(availableSizes[0] ?? (isFootwear ? 40 : 'All Size'));
   const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] || 'Default');
   const [qty, setQty] = useState<number>(1);
 
@@ -119,9 +124,9 @@ export default function ProductDetailModal({
           <div className="space-y-1.5 pt-1 border-t border-slate-100">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-700">
-                Pilih Ukuran {isBag ? '' : '(Size 36-43)'}:
+                Pilih Ukuran {isFootwear ? '(Size Kaki)' : '(Varian / Ukuran)'}:
               </span>
-              {!isBag && (
+              {isFootwear && (
                 <button
                   type="button"
                   onClick={onOpenSizeAssistant}

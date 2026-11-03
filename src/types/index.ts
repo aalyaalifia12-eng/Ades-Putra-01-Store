@@ -1,4 +1,25 @@
-export type ProductCategory = 'sepatu' | 'sandal' | 'tas';
+export type ProductCategory =
+  | 'all'
+  | 'sepatu_pria'
+  | 'sepatu_wanita'
+  | 'sepatu_olahraga'
+  | 'sepatu_bayi'
+  | 'sepatu_anak_laki'
+  | 'sepatu_anak_perempuan'
+  | 'sepatu_sekolah'
+  | 'sepatu_gunung'
+  | 'tas_sekolah_tk_sd'
+  | 'tas_sekolah_smp_sma'
+  | 'tas_wanita'
+  | 'tas_pria'
+  | 'tas_gunung'
+  | 'dompet'
+  | 'buku_alat_tulis'
+  | 'aksesoris'
+  | 'sepatu'
+  | 'sandal'
+  | 'tas'
+  | string;
 
 export interface Product {
   id: string;
@@ -9,7 +30,7 @@ export interface Product {
   original_price: number;
   promo_price?: number;
   cost_price: number;
-  sizes: number[]; // e.g. [36, 37, 38, 39, 40, 41, 42, 43]
+  sizes: (number | string)[]; // e.g. [36, 37, 38] or ['One Size'] or [18, 19, 20]
   colors: string[];
   stock: number;
   min_stock_alert: number;

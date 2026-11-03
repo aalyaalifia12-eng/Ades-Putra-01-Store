@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { Product, Order, ProductCategory } from '@/types';
 import { formatIDR, formatIndoDate } from '@/lib/utils';
+import { PRODUCT_CATEGORIES } from '@/lib/categories';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -146,7 +147,7 @@ export default function AdminDashboardPage() {
         cost_price: Number(formCostPrice),
         stock: Number(formStock),
         min_stock_alert: Number(formMinStock),
-        sizes: formCategory === 'tas' ? [0] : formSizes,
+        sizes: formCategory.startsWith('sepatu') ? (formSizes.length > 0 ? formSizes : [39, 40, 41]) : ['All Size'],
         colors: formColors.split(',').map((c) => c.trim()).filter(Boolean),
         image_url: formImageUrl,
         description: formDescription,
@@ -383,12 +384,14 @@ export default function AdminDashboardPage() {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="py-2 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-bold focus:outline-none"
+                  className="py-2 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-bold focus:outline-none max-w-xs"
                 >
                   <option value="all">Semua Kategori ({products.length})</option>
-                  <option value="sepatu">👟 Sepatu</option>
-                  <option value="sandal">🩴 Sandal</option>
-                  <option value="tas">👜 Tas</option>
+                  {PRODUCT_CATEGORIES.filter((c) => c.id !== 'all').map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -444,8 +447,8 @@ export default function AdminDashboardPage() {
                           </td>
 
                           <td className="py-3 px-4">
-                            {p.category === 'tas' ? (
-                              <span className="text-slate-400">One Size</span>
+                            {!p.category.startsWith('sepatu') ? (
+                              <span className="text-slate-400">All Size / Standar</span>
                             ) : (
                               <div className="flex flex-wrap gap-1 max-w-[140px]">
                                 {(p.sizes || []).map((s) => (
@@ -733,24 +736,19 @@ export default function AdminDashboardPage() {
               {/* Category */}
               <div>
                 <label className="font-bold text-slate-300 block mb-1">
-                  Kategori Fashion:
+                  Pilih Kategori Produk:
                 </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['sepatu', 'sandal', 'tas'] as ProductCategory[]).map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setFormCategory(cat)}
-                      className={`py-2 px-3 rounded-xl uppercase font-extrabold border text-center transition-all ${
-                        formCategory === cat
-                          ? 'border-rose-500 bg-rose-600 text-white'
-                          : 'border-slate-700 bg-slate-800 text-slate-400'
-                      }`}
-                    >
-                      {cat}
-                    </button>
+                <select
+                  value={formCategory}
+                  onChange={(e) => setFormCategory(e.target.value as ProductCategory)}
+                  className="w-full py-2.5 px-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-bold text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+                >
+                  {PRODUCT_CATEGORIES.filter((c) => c.id !== 'all').map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
 
               {/* Name */}
@@ -832,13 +830,13 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Sizes (for shoes/sandals) */}
-              {formCategory !== 'tas' && (
+              {formCategory.startsWith('sepatu') && (
                 <div>
                   <label className="font-bold text-slate-300 block mb-1">
-                    Pilihan Ukuran Size (36 - 43):
+                    Pilihan Ukuran Size Kaki:
                   </label>
                   <div className="flex flex-wrap gap-1.5">
-                    {[36, 37, 38, 39, 40, 41, 42, 43].map((sz) => {
+                    {[18, 20, 22, 26, 28, 30, 32, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44].map((sz) => {
                       const isChecked = formSizes.includes(sz);
                       return (
                         <button

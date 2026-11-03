@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
     if (size) {
       const numSize = parseInt(size, 10);
-      products = products.filter((p) => p.sizes.includes(numSize));
+      products = products.filter((p) => p.sizes && (p.sizes.includes(numSize) || p.sizes.includes(size)));
     }
 
     return NextResponse.json({
