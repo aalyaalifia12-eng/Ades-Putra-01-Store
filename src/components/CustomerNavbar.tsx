@@ -23,6 +23,7 @@ interface CustomerNavbarProps {
   onOpenVipModal: () => void;
   onOpenProfile?: () => void;
   onOpenOrders?: () => void;
+  onOpenGame?: () => void;
   onLogout: () => void;
   onSwitchToLogin?: () => void;
   searchQuery: string;
@@ -39,6 +40,7 @@ export default function CustomerNavbar({
   onOpenVipModal,
   onOpenProfile,
   onOpenOrders,
+  onOpenGame,
   onLogout,
   onSwitchToLogin,
   searchQuery,
@@ -131,6 +133,23 @@ export default function CustomerNavbar({
                 </p>
               </div>
             </div>
+
+            {/* Game Candy Crush Button */}
+            {onOpenGame && (
+              <button
+                onClick={onOpenGame}
+                className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border-2 border-red-500 bg-white hover:bg-red-50 text-slate-900 transition-all shadow-xs group"
+                title="Main Game Candy Crush & Kumpulkan Koin Diskon!"
+              >
+                <span className="text-sm animate-pulse">🍬</span>
+                <span className="hidden sm:inline text-xs font-black text-red-600">
+                  Game Koin
+                </span>
+                <span className="text-[8px] font-black uppercase px-1 rounded bg-red-600 text-white">
+                  Diskon
+                </span>
+              </button>
+            )}
 
             {/* Cart Button */}
             <button

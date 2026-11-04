@@ -8,7 +8,7 @@ export async function PUT(
   try {
     const { id } = params;
     const body = await request.json();
-    const { order_status, payment_status } = body;
+    const { order_status, payment_status, tracking_number, notes } = body;
 
     const updated = await runInTransaction((db) => {
       const order = db.orders.find((o) => o.id === id || o.order_number === id);
@@ -18,6 +18,8 @@ export async function PUT(
 
       if (order_status) order.order_status = order_status;
       if (payment_status) order.payment_status = payment_status;
+      if (tracking_number !== undefined) order.tracking_number = tracking_number;
+      if (notes !== undefined) order.notes = notes;
 
       return order;
     });

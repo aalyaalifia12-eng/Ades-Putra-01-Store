@@ -56,95 +56,106 @@ export default function AdminLoginScreen({ onBackToLanding }: AdminLoginScreenPr
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-black text-white select-none relative overflow-hidden">
-      {/* Glow ambient background */}
-      <div className="absolute -top-24 -right-24 w-80 h-80 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-slate-900 select-none relative overflow-hidden font-sans">
       {/* Top Header with Back button */}
-      <div className="relative z-10 px-4 pt-4 pb-3 flex items-center justify-between border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
+      <div className="relative z-10 px-4 pt-4 pb-3 flex items-center justify-between border-b-2 border-red-500 bg-white shadow-xs">
         <button
           onClick={onBackToLanding}
-          className="inline-flex items-center space-x-1.5 text-xs font-bold text-zinc-400 hover:text-white transition-colors px-2.5 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800"
+          className="inline-flex items-center space-x-1.5 text-xs font-bold text-slate-600 hover:text-red-600 transition-colors px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 border border-slate-200"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Kembali</span>
+          <span>Kembali ke Beranda</span>
         </button>
 
-        <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-400 text-[10px] font-bold">
-          <ShieldCheck className="w-3.5 h-3.5 text-red-500" />
-          <span>SISTEM PENGELOLA</span>
+        <div className="flex items-center space-x-1.5">
+          <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+          <span className="text-[10px] font-black uppercase text-red-600 tracking-wider">
+            Portal Admin Resmi
+          </span>
         </div>
       </div>
 
-      {/* Form Card */}
-      <main className="relative z-10 flex-1 px-4 py-8 flex flex-col justify-center space-y-5">
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-white p-1 border border-zinc-700 shadow-md mx-auto flex items-center justify-center overflow-hidden">
-            <img src="/logo.png" alt="Ades Store 01" className="h-full w-full object-contain" />
+      {/* Main Login Card */}
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-md bg-white rounded-3xl border-2 border-red-500 p-6 sm:p-8 shadow-xl shadow-red-500/10 space-y-6">
+          <div className="text-center space-y-2">
+            <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-red-500 mx-auto shadow-md flex items-center justify-center overflow-hidden">
+              <img src="/logo.png" alt="Ades Store 01" className="h-full w-full object-contain" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                Login Administrator Toko
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Ades Putra 01 Store &bull; Kelola Stok &amp; Pesanan Masuk
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-black text-white tracking-tight uppercase">
-              Akses Pengelola Toko
-            </h2>
-            <p className="text-[11px] text-zinc-400 font-medium">
-              Manajemen Produk, Stok &amp; Analisis Penjualan
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-slate-700 block mb-1">
+                ID / Email Admin / No. HP:
+              </label>
+              <input
+                type="text"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@adesstore01.com atau 082126468980"
+                className="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-200 focus:border-red-500 bg-white text-slate-900 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-red-100 transition-all font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-700 block mb-1">
+                Kata Sandi (PIN):
+              </label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="admin123 atau 0101"
+                className="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-200 focus:border-red-500 bg-white text-slate-900 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-red-100 transition-all font-mono"
+              />
+            </div>
+
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-300 text-red-700 text-xs font-bold flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-xs shadow-lg shadow-red-600/30 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+            >
+              {loading ? (
+                <span>Memverifikasi...</span>
+              ) : (
+                <>
+                  <span>Masuk Dashboard Admin</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="pt-2 border-t border-red-100 text-center">
+            <p className="text-[11px] text-slate-400">
+              Default ID: <b className="text-slate-700">admin</b> | PIN: <b className="text-slate-700">admin123</b>
             </p>
           </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-3.5">
-          <div>
-            <label className="text-[11px] font-bold text-zinc-300 block mb-1">
-              Email Administrator:
-            </label>
-            <input
-              type="text"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@adesstore01.com"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-800 bg-zinc-900 text-white text-xs focus:ring-2 focus:ring-red-500 focus:outline-none font-mono"
-            />
-          </div>
-
-          <div>
-            <label className="text-[11px] font-bold text-zinc-300 block mb-1">
-              Kata Sandi Admin:
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-800 bg-zinc-900 text-white text-xs focus:ring-2 focus:ring-red-500 focus:outline-none font-mono"
-            />
-          </div>
-
-          {error && (
-            <div className="p-2.5 rounded-xl bg-red-950/80 border border-red-800 text-red-300 text-xs font-bold flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-400" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-red-600/30 flex items-center justify-center space-x-2 transition-all disabled:opacity-50"
-          >
-            <span>{loading ? 'Memverifikasi...' : 'Masuk Dashboard Admin'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
-      </main>
+      </div>
 
       {/* Footer */}
-      <footer className="relative z-10 px-4 py-3 border-t border-zinc-900 bg-black/80 text-center">
-        <p className="text-[10px] text-zinc-600">
-          Ades Store 01 &bull; Internal Control
-        </p>
-      </footer>
+      <div className="p-4 text-center text-[10px] text-slate-400 border-t border-slate-200 bg-white">
+        &copy; 2026 Ades Store 01. Hak Cipta Dilindungi.
+      </div>
     </div>
   );
 }

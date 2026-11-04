@@ -11,6 +11,7 @@ import VipModal from '@/components/VipModal';
 import UserProfileModal from '@/components/UserProfileModal';
 import MyOrdersModal, { OrderTab } from '@/components/MyOrdersModal';
 import PromoAdsBanner from '@/components/PromoAdsBanner';
+import CandyCrushGameModal from '@/components/CandyCrushGameModal';
 import AdesBot from '@/components/AdesBot';
 import { Product, CartItem, User, Order } from '@/types';
 import { Crown, Tag, Truck, RotateCcw, CheckCircle } from 'lucide-react';
@@ -44,6 +45,7 @@ export default function ResponsiveAppRoot() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isVipModalOpen, setIsVipModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isGameModalOpen, setIsGameModalOpen] = useState(false);
 
   // Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -307,6 +309,20 @@ export default function ResponsiveAppRoot() {
     showToast('🎉 Selamat! Anda resmi jadi VIP Member! Bonus Gratis Ongkir & Cashback 10% telah aktif!');
   };
 
+  const handleClaimGameCoins = (points: number) => {
+    if (currentUser) {
+      const updatedUser = {
+        ...currentUser,
+        memberPoints: (currentUser.memberPoints || 0) + points,
+      };
+      setCurrentUser(updatedUser);
+      localStorage.setItem('ades_user', JSON.stringify(updatedUser));
+      showToast(`🎉 Hadiah Game Berhasil! +${points.toLocaleString('id-ID')} Koin ditambahkan (Otomatis jadi diskon belanja)!`);
+    } else {
+      showToast(`🎉 Selamat! Anda memenangkan +${points.toLocaleString('id-ID')} Koin Hadiah Game!`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-900 selection:bg-red-600 selection:text-white flex flex-col justify-between">
       {/* Toast Notification */}
@@ -361,6 +377,7 @@ export default function ResponsiveAppRoot() {
                 setInitialOrdersTab('semua');
                 setIsOrdersModalOpen(true);
               }}
+              onOpenGame={() => setIsGameModalOpen(true)}
               onLogout={handleLogout}
               onSwitchToLogin={() => setCurrentScreen('customer_login')}
               searchQuery={searchQuery}
@@ -594,6 +611,36 @@ export default function ResponsiveAppRoot() {
         onOpenProduct={(p) => setSelectedProduct(p)}
         onOpenVipModal={() => setIsVipModalOpen(true)}
       />
+
+      {/* Game Candy Crush Modal (Match-3 Susah & Klaim Koin Potongan Belanja) */}
+      <CandyCrushGameModal
+        isOpen={isGameModalOpen}
+        onClose={() => setIsGameModalOpen(false)}
+        onClaimReward={handleClaimGameCoins}
+        currentPoints={currentUser?.memberPoints || 0}
+      />
+
+      {/* Floating Game Candy Crush Button (Clean White dengan Red Line) */}
+      {currentScreen === 'store' && (
+        <button
+          onClick={() => setIsGameModalOpen(true)}
+          className="fixed bottom-20 left-4 z-40 bg-white border-2 border-red-500 hover:border-red-600 text-slate-900 rounded-full px-3.5 py-2 shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 active:scale-95 flex items-center space-x-2 group"
+          title="Mainkan Game Candy Crush & Kumpulkan Koin Diskon!"
+        >
+          <span className="text-xl animate-bounce">🍬</span>
+          <div className="text-left hidden sm:block">
+            <span className="text-[9px] uppercase font-black text-red-600 block leading-tight">
+              Game Candy Diskon
+            </span>
+            <span className="text-xs font-black text-slate-900 leading-none">
+              Klaim Koin Belanja
+            </span>
+          </div>
+          <span className="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase shadow-xs">
+            +Koin
+          </span>
+        </button>
+      )}
     </div>
   );
 }

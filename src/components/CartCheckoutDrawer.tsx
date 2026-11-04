@@ -568,19 +568,19 @@ export default function CartCheckoutDrawer({
                 </div>
               </div>
 
-              {/* 4. Potong Koin Member Toggle */}
-              <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 p-3.5 rounded-2xl border border-amber-200/80 space-y-2">
+              {/* 4. Potong Koin Member & Hadiah Game Toggle */}
+              <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 p-3.5 rounded-2xl border-2 border-amber-300 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <div className="w-7 h-7 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center font-bold text-xs">
+                    <div className="w-8 h-8 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center font-bold text-sm shadow-xs">
                       🪙
                     </div>
                     <div>
                       <p className="text-xs font-black text-slate-900">
-                        Potong Koin Member
+                        Potong Koin Diskon Belanja
                       </p>
                       <p className="text-[10px] text-slate-600">
-                        Saldo Anda: <b>🪙 {userPoints.toLocaleString('id-ID')} Poin</b> (1 Poin = Rp 1)
+                        Saldo: <b>🪙 {userPoints.toLocaleString('id-ID')} Koin</b> (Hasil Game Candy &amp; Member)
                       </p>
                     </div>
                   </div>
@@ -591,14 +591,14 @@ export default function CartCheckoutDrawer({
                     checked={useMemberPoints && userPoints > 0}
                     disabled={userPoints <= 0}
                     onChange={(e) => setUseMemberPoints(e.target.checked)}
-                    className="w-5 h-5 rounded-md accent-amber-600 cursor-pointer"
+                    className="w-5 h-5 rounded-md accent-red-600 cursor-pointer"
                   />
                 </div>
 
                 {userPoints > 0 && useMemberPoints && (
-                  <div className="text-[11px] text-amber-900 font-bold bg-amber-200/60 p-2 rounded-xl flex items-center justify-between">
-                    <span>Diskon Koin Diterapkan:</span>
-                    <span className="text-rose-700 font-black">-{formatIDR(pointsUsed)}</span>
+                  <div className="text-[11px] text-amber-950 font-bold bg-amber-200/80 p-2 rounded-xl flex items-center justify-between border border-amber-300">
+                    <span>Potongan Harga dari Koin:</span>
+                    <span className="text-red-700 font-black">-{formatIDR(pointsUsed)}</span>
                   </div>
                 )}
 
