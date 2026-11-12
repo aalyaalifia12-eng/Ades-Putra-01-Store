@@ -44,7 +44,14 @@ export interface Product {
   updated_at?: string;
 }
 
-export type CourierOption = 'JNE' | 'J&T Express' | 'GOTO (Instant)' | 'Ninja Xpress';
+export type CourierOption =
+  | '⚡ Kurir Kilat Ades (Cikajang & Garut)'
+  | '🏪 Ambil di Toko Offline (Pick-up Store)'
+  | 'J&T Express'
+  | 'JNE'
+  | 'GOTO (Instant)'
+  | 'Ninja Xpress'
+  | string;
 
 export interface CourierTariff {
   code: CourierOption;

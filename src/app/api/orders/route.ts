@@ -101,17 +101,19 @@ export async function POST(request: Request) {
       // 3. VIP Discount (10% on products for VIP members)
       const vipDiscount = isVip ? Math.round(subtotal * 0.1) : 0;
 
-      // 4. Member Points Discount toggle
-      let pointsUsed = 0;
-      if (usePoints && user && user.memberPoints > 0) {
-        const maxDeductible = subtotal - vipDiscount;
-        pointsUsed = Math.min(user.memberPoints, maxDeductible);
+      // 4. Member Points Discount toggle (Aturan: 10.000 Poin Game = Rp 1.000 Potongan Diskon)
+      let pointsUsed = 0; // Poin koin yang dipotong dari saldo user
+      let pointDiscountRupiah = 0; // Potongan rupiah yang mengurangi total belanja
+      if (usePoints && user && user.memberPoints >= 10000) {
+        const pointSteps = Math.floor(user.memberPoints / 10000);
+        pointsUsed = pointSteps * 10000;
+        pointDiscountRupiah = pointSteps * 1000;
         user.memberPoints -= pointsUsed;
       }
 
       // 5. Total
-      const shipCost = Number(shippingCost) || 15000;
-      const totalAmount = Math.max(0, subtotal - vipDiscount - pointsUsed + shipCost);
+      const shipCost = Number(shippingCost) >= 0 ? Number(shippingCost) : 10000;
+      const totalAmount = Math.max(0, subtotal - vipDiscount - pointDiscountRupiah + shipCost);
 
       const orderNumber = generateOrderNumber(db);
       const newOrder: Order = {
@@ -123,9 +125,9 @@ export async function POST(request: Request) {
         customer_address: customerAddress,
         items: orderItems,
         subtotal,
-        shipping_courier: shippingCourier || 'J&T Express',
+        shipping_courier: shippingCourier || '⚡ Kurir Kilat Ades (Cikajang & Garut)',
         shipping_cost: shipCost,
-        points_used: pointsUsed,
+        points_used: pointDiscountRupiah,
         vip_discount: vipDiscount,
         total_amount: totalAmount,
         payment_method: paymentMethod || 'QRIS',

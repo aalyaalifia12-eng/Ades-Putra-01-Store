@@ -1135,46 +1135,241 @@ export default function AdminDashboardPage() {
         )}
 
         {/* ================================================================= */}
-        {/* TAB 3: LAPORAN PENJUALAN MINGGUAN                                */}
+        {/* TAB 3: LAPORAN PENJUALAN MINGGUAN & ANALYTICS                     */}
         {/* ================================================================= */}
         {activeTab === 'analytics' && (
-          <div className="space-y-4">
-            <div className="bg-white p-5 rounded-3xl border border-red-200 space-y-4 shadow-2xs">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="space-y-6">
+            {/* KPI Cards Header */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="bg-white p-4 rounded-3xl border-2 border-red-500/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    Total Omzet Kotor
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
+                    <DollarSign className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900">
+                  {formatIDR(analytics?.totalOmzet || 0)}
+                </h3>
+                <p className="text-[10px] text-emerald-600 font-bold flex items-center space-x-1">
+                  <TrendingUp className="w-3 h-3" />
+                  <span>Dari seluruh pesanan aktif</span>
+                </p>
+              </div>
+
+              <div className="bg-white p-4 rounded-3xl border-2 border-red-500/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    Est. Keuntungan Bersih
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-emerald-700">
+                  {formatIDR(analytics?.cleanProfit || Math.round((analytics?.totalOmzet || 0) * 0.35))}
+                </h3>
+                <p className="text-[10px] text-slate-500">
+                  Margin keuntungan bersih rata-rata ~35%
+                </p>
+              </div>
+
+              <div className="bg-white p-4 rounded-3xl border-2 border-red-500/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    Total Pesanan
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <Package className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900">
+                  {analytics?.totalOrdersCount || orders.length || 0}
+                </h3>
+                <p className="text-[10px] text-slate-500">
+                  Pesanan masuk di sistem Ades Store
+                </p>
+              </div>
+
+              <div className="bg-white p-4 rounded-3xl border-2 border-red-500/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    Garansi Retur / Tukar
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                    <RefreshCw className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-amber-800">
+                  {analytics?.returOrdersCount || 0}
+                </h3>
+                <p className="text-[10px] text-slate-500">
+                  Garansi tukar size 7 hari terlayani
+                </p>
+              </div>
+            </div>
+
+            {/* Grafik Tren Omzet Harian 7 Hari */}
+            <div className="bg-white p-5 sm:p-6 rounded-3xl border-2 border-red-500 shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-red-100 pb-3">
                 <div>
-                  <h4 className="font-black text-base text-slate-900">
-                    Grafik Tren Omzet 7 Hari Terakhir
+                  <h4 className="font-black text-base text-slate-900 flex items-center space-x-2">
+                    <BarChart3 className="w-5 h-5 text-red-600" />
+                    <span>Grafik Tren Penjualan 7 Hari Terakhir</span>
                   </h4>
                   <p className="text-xs text-slate-500">
-                    Ades Store 01 &bull; Performa Omzet Harian
+                    Ades Store 01 &bull; Cikajang & Garut &bull; Performa Omzet Harian
                   </p>
                 </div>
-                <span className="font-mono text-xs font-black text-red-600 bg-red-50 px-2.5 py-1 rounded-xl border border-red-200">
-                  Total: {formatIDR(analytics?.totalOmzet || 0)}
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="font-mono text-xs font-black text-red-600 bg-red-50 px-3 py-1.5 rounded-xl border border-red-200">
+                    Omzet: {formatIDR(analytics?.totalOmzet || 0)}
+                  </span>
+                  <button
+                    onClick={fetchData}
+                    className="p-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 border border-slate-200"
+                    title="Refresh Data"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               {/* Bar Chart Visual */}
-              <div className="grid grid-cols-7 gap-2 pt-4 items-end h-44">
+              <div className="grid grid-cols-7 gap-2 pt-6 items-end h-52">
                 {(analytics?.weeklyTrend || []).map((day: any, idx: number) => {
                   const maxOmzet = Math.max(...(analytics?.weeklyTrend || []).map((d: any) => d.omzet), 100000);
-                  const heightPercent = Math.max(8, Math.round((day.omzet / maxOmzet) * 100));
+                  const heightPercent = Math.max(10, Math.round((day.omzet / maxOmzet) * 100));
 
                   return (
-                    <div key={idx} className="flex flex-col items-center justify-end h-full space-y-2">
-                      <span className="text-[10px] font-bold text-red-600 line-clamp-1">
+                    <div key={idx} className="flex flex-col items-center justify-end h-full space-y-2 group">
+                      <span className="text-[10px] font-black text-red-600 line-clamp-1 group-hover:scale-110 transition-transform">
                         {day.omzet > 0 ? `${Math.round(day.omzet / 1000)}k` : '0'}
                       </span>
                       <div
-                        className="w-full max-w-[36px] bg-gradient-to-t from-red-600 to-rose-400 rounded-t-xl transition-all duration-500 shadow-sm"
+                        className="w-full max-w-[42px] bg-gradient-to-t from-red-600 via-rose-500 to-rose-400 rounded-t-xl transition-all duration-500 shadow-sm group-hover:from-red-700 group-hover:to-rose-500"
                         style={{ height: `${heightPercent}%` }}
+                        title={`${day.day || day.date}: ${formatIDR(day.omzet)} (${day.count || 0} transaksi)`}
                       />
-                      <span className="text-[10px] font-bold text-slate-500 truncate w-full text-center">
-                        {day.date.slice(-5)}
+                      <span className="text-[11px] font-bold text-slate-600 truncate w-full text-center">
+                        {day.day || day.date || `Hari ${idx + 1}`}
+                      </span>
+                      <span className="text-[9px] text-slate-400 font-medium">
+                        {day.count || 0} order
                       </span>
                     </div>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* Grid 2 Kolom: Distribusi Ekspedisi Kurir & Produk Terlaris */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Kolom 1: Distribusi Ekspedisi & Antar Cepat Garut */}
+              <div className="bg-white p-5 rounded-3xl border-2 border-red-500/80 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-red-100 pb-2">
+                  <div className="flex items-center space-x-2">
+                    <Truck className="w-5 h-5 text-red-600" />
+                    <h4 className="font-black text-sm text-slate-900">
+                      Distribusi Kurir &amp; Pengiriman
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500">
+                    Cikajang, Garut &amp; Nasional
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  {Object.entries(analytics?.courierBreakdown || {
+                    '⚡ Kurir Kilat Ades (Cikajang & Garut)': 0,
+                    '🏪 Ambil di Toko Offline (Pick-up Store)': 0,
+                    'J&T Express': 0,
+                    'JNE': 0,
+                    'Ninja Xpress': 0,
+                  }).map(([courierName, count]: any) => {
+                    const totalDeliveries = Math.max(1, Object.values(analytics?.courierBreakdown || {}).reduce((a: any, b: any) => Number(a) + Number(b), 0) as number);
+                    const pct = Math.round((Number(count) / totalDeliveries) * 100);
+
+                    return (
+                      <div key={courierName} className="space-y-1">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-800 line-clamp-1">
+                            {courierName}
+                          </span>
+                          <span className="font-mono font-black text-red-600">
+                            {count} paket ({pct}%)
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                          <div
+                            className="bg-red-600 h-full rounded-full transition-all duration-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Kolom 2: Top 5 Produk Paling Laris */}
+              <div className="bg-white p-5 rounded-3xl border-2 border-red-500/80 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-red-100 pb-2">
+                  <div className="flex items-center space-x-2">
+                    <ShoppingBag className="w-5 h-5 text-red-600" />
+                    <h4 className="font-black text-sm text-slate-900">
+                      Top 5 Produk Terlaris
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500">
+                    Paling Banyak Dibeli
+                  </span>
+                </div>
+
+                <div className="space-y-2.5">
+                  {(analytics?.topProducts && analytics.topProducts.length > 0) ? (
+                    analytics.topProducts.map((tp: any, i: number) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 hover:bg-red-50/50 border border-slate-200 transition-colors"
+                      >
+                        <div className="flex items-center space-x-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 overflow-hidden flex-shrink-0">
+                            <img
+                              src={tp.image || '/logo.png'}
+                              alt={tp.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-extrabold text-xs text-slate-900 truncate">
+                              {tp.name}
+                            </p>
+                            <span className="text-[10px] text-slate-500 capitalize">
+                              {tp.category || 'Fashion'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="text-right flex-shrink-0 pl-2">
+                          <p className="text-xs font-black text-red-600">
+                            {tp.qty} Terjual
+                          </p>
+                          <p className="text-[10px] font-mono text-slate-500">
+                            {formatIDR(tp.revenue || 0)}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-slate-400 text-xs">
+                      <Package className="w-8 h-8 mx-auto text-slate-300 mb-1" />
+                      <span>Belum ada data produk terjual</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

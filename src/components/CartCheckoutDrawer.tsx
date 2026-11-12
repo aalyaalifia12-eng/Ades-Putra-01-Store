@@ -20,6 +20,7 @@ import {
   MessageCircle,
   Copy,
   Package,
+  RefreshCw,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CartItem, User, CourierOption, Order } from '@/types';
@@ -54,8 +55,8 @@ export default function CartCheckoutDrawer({
   // Checkout Form States
   const [recipientName, setRecipientName] = useState(currentUser?.name || 'Alya Alifia');
   const [recipientPhone, setRecipientPhone] = useState(currentUser?.phone || '081298765432');
-  const [recipientAddress, setRecipientAddress] = useState(currentUser?.address || '');
-  const [selectedCourier, setSelectedCourier] = useState<CourierOption>('J&T Express');
+  const [recipientAddress, setRecipientAddress] = useState(currentUser?.address || 'Cikajang, Garut');
+  const [selectedCourier, setSelectedCourier] = useState<CourierOption>('⚡ Kurir Kilat Ades (Cikajang & Garut)');
   const [useMemberPoints, setUseMemberPoints] = useState<boolean>(true);
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'QRIS'>('QRIS');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,13 +91,15 @@ export default function CartCheckoutDrawer({
   const isVip = currentUser?.isVip || false;
   const vipDiscount = isVip ? Math.round(subtotal * 0.1) : 0;
 
-  // Member points discount
+  // Member points discount (Aturan Baru: 10.000 Poin = Rp 1.000 Potongan Diskon)
   const userPoints = currentUser?.memberPoints || 0;
-  const maxPointsDeductible = Math.max(0, subtotal - vipDiscount);
-  const pointsUsed = useMemberPoints ? Math.min(userPoints, maxPointsDeductible) : 0;
+  const pointExchangeSteps = Math.floor(userPoints / 10000);
+  const maxAvailablePointDiscount = pointExchangeSteps * 1000;
+  const pointDiscountRupiah = (useMemberPoints && pointExchangeSteps > 0) ? maxAvailablePointDiscount : 0;
+  const pointsUsedInOrder = (useMemberPoints && pointExchangeSteps > 0) ? pointExchangeSteps * 10000 : 0;
 
   // Final Total
-  const grandTotal = Math.max(0, subtotal - vipDiscount - pointsUsed + shippingCost);
+  const grandTotal = Math.max(0, subtotal - vipDiscount - pointDiscountRupiah + shippingCost);
 
   // WhatsApp Admin & DANA payment details
   const ADMIN_WHATSAPP_NUMBER = '6282126468980'; // Ades Store 01 (+62 821-2646-8980)
@@ -122,8 +125,8 @@ export default function CartCheckoutDrawer({
       `*Rincian Pembayaran:*\n` +
       `• Subtotal Belanja : ${formatIDR(subtotal)}\n` +
       `${vipDiscount > 0 ? `• Diskon VIP 10% : -${formatIDR(vipDiscount)}\n` : ''}` +
-      `${pointsUsed > 0 ? `• Potong Poin Member : -${formatIDR(pointsUsed)} (🪙 ${pointsUsed} Poin)\n` : ''}` +
-      `• Ekspedisi (${selectedCourier}) : ${formatIDR(shippingCost)}\n` +
+      `${pointDiscountRupiah > 0 ? `• Potong Poin Game (${pointsUsedInOrder.toLocaleString('id-ID')} Poin) : -${formatIDR(pointDiscountRupiah)}\n` : ''}` +
+      `• Ekspedisi (${selectedCourier}) : ${shippingCost === 0 ? 'GRATIS (Rp 0)' : formatIDR(shippingCost)}\n` +
       `*• TOTAL PEMBAYARAN : ${formatIDR(grandTotal)}*\n` +
       `• Metode Pembayaran: *${paymentMethod === 'COD' ? 'COD (Bayar di Tempat)' : 'QRIS Instan'}*\n\n` +
       `Mohon segera diproses dan dikirimkan resinya ya admin. Terima kasih! ✨`;
@@ -349,6 +352,53 @@ export default function CartCheckoutDrawer({
                 <span>Kirim Bukti / Konfirmasi ke WhatsApp Admin</span>
               </button>
 
+              {/* Fitur Garansi Retur & Tukar Barang Setelah Checkout */}
+              <div className="bg-rose-50/70 border-2 border-red-500 rounded-2xl p-4 text-left space-y-3 shadow-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl">🔄</span>
+                    <div>
+                      <h4 className="font-black text-xs text-slate-900">
+                        Garansi Retur &amp; Tukar Size (7 Hari)
+                      </h4>
+                      <p className="text-[10px] text-slate-500 font-medium">
+                        Ukuran kurang pas atau ingin ganti model? Kami ganti tanpa ribet!
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-red-600 text-white">
+                    7 Hari Resmi
+                  </span>
+                </div>
+
+                <div className="text-[11px] text-slate-700 bg-white p-3 rounded-xl border border-red-200 space-y-1.5 leading-relaxed">
+                  <div className="flex items-start space-x-1.5">
+                    <span className="text-red-600 font-bold">•</span>
+                    <span><b>Bisa Bawa / Tukar Langsung di Toko (Cikajang):</b> Datang ke toko fisik Ades Putra 01 di Cikajang untuk coba dan tukar size langsung di tempat (Gratis).</span>
+                  </div>
+                  <div className="flex items-start space-x-1.5">
+                    <span className="text-red-600 font-bold">•</span>
+                    <span><b>Bisa Retur via Kurir Cepat / Ekspedisi:</b> Admin siap bantu tukar barang dengan kurir kilat Cikajang & Garut atau paket ekspedisi.</span>
+                  </div>
+                </div>
+
+                <a
+                  href={`https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                    `*HALO ADMIN ADES STORE 01, SAYA INGIN AJUKAN TUKAR SIZE / RETUR BARANG*\n\n` +
+                    `• No. Pesanan : ${completedOrder.order_number}\n` +
+                    `• Nama Pemesan: ${completedOrder.customer_name}\n` +
+                    `• Info: Saya ingin tukar size / retur barang\n\n` +
+                    `Mohon dibantu panduan tukar sizenya ya min. Terima kasih!`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-xl bg-white hover:bg-red-50 border-2 border-red-500 text-red-600 font-extrabold text-xs flex items-center justify-center space-x-2 shadow-xs transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4 text-red-600" />
+                  <span>Ajukan Tukar Size / Retur Barang</span>
+                </a>
+              </div>
+
               {/* View Order History & Tracking */}
               <button
                 type="button"
@@ -568,8 +618,8 @@ export default function CartCheckoutDrawer({
                 </div>
               </div>
 
-              {/* 4. Potong Koin Member & Hadiah Game Toggle */}
-              <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 p-3.5 rounded-2xl border-2 border-amber-300 space-y-2">
+              {/* 4. Potong Poin Candy Crush & Koin Belanja (10.000 Poin = Rp 1.000 Diskon) */}
+              <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 p-3.5 rounded-2xl border-2 border-amber-300 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center font-bold text-sm shadow-xs">
@@ -577,10 +627,10 @@ export default function CartCheckoutDrawer({
                     </div>
                     <div>
                       <p className="text-xs font-black text-slate-900">
-                        Potong Koin Diskon Belanja
+                        Tukar Poin Diskon Belanja
                       </p>
                       <p className="text-[10px] text-slate-600">
-                        Saldo: <b>🪙 {userPoints.toLocaleString('id-ID')} Koin</b> (Hasil Game Candy &amp; Member)
+                        Saldo: <b>🪙 {userPoints.toLocaleString('id-ID')} Poin</b> (Game Candy Crush)
                       </p>
                     </div>
                   </div>
@@ -588,34 +638,47 @@ export default function CartCheckoutDrawer({
                   <input
                     type="checkbox"
                     id="togglePoints"
-                    checked={useMemberPoints && userPoints > 0}
-                    disabled={userPoints <= 0}
+                    checked={useMemberPoints && pointExchangeSteps > 0}
+                    disabled={pointExchangeSteps <= 0}
                     onChange={(e) => setUseMemberPoints(e.target.checked)}
-                    className="w-5 h-5 rounded-md accent-red-600 cursor-pointer"
+                    className="w-5 h-5 rounded-md accent-red-600 cursor-pointer disabled:opacity-40"
                   />
                 </div>
 
-                {userPoints > 0 && useMemberPoints && (
-                  <div className="text-[11px] text-amber-950 font-bold bg-amber-200/80 p-2 rounded-xl flex items-center justify-between border border-amber-300">
-                    <span>Potongan Harga dari Koin:</span>
-                    <span className="text-red-700 font-black">-{formatIDR(pointsUsed)}</span>
+                {/* Progress bar towards 10.000 points */}
+                <div className="bg-white/90 p-2.5 rounded-xl border border-amber-200 space-y-1.5 text-[11px]">
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="font-bold">Aturan Penukaran Poin:</span>
+                    <span className="text-amber-800 font-black">10.000 Poin = Rp 1.000</span>
                   </div>
-                )}
 
-                {userPoints <= 0 && (
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-[10px] text-amber-800 font-medium">
-                      Belum punya koin? Gabung VIP sekarang dan dapat 50.000 Poin!
-                    </span>
-                    <button
-                      type="button"
-                      onClick={onOpenVipModal}
-                      className="text-[10px] font-black underline text-amber-900"
-                    >
-                      Daftar VIP
-                    </button>
-                  </div>
-                )}
+                  {pointExchangeSteps > 0 ? (
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-emerald-800 font-bold">
+                        <span>Poin Dapat Ditukar:</span>
+                        <span>{pointsUsedInOrder.toLocaleString('id-ID')} Poin</span>
+                      </div>
+                      {useMemberPoints && (
+                        <div className="flex items-center justify-between text-red-600 font-black border-t border-amber-200 pt-1 text-xs">
+                          <span>Potongan Harga Checkout:</span>
+                          <span>-{formatIDR(pointDiscountRupiah)}</span>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                        <div
+                          className="bg-amber-500 h-full rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.round((userPoints / 10000) * 100))}%` }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-slate-600 leading-snug">
+                        Terkumpul <b>{userPoints.toLocaleString('id-ID')} / 10.000 Poin</b> (Sisa <b>{(10000 - userPoints).toLocaleString('id-ID')}</b> poin lagi untuk potongan Rp 1.000). Mainkan <b>Game Candy Crush</b> (+5 poin/menang) untuk kumpulkan poin!
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* 5. Payment Method Selector */}
@@ -676,15 +739,17 @@ export default function CartCheckoutDrawer({
                   <span>-{formatIDR(vipDiscount)}</span>
                 </div>
               )}
-              {pointsUsed > 0 && (
+              {pointDiscountRupiah > 0 && (
                 <div className="flex justify-between text-amber-700 font-bold">
-                  <span>Potong Poin Member:</span>
-                  <span>-{formatIDR(pointsUsed)}</span>
+                  <span>Potong Poin Game ({pointsUsedInOrder.toLocaleString('id-ID')} Poin):</span>
+                  <span>-{formatIDR(pointDiscountRupiah)}</span>
                 </div>
               )}
               <div className="flex justify-between text-slate-600">
-                <span>Ongkos Kirim ({selectedCourier}):</span>
-                <span>{formatIDR(shippingCost)}</span>
+                <span>Ongkir ({selectedCourier}):</span>
+                <span className={shippingCost === 0 ? 'text-emerald-600 font-black' : ''}>
+                  {shippingCost === 0 ? 'GRATIS (Rp 0)' : formatIDR(shippingCost)}
+                </span>
               </div>
               <div className="border-t border-slate-200 pt-1.5 flex justify-between font-black text-base text-slate-900">
                 <span>Total Pembayaran:</span>

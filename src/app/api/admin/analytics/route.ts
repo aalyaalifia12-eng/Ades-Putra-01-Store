@@ -19,6 +19,7 @@ export async function GET() {
     // 1 -> 0 (Senin), 2 -> 1, 3 -> 2, 4 -> 3, 5 -> 4, 6 -> 5, 0 -> 6 (Minggu)
     const weeklyData = dayLabels.map((day) => ({
       day,
+      date: day,
       omzet: 0,
       count: 0,
     }));
@@ -26,28 +27,38 @@ export async function GET() {
     orders.forEach((o) => {
       if (o.order_status !== 'BATAL') {
         const d = new Date(o.created_at);
-        const jsDay = d.getDay(); // 0 is Sunday
+        const jsDay = isNaN(d.getTime()) ? 1 : d.getDay(); // fallback Monday
         const targetIdx = jsDay === 0 ? 6 : jsDay - 1;
         weeklyData[targetIdx].omzet += o.total_amount;
         weeklyData[targetIdx].count += 1;
       }
     });
 
-    // Courier breakdown
+    // Courier breakdown including local fast delivery and store pick-up
     const courierBreakdown: Record<string, number> = {
+      '⚡ Kurir Kilat Ades (Cikajang & Garut)': 0,
+      '🏪 Ambil di Toko Offline (Pick-up Store)': 0,
       'J&T Express': 0,
       'JNE': 0,
-      'GOTO (Instant)': 0,
       'Ninja Xpress': 0,
     };
 
     orders.forEach((o) => {
-      if (courierBreakdown[o.shipping_courier] !== undefined) {
-        courierBreakdown[o.shipping_courier] += 1;
+      const courierKey = o.shipping_courier || '⚡ Kurir Kilat Ades (Cikajang & Garut)';
+      if (courierBreakdown[courierKey] !== undefined) {
+        courierBreakdown[courierKey] += 1;
       } else {
-        courierBreakdown[o.shipping_courier] = 1;
+        courierBreakdown[courierKey] = 1;
       }
     });
+
+    // Count by order status
+    const completedOrdersCount = orders.filter((o) => o.order_status === 'SELESAI').length;
+    const returOrdersCount = orders.filter((o) => o.order_status === 'RETUR').length;
+    const shippingOrdersCount = orders.filter((o) => o.order_status === 'DIKIRIM').length;
+
+    // Estimasi Keuntungan Bersih (Profit Margin ~35%)
+    const cleanProfit = Math.round(totalOmzet * 0.35);
 
     // Low stock products count
     const lowStockProducts = products.filter((p) => p.stock <= p.min_stock_alert);
@@ -80,8 +91,12 @@ export async function GET() {
       success: true,
       analytics: {
         totalOmzet,
+        cleanProfit,
         totalOrdersCount,
         pendingOrdersCount,
+        shippingOrdersCount,
+        completedOrdersCount,
+        returOrdersCount,
         totalProductsCount: products.length,
         lowStockCount: lowStockProducts.length,
         weeklyTrend: weeklyData,

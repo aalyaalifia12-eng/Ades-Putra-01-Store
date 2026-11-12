@@ -85,7 +85,7 @@ const CANDY_TYPES: Omit<CandyItem, 'id'>[] = [
 const BOARD_SIZE = 6;
 const TARGET_SCORE = 1500;
 const INITIAL_MOVES = 12; // DIBUAT SUSAH: hanya 12 langkah untuk mencapai 1.500 poin!
-const REWARD_POINTS = 1000; // 1 Koin Hadiah Game (= Rp 1.000 Diskon Belanja Langsung)
+const REWARD_POINTS = 5; // Sekali main menang dapat 5 Poin (Kumpulkan 10.000 poin = Rp 1.000 diskon)
 
 function getRandomCandy(): CandyItem {
   const template = CANDY_TYPES[Math.floor(Math.random() * CANDY_TYPES.length)];
@@ -493,14 +493,14 @@ export default function CandyCrushGameModal({
 
               <div className="bg-white p-3 rounded-2xl border border-red-300 max-w-xs mx-auto shadow-sm">
                 <span className="text-[10px] text-slate-400 font-bold uppercase block">
-                  Hadiah Game:
+                  Hadiah Kemenangan:
                 </span>
                 <div className="flex items-center justify-center space-x-1.5 text-red-600 font-black text-base mt-0.5">
                   <Coins className="w-5 h-5 text-amber-500" />
-                  <span>+1 Koin Hadiah (= Rp 1.000 Diskon)</span>
+                  <span>+5 Poin Game</span>
                 </div>
-                <p className="text-[10px] text-slate-500 mt-0.5">
-                  Koin dikumpulkan dan otomatis jadi potongan harga di keranjang belanja!
+                <p className="text-[10px] text-slate-500 mt-1 leading-snug">
+                  Kumpulkan hingga <b>10.000 Poin</b> untuk ditukar potongan harga <b>Rp 1.000</b> saat checkout!
                 </p>
               </div>
 
@@ -509,7 +509,7 @@ export default function CandyCrushGameModal({
                 className="w-full max-w-xs py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-xs shadow-lg shadow-red-600/30 transition-all transform active:scale-95 flex items-center justify-center space-x-2 mx-auto"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Klaim 1 Koin Belanja Sekarang &rarr;</span>
+                <span>Klaim +5 Poin Game Sekarang &rarr;</span>
               </button>
             </div>
           )}
@@ -521,10 +521,10 @@ export default function CandyCrushGameModal({
               </div>
               <div>
                 <h4 className="text-lg font-black text-slate-900">
-                  Koin Berhasil Diklaim!
+                  +5 Poin Berhasil Diklaim!
                 </h4>
                 <p className="text-xs text-slate-600 max-w-xs mx-auto mt-1">
-                  Koin sudah masuk ke akun Anda. Anda bisa mengumpulkannya lagi atau langsung berbelanja sepatu, tas & buku!
+                  Poin Anda bertambah +5! Terus kumpulkan hingga 10.000 poin untuk mendapatkan potongan harga Rp 1.000 di toko kami.
                 </p>
               </div>
 
@@ -534,13 +534,13 @@ export default function CandyCrushGameModal({
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs transition-colors flex items-center justify-center space-x-1.5"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Main Lagi Kumpulkan Koin</span>
+                  <span>Main Lagi (+5 Poin)</span>
                 </button>
                 <button
                   onClick={onClose}
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs transition-colors shadow-sm"
                 >
-                  Belanja Pakai Koin &rarr;
+                  Belanja Pakai Poin &rarr;
                 </button>
               </div>
             </div>
@@ -626,7 +626,7 @@ export default function CandyCrushGameModal({
         <div className="px-5 py-3 bg-white border-t border-red-200 flex items-center justify-between text-xs">
           <div className="flex items-center space-x-1.5 text-slate-500">
             <Coins className="w-3.5 h-3.5 text-amber-500" />
-            <span className="text-[11px]">1 Koin = Rp 1.000 Potongan Belanja</span>
+            <span className="text-[11px]">Setiap Menang = <b>+5 Poin</b> &bull; Kumpulkan <b>10.000 Poin = Rp 1.000 Diskon</b></span>
           </div>
 
           <button
