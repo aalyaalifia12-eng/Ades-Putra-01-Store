@@ -69,9 +69,17 @@ export default function ProductDetailModal({
     `🛡️ Garansi Bebas Tukar Ukuran 7 Hari!\n\n` +
     `👉 Cek Detail & Beli Produk di Sini:\n${shareProductUrl}`;
 
-  // Handle Share directly to WhatsApp Status
+  // Handle Share directly to WhatsApp Status & Otomatis Masuk 10 Poin
   const handleOpenWhatsAppStatus = async () => {
-    // 1. Salin teks postingan dan link ke clipboard otomatis
+    // 1. Langsung Berikan 10 Poin Secara Otomatis (Tanpa Perlu Ditanya Lagi)
+    if (!isStatusClaimed) {
+      setIsStatusClaimed(true);
+      if (onRewardCommission) {
+        onRewardCommission(10, 'Status WhatsApp', product.name);
+      }
+    }
+
+    // 2. Salin teks postingan dan link ke clipboard otomatis
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareFullPost).catch(() => {});
     }
@@ -80,25 +88,25 @@ export default function ProductDetailModal({
     const deepLink = `whatsapp://send?text=${encodedText}`;
     const webLink = `https://api.whatsapp.com/send?text=${encodedText}`;
 
-    // 2. Jika di perangkat seluler (HP Android/iPhone) yang mendukung Web Share API
+    setHasOpenedWhatsApp(true);
+    setShareNotice('🎉 Berhasil! +10 Poin Otomatis Masuk ke Saldo Anda!');
+
+    // 3. Jika di perangkat seluler (HP Android/iPhone) yang mendukung Web Share API
     if (navigator.share) {
       try {
         await navigator.share({
           title: `Ades Store 01 - ${product.name}`,
           text: shareFullPost,
         });
-        setHasOpenedWhatsApp(true);
-        setShareNotice('✓ Berhasil membuka WhatsApp! Pilih "Status saya" paling atas, lalu tekan tombol kirim.');
         return;
       } catch (err: any) {
         if (err.name === 'AbortError') {
-          setHasOpenedWhatsApp(true);
           return;
         }
       }
     }
 
-    // 3. Langsung panggil skema WhatsApp Mobile (whatsapp://) agar langsung membuka aplikasi WhatsApp
+    // 4. Langsung panggil skema WhatsApp Mobile (whatsapp://) agar langsung membuka aplikasi WhatsApp
     const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
       window.location.href = deepLink;
@@ -108,22 +116,6 @@ export default function ProductDetailModal({
     } else {
       window.open(webLink, '_blank');
     }
-
-    setHasOpenedWhatsApp(true);
-    setShareNotice('✓ Membuka WhatsApp! Pilih "Status saya" di paling atas untuk memposting langsung.');
-  };
-
-  // Claim 10 Points after posting to WA Status
-  const handleClaimWhatsAppPoints = () => {
-    if (isStatusClaimed) return;
-    setIsStatusClaimed(true);
-    if (onRewardCommission) {
-      onRewardCommission(10, 'Status WhatsApp', product.name);
-    }
-    setShareNotice('🎉 Selamat! 10 Poin Member berhasil ditambahkan ke akun Anda!');
-    setTimeout(() => {
-      setShareNotice(null);
-    }, 5000);
   };
 
   const handleCopyShareText = () => {
@@ -225,58 +217,30 @@ export default function ProductDetailModal({
             </div>
 
             <p className="text-[11px] text-slate-600 leading-tight">
-              Bagikan langsung produk ini ke <b>Status WhatsApp</b> Anda. Setelah status terkirim, Anda langsung mendapatkan <b>10 Poin Potongan Harga</b>!
+              Bagikan langsung produk ini ke <b>Status WhatsApp</b> Anda. Status otomatis terhubung dan <b>10 Poin langsung masuk ke akun Anda</b>!
             </p>
-
-            {/* Panduan Cepat 2 Langkah */}
-            <div className="bg-white/80 border border-emerald-300 rounded-xl p-2.5 text-[10px] text-emerald-950 space-y-1">
-              <p className="font-black text-emerald-800 flex items-center space-x-1">
-                <span>📲 Cara Langsung Posting ke Status WA:</span>
-              </p>
-              <ol className="list-decimal list-inside space-y-0.5 text-[9.5px] leading-tight text-slate-700">
-                <li>Klik tombol hijau <b>&ldquo;Kirim Langsung ke Status WA&rdquo;</b> di bawah.</li>
-                <li>WhatsApp otomatis terbuka &rarr; pilih <b>&ldquo;Status saya&rdquo;</b> (paling atas).</li>
-                <li>Tekan tombol tanda panah kirim ➡️ Status &amp; link produk langsung tayang!</li>
-                <li>Kembali ke sini &amp; tekan tombol <b>&ldquo;Klaim 10 Poin&rdquo;</b>.</li>
-              </ol>
-            </div>
 
             {/* Tombol Utama: Kirim Langsung ke Status WA */}
             <button
               type="button"
               onClick={handleOpenWhatsAppStatus}
-              className="w-full py-3 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
+              className="w-full py-3.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
             >
               <svg className="w-5 h-5 fill-current flex-shrink-0" viewBox="0 0 24 24">
                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
               </svg>
-              <span>Kirim Langsung ke Status WA</span>
+              <span>
+                {isStatusClaimed
+                  ? '✓ 10 Poin Sudah Masuk! Bagikan Lagi ke Status WA'
+                  : 'Kirim Langsung ke Status WA (+10 Poin Otomatis)'}
+              </span>
             </button>
 
-            {/* Konfirmasi Pengiriman Status WA untuk Klaim 10 Poin */}
-            {hasOpenedWhatsApp && !isStatusClaimed && (
-              <div className="p-3 rounded-xl bg-white border-2 border-emerald-400 space-y-2 animate-in slide-in-from-top-2">
-                <p className="text-xs font-black text-emerald-950 flex items-center space-x-1.5">
-                  <span>❓ Apakah Anda sudah mengirim ke Status WhatsApp?</span>
-                </p>
-                <p className="text-[10px] text-slate-600 leading-tight">
-                  Kirim status lalu klik tombol di bawah agar <b>10 Poin</b> langsung masuk ke saldo akun Anda.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleClaimWhatsAppPoints}
-                  className="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center justify-center space-x-1.5 transition-all active:scale-95"
-                >
-                  <Check className="w-4 h-4 text-white" />
-                  <span>Saya Sudah Kirim Status — Klaim 10 Poin!</span>
-                </button>
-              </div>
-            )}
-
+            {/* Badge Konfirmasi: 10 Poin Otomatis Masuk */}
             {isStatusClaimed && (
-              <div className="p-2.5 rounded-xl bg-emerald-100 border border-emerald-400 text-emerald-900 text-xs font-black flex items-center space-x-2">
+              <div className="p-2.5 rounded-xl bg-emerald-100 border border-emerald-400 text-emerald-900 text-xs font-black flex items-center space-x-2 animate-in fade-in">
                 <Check className="w-4 h-4 text-emerald-700 flex-shrink-0" />
-                <span>✓ Poin Berhasil Diklaim! (+10 Poin Member Aktif)</span>
+                <span>✓ Berhasil! +10 Poin Otomatis Masuk ke Saldo Akun Anda!</span>
               </div>
             )}
 
