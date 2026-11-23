@@ -70,7 +70,7 @@ export default function ProductDetailModal({
     `👉 Cek Detail & Beli Produk di Sini:\n${shareProductUrl}`;
 
   // Handle Share directly to WhatsApp Status & Otomatis Masuk 10 Poin
-  const handleOpenWhatsAppStatus = async () => {
+  const handleOpenWhatsAppStatus = () => {
     // 1. Langsung Berikan 10 Poin Secara Otomatis (Tanpa Perlu Ditanya Lagi)
     if (!isStatusClaimed) {
       setIsStatusClaimed(true);
@@ -85,36 +85,22 @@ export default function ProductDetailModal({
     }
 
     const encodedText = encodeURIComponent(shareFullPost);
-    const deepLink = `whatsapp://send?text=${encodedText}`;
-    const webLink = `https://api.whatsapp.com/send?text=${encodedText}`;
+    const waDirectUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
 
     setHasOpenedWhatsApp(true);
-    setShareNotice('🎉 Berhasil! +10 Poin Otomatis Masuk ke Saldo Anda!');
+    setShareNotice('🎉 Berhasil! Membuka WhatsApp & +10 Poin Otomatis Masuk ke Saldo Anda!');
 
-    // 3. Jika di perangkat seluler (HP Android/iPhone) yang mendukung Web Share API
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Ades Store 01 - ${product.name}`,
-          text: shareFullPost,
-        });
-        return;
-      } catch (err: any) {
-        if (err.name === 'AbortError') {
-          return;
-        }
-      }
-    }
-
-    // 4. Langsung panggil skema WhatsApp Mobile (whatsapp://) agar langsung membuka aplikasi WhatsApp
+    // 3. Buka WhatsApp secara langsung (TANPA memanggil share dialog OS/Windows!)
     const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
-      window.location.href = deepLink;
+      // Di HP Android / iPhone: langsung panggil aplikasi WhatsApp native
+      window.location.href = `whatsapp://send?text=${encodedText}`;
       setTimeout(() => {
-        window.open(webLink, '_blank');
+        window.open(waDirectUrl, '_blank');
       }, 1200);
     } else {
-      window.open(webLink, '_blank');
+      // Di PC / Laptop: langsung buka WhatsApp Web / Desktop
+      window.open(waDirectUrl, '_blank');
     }
   };
 
