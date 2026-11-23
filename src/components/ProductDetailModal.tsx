@@ -187,14 +187,14 @@ export default function ProductDetailModal({
           </div>
 
           {/* ============================================================== */}
-          {/* FITUR BAGIKAN KE STATUS WHATSAPP (+10 POIN MEMBER)             */}
+          {/* FITUR BAGIKAN KE WHATSAPP (STATUS DI HP / CHAT DI LAPTOP)      */}
           {/* ============================================================== */}
           <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 border-2 border-emerald-300 shadow-2xs space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1.5">
                 <Gift className="w-4 h-4 text-emerald-600 animate-bounce" />
                 <span className="text-xs font-black text-slate-900">
-                  Bagikan ke Status WhatsApp
+                  Bagikan ke WhatsApp
                 </span>
               </div>
               <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-2xs">
@@ -203,10 +203,10 @@ export default function ProductDetailModal({
             </div>
 
             <p className="text-[11px] text-slate-600 leading-tight">
-              Bagikan langsung produk ini ke <b>Status WhatsApp</b> Anda. Status otomatis terhubung dan <b>10 Poin langsung masuk ke akun Anda</b>!
+              Bagikan produk ini ke <b>Status WhatsApp</b> (jika dibuka dari HP) atau ke <b>Chat Teman / Grup</b> (jika dibuka dari Laptop). Poin <b>+10 Poin otomatis langsung masuk</b> ke saldo akun Anda!
             </p>
 
-            {/* Tombol Utama: Kirim Langsung ke Status WA */}
+            {/* Tombol Utama: Buka WhatsApp Langsung */}
             <button
               type="button"
               onClick={handleOpenWhatsAppStatus}
@@ -217,10 +217,17 @@ export default function ProductDetailModal({
               </svg>
               <span>
                 {isStatusClaimed
-                  ? '✓ 10 Poin Sudah Masuk! Bagikan Lagi ke Status WA'
-                  : 'Kirim Langsung ke Status WA (+10 Poin Otomatis)'}
+                  ? '✓ 10 Poin Sudah Masuk! Buka WhatsApp Lagi'
+                  : 'Kirim ke WhatsApp (+10 Poin Otomatis)'}
               </span>
             </button>
+
+            {/* Catatan Khusus WhatsApp Web Laptop vs HP */}
+            <div className="bg-emerald-100/60 border border-emerald-200 rounded-xl p-2 text-[9.5px] text-emerald-950 leading-relaxed">
+              <p>
+                💡 <b>Info WhatsApp:</b> Di WhatsApp Web (Laptop), WhatsApp otomatis membuka pilihan kirim chat teman/grup. Untuk langsung memilih <b>&ldquo;Status Saya&rdquo;</b>, silakan klik tombol ini saat membuka toko di <b>HP (Smartphone)</b>. Poin Anda tetap <b>langsung masuk +10 poin</b> di HP maupun Laptop!
+              </p>
+            </div>
 
             {/* Badge Konfirmasi: 10 Poin Otomatis Masuk */}
             {isStatusClaimed && (
