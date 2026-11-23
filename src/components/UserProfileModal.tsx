@@ -61,17 +61,30 @@ export default function UserProfileModal({
   onOpenVipModal,
   onOpenOrders,
 }: UserProfileModalProps) {
-  if (!isOpen || !currentUser) return null;
-
-  const [name, setName] = useState(currentUser.name || '');
-  const [phone, setPhone] = useState(currentUser.phone || '');
-  const [email, setEmail] = useState(currentUser.email || '');
-  const [address, setAddress] = useState(currentUser.address || '');
+  const [name, setName] = useState(currentUser?.name || '');
+  const [phone, setPhone] = useState(currentUser?.phone || '');
+  const [email, setEmail] = useState(currentUser?.email || '');
+  const [address, setAddress] = useState(currentUser?.address || '');
   const [avatarUrl, setAvatarUrl] = useState(
-    currentUser.avatar_url || AVATAR_PRESETS[0].url
+    currentUser?.avatar_url || AVATAR_PRESETS[0].url
   );
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+
+  // Sync state whenever modal opens or currentUser updates
+  React.useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.name || '');
+      setPhone(currentUser.phone || '');
+      setEmail(currentUser.email || '');
+      setAddress(currentUser.address || '');
+      if (currentUser.avatar_url) {
+        setAvatarUrl(currentUser.avatar_url);
+      }
+    }
+  }, [currentUser, isOpen]);
+
+  if (!isOpen || !currentUser) return null;
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,14 +242,14 @@ export default function UserProfileModal({
                     Saldo Koin Belanja &amp; Komisi
                   </span>
                   <p className="text-lg font-black text-slate-900">
-                    {currentUser.memberPoints.toLocaleString('id-ID')}{' '}
+                    {(currentUser.memberPoints || 0).toLocaleString('id-ID')}{' '}
                     <span className="text-xs font-semibold text-slate-500">
-                      Poin (Setara Rp {currentUser.memberPoints.toLocaleString('id-ID')})
+                      Poin (Setara Rp {(currentUser.memberPoints || 0).toLocaleString('id-ID')})
                     </span>
                   </p>
                   {currentUser.commissionEarned && currentUser.commissionEarned > 0 && (
                     <p className="text-[10px] text-emerald-700 font-bold mt-0.5">
-                      💸 Termasuk Komisi Share FB/IG: Rp {currentUser.commissionEarned.toLocaleString('id-ID')}
+                      💸 Termasuk Komisi Share FB/IG: Rp {(currentUser.commissionEarned || 0).toLocaleString('id-ID')}
                     </p>
                   )}
                 </div>

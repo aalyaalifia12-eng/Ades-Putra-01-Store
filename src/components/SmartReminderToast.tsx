@@ -181,7 +181,7 @@ export default function SmartReminderToast({
                     {formatIDR(latestProduct.promo_price || latestProduct.original_price)}
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    Ready Size {latestProduct.sizes.slice(0, 3).join(', ')}...
+                    Ready Size {latestProduct.sizes?.slice(0, 3).join(', ') || 'All Size'}...
                   </span>
                 </div>
               </div>

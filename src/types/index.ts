@@ -69,6 +69,7 @@ export interface User {
   role: 'ADMIN' | 'CUSTOMER';
   isVip: boolean;
   memberPoints: number; // 1 point = Rp 1
+  commissionEarned?: number;
   avatar_url?: string;
   address?: string;
   vipJoinedAt?: string;

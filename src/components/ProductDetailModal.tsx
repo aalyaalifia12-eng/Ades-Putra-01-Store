@@ -51,7 +51,7 @@ export default function ProductDetailModal({
       ? [38, 39, 40, 41, 42]
       : ['All Size'];
   const [selectedSize, setSelectedSize] = useState<number | string>(availableSizes[0] ?? (isFootwear ? 40 : 'All Size'));
-  const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] || 'Default');
+  const [selectedColor, setSelectedColor] = useState<string>(product.colors?.[0] || 'Default');
   const [qty, setQty] = useState<number>(1);
   const [claimedPlatforms, setClaimedPlatforms] = useState<string[]>([]);
   const [shareNotice, setShareNotice] = useState<string | null>(null);

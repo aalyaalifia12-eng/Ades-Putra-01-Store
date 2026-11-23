@@ -66,17 +66,44 @@ export default function ResponsiveAppRoot() {
     try {
       const savedUser = localStorage.getItem('ades_user');
       if (savedUser) {
-        setCurrentUser(JSON.parse(savedUser));
+        try {
+          const u = JSON.parse(savedUser);
+          if (u && typeof u === 'object') {
+            setCurrentUser(u);
+          } else {
+            localStorage.removeItem('ades_user');
+          }
+        } catch {
+          localStorage.removeItem('ades_user');
+        }
       }
 
       const savedCart = localStorage.getItem('ades_cart');
       if (savedCart) {
-        setCart(JSON.parse(savedCart));
+        try {
+          const c = JSON.parse(savedCart);
+          if (Array.isArray(c)) {
+            setCart(c);
+          } else {
+            localStorage.removeItem('ades_cart');
+          }
+        } catch {
+          localStorage.removeItem('ades_cart');
+        }
       }
 
       const savedOrders = localStorage.getItem('ades_orders');
       if (savedOrders) {
-        setOrders(JSON.parse(savedOrders));
+        try {
+          const o = JSON.parse(savedOrders);
+          if (Array.isArray(o)) {
+            setOrders(o);
+          } else {
+            localStorage.removeItem('ades_orders');
+          }
+        } catch {
+          localStorage.removeItem('ades_orders');
+        }
       } else {
         // Initial Realistic Demo Order (Perlu Dibayar via DANA 0821-2646-8980)
         const initialOrder: Order = {
@@ -635,25 +662,27 @@ export default function ResponsiveAppRoot() {
       />
 
       {/* User Profile Modal (Foto, Nama, WhatsApp, Email, Alamat, Koin & Status VIP) */}
-      <UserProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-        currentUser={currentUser}
-        onUpdateUser={(updated) => {
-          setCurrentUser(updated);
-          localStorage.setItem('ades_user', JSON.stringify(updated));
-        }}
-        onLogout={handleLogout}
-        onOpenVipModal={() => {
-          setIsProfileModalOpen(false);
-          setIsVipModalOpen(true);
-        }}
-        onOpenOrders={() => {
-          setIsProfileModalOpen(false);
-          setInitialOrdersTab('semua');
-          setIsOrdersModalOpen(true);
-        }}
-      />
+      {isProfileModalOpen && currentUser && (
+        <UserProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          currentUser={currentUser}
+          onUpdateUser={(updated) => {
+            setCurrentUser(updated);
+            localStorage.setItem('ades_user', JSON.stringify(updated));
+          }}
+          onLogout={handleLogout}
+          onOpenVipModal={() => {
+            setIsProfileModalOpen(false);
+            setIsVipModalOpen(true);
+          }}
+          onOpenOrders={() => {
+            setIsProfileModalOpen(false);
+            setInitialOrdersTab('semua');
+            setIsOrdersModalOpen(true);
+          }}
+        />
+      )}
 
       {/* Pesanan Saya Modal (Semua, Perlu Dibayar, Untuk Dikirim, Akan Diterima, Untuk Diulas, Pengembalian) */}
       <MyOrdersModal

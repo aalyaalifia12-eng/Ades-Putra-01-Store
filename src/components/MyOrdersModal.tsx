@@ -139,7 +139,7 @@ export default function MyOrdersModal({
   // Open Return Form
   const handleOpenReturnModal = (order: Order) => {
     setSelectedReturnOrder(order);
-    const item = order.items[0];
+    const item = order.items?.[0];
     if (item && item.size) {
       setReturnTargetSize(`Size ${Number(item.size) + 1 || 40}`);
     } else {
@@ -350,7 +350,7 @@ export default function MyOrdersModal({
 
                   {/* Item List in Order */}
                   <div className="space-y-2.5">
-                    {order.items.map((item, idx) => (
+                    {(order.items || []).map((item, idx) => (
                       <div
                         key={idx}
                         className="flex items-center space-x-3 p-2 rounded-xl bg-slate-50/70 border border-slate-100"
@@ -793,7 +793,7 @@ export default function MyOrdersModal({
                 <div className="text-right">
                   <span className="text-[9px] font-bold text-slate-400 uppercase block">Total Produk:</span>
                   <span className="font-black text-red-600">
-                    {selectedReturnOrder.items.length} Barang
+                    {selectedReturnOrder.items?.length || 0} Barang
                   </span>
                 </div>
               </div>
