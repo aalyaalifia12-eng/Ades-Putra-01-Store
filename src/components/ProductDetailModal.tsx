@@ -69,13 +69,13 @@ export default function ProductDetailModal({
     `🛡️ Garansi Bebas Tukar Ukuran 7 Hari!\n\n` +
     `👉 Cek Detail & Beli Produk di Sini:\n${shareProductUrl}`;
 
-  // Handle Share directly to WhatsApp Status & Otomatis Masuk 10 Poin
-  const handleOpenWhatsAppStatus = () => {
-    // 1. Langsung Berikan 10 Poin Secara Otomatis (Tanpa Perlu Ditanya Lagi)
+  // Handle Share directly to Friends on WhatsApp & Otomatis Masuk 10 Poin
+  const handleOpenWhatsAppShare = () => {
+    // 1. Langsung Berikan 10 Poin Secara Otomatis
     if (!isStatusClaimed) {
       setIsStatusClaimed(true);
       if (onRewardCommission) {
-        onRewardCommission(10, 'Status WhatsApp', product.name);
+        onRewardCommission(10, 'WhatsApp Teman', product.name);
       }
     }
 
@@ -85,21 +85,20 @@ export default function ProductDetailModal({
     }
 
     const encodedText = encodeURIComponent(shareFullPost);
+    const waUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
 
     setHasOpenedWhatsApp(true);
-    setShareNotice('🎉 Teks & Link Otomatis Disalin! +10 Poin Masuk ke Saldo Anda!');
+    setShareNotice('🎉 Link Siap Dikirim! +10 Poin Otomatis Masuk ke Saldo Anda!');
 
-    // 3. Navigasi Langsung Tanpa Popup Chat Teman
+    // 3. Langsung buka WhatsApp untuk memilih teman / grup yang ingin dikirimkan link
     const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
-      // Di HP Android / iPhone: langsung panggil aplikasi WhatsApp native
       window.location.href = `whatsapp://send?text=${encodedText}`;
       setTimeout(() => {
-        window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+        window.open(waUrl, '_blank');
       }, 1200);
     } else {
-      // Di PC / Laptop: Langsung buka web.whatsapp.com bersih (TIDAK membuka modal "Kirim pesan ke teman"!)
-      window.open('https://web.whatsapp.com', '_blank');
+      window.open(waUrl, '_blank');
     }
   };
 
@@ -107,7 +106,7 @@ export default function ProductDetailModal({
     if (!isStatusClaimed) {
       setIsStatusClaimed(true);
       if (onRewardCommission) {
-        onRewardCommission(10, 'Status WhatsApp', product.name);
+        onRewardCommission(10, 'WhatsApp Teman', product.name);
       }
     }
     if (navigator.clipboard) {
@@ -192,14 +191,14 @@ export default function ProductDetailModal({
           </div>
 
           {/* ============================================================== */}
-          {/* FITUR BAGIKAN KE STATUS WHATSAPP (+10 POIN MEMBER OTOMATIS)    */}
+          {/* FITUR BAGIKAN LINK KE TEMAN WHATSAPP (+10 POIN OTOMATIS)       */}
           {/* ============================================================== */}
           <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 border-2 border-emerald-300 shadow-2xs space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1.5">
                 <Gift className="w-4 h-4 text-emerald-600 animate-bounce" />
                 <span className="text-xs font-black text-slate-900">
-                  Bagikan ke Status WhatsApp
+                  Bagikan Link ke Teman WhatsApp
                 </span>
               </div>
               <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-2xs">
@@ -208,13 +207,13 @@ export default function ProductDetailModal({
             </div>
 
             <p className="text-[11px] text-slate-600 leading-tight">
-              Teks promo &amp; link produk otomatis disalin, dan <b>+10 Poin langsung otomatis masuk ke akun Anda</b>!
+              Kirim link produk ini ke teman atau grup WhatsApp Anda. Begitu tombol diklik, <b>10 Poin Member langsung otomatis masuk</b> ke saldo akun Anda!
             </p>
 
-            {/* Tombol Utama: Buka WhatsApp Langsung */}
+            {/* Tombol Utama: Kirim Link ke Teman WhatsApp */}
             <button
               type="button"
-              onClick={handleOpenWhatsAppStatus}
+              onClick={handleOpenWhatsAppShare}
               className="w-full py-3.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
             >
               <svg className="w-5 h-5 fill-current flex-shrink-0" viewBox="0 0 24 24">
@@ -222,22 +221,10 @@ export default function ProductDetailModal({
               </svg>
               <span>
                 {isStatusClaimed
-                  ? '✓ 10 Poin Sudah Masuk! Buka WhatsApp Web'
-                  : 'Buka WhatsApp & Buat Status (+10 Poin Otomatis)'}
+                  ? '✓ 10 Poin Sudah Masuk! Kirim ke Teman Lainnya'
+                  : 'Kirim Link ke Teman WhatsApp (+10 Poin Otomatis)'}
               </span>
             </button>
-
-            {/* Panduan Menuju Layar Status Saya yang Sesuai Screenshot */}
-            <div className="bg-white/90 border border-emerald-300 rounded-xl p-2.5 text-[10px] text-slate-800 space-y-1 shadow-2xs">
-              <p className="font-black text-emerald-800 flex items-center space-x-1">
-                <span>📍 Cara Langsung Buka Layar &ldquo;Status Saya&rdquo;:</span>
-              </p>
-              <div className="space-y-1 text-[9.5px] leading-relaxed text-slate-700">
-                <p>1. Klik tombol hijau di atas ➔ WhatsApp Web terbuka bersih tanpa popup chat.</p>
-                <p>2. Klik menu <b>Status</b> (ikon lingkaran di samping kiri obrolan).</p>
-                <p>3. Klik <b>&ldquo;Status saya&rdquo; (+)</b> seperti gambar di WhatsApp Anda ➔ tekan <b>Paste (Ctrl+V)</b> &amp; kirim!</p>
-              </div>
-            </div>
 
             {/* Badge Konfirmasi: 10 Poin Otomatis Masuk */}
             {isStatusClaimed && (
@@ -251,7 +238,7 @@ export default function ProductDetailModal({
             <div className="p-2.5 rounded-xl bg-white border border-emerald-200 text-left space-y-1.5 shadow-2xs">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wide flex items-center space-x-1">
-                  <span>📋 Otomatis Ter-Post Beserta Link di Bawah:</span>
+                  <span>📋 Format Pesan &amp; Link yang Dikirim ke Teman:</span>
                 </span>
                 <button
                   type="button"
