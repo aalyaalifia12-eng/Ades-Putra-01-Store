@@ -30,6 +30,8 @@ interface AdminLiveStudioModalProps {
   isOpen: boolean;
   onClose: () => void;
   products: Product[];
+  isLiveActive: boolean;
+  onToggleLive: (active: boolean) => void;
 }
 
 interface LiveComment {
@@ -44,9 +46,10 @@ export default function AdminLiveStudioModal({
   isOpen,
   onClose,
   products,
+  isLiveActive,
+  onToggleLive,
 }: AdminLiveStudioModalProps) {
-  // Live Broadcast State
-  const [isLiveActive, setIsLiveActive] = useState(false);
+  // Live Broadcast Duration Timer
   const [liveDuration, setLiveDuration] = useState(0);
 
   // Camera & Mic Controls
@@ -279,18 +282,20 @@ export default function AdminLiveStudioModal({
                   Ades Live Studio Admin
                 </h3>
                 {isLiveActive ? (
-                  <span className="px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[9px] uppercase tracking-wider animate-pulse flex items-center space-x-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                  <span className="px-2.5 py-0.5 rounded-full bg-red-600 text-white font-black text-[9px] uppercase tracking-wider animate-pulse flex items-center space-x-1 shadow-md">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                     <span>ON AIR: {formatTimer(liveDuration)}</span>
                   </span>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-full bg-zinc-700 text-zinc-300 font-bold text-[9px] uppercase">
-                    STANDBY / KAMERA SIAP
+                  <span className="px-2.5 py-0.5 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 font-black text-[9px] uppercase tracking-wider flex items-center space-x-1">
+                    <span>⚪ SEDANG TIDAK MELAKUKAN SIARAN LANGSUNG</span>
                   </span>
                 )}
               </div>
               <p className="text-[10px] text-zinc-300">
-                Siaran Langsung Kamera &amp; Etalase Produk TikTok Live Ades Store 01
+                {isLiveActive
+                  ? 'Siaran Langsung Kamera Aktif & Terhubung ke Penonton'
+                  : 'Status Offline: Kamera Siap / Siaran Toko Sedang Nonaktif'}
               </p>
             </div>
           </div>
@@ -299,19 +304,19 @@ export default function AdminLiveStudioModal({
             {/* Start / End Live Broadcast Button */}
             {!isLiveActive ? (
               <button
-                onClick={() => setIsLiveActive(true)}
-                className="px-3 sm:px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs shadow-lg shadow-red-600/30 transition-all flex items-center space-x-1.5 active:scale-95"
+                onClick={() => onToggleLive(true)}
+                className="px-3 sm:px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs shadow-lg shadow-red-600/30 transition-all flex items-center space-x-1.5 active:scale-95 animate-pulse"
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>Mulai Siaran Langsung</span>
               </button>
             ) : (
               <button
-                onClick={() => setIsLiveActive(false)}
+                onClick={() => onToggleLive(false)}
                 className="px-3 sm:px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-red-400 font-black text-xs border border-red-500/50 transition-all flex items-center space-x-1.5 active:scale-95"
               >
                 <Square className="w-4 h-4 fill-current" />
-                <span>Akhiri Siaran</span>
+                <span>Akhiri Siaran (Matikan Live)</span>
               </button>
             )}
 
@@ -359,6 +364,26 @@ export default function AdminLiveStudioModal({
                 <CameraOff className="w-12 h-12 text-zinc-600 mx-auto" />
                 <p className="text-xs font-bold text-zinc-400">Kamera Dinonaktifkan</p>
                 <p className="text-[10px] text-zinc-600">Klik tombol kamera di bawah untuk menyalakan</p>
+              </div>
+            )}
+
+            {/* Overlay Status: Sedang Tidak Melakukan Siaran Langsung */}
+            {!isLiveActive && (
+              <div className="absolute inset-0 bg-black/70 backdrop-blur-xs flex flex-col items-center justify-center p-6 text-center z-20 space-y-3 pointer-events-none animate-in fade-in">
+                <div className="w-14 h-14 rounded-3xl bg-zinc-900 border-2 border-zinc-700 flex items-center justify-center shadow-2xl">
+                  <Radio className="w-7 h-7 text-zinc-400" />
+                </div>
+                <div className="space-y-1">
+                  <span className="inline-block px-3 py-1 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-300 font-black text-[10px] uppercase tracking-wider">
+                    ⚪ SEDANG TIDAK MELAKUKAN SIARAN LANGSUNG
+                  </span>
+                  <p className="text-sm font-black text-white">
+                    Siaran Toko Saat Ini Sedang Nonaktif / Offline
+                  </p>
+                  <p className="text-xs text-zinc-400 max-w-xs mx-auto leading-relaxed">
+                    Kamera dalam mode pratinjau (standby). Klik tombol merah <b>&ldquo;Mulai Siaran Langsung&rdquo;</b> di atas untuk mulai live ke penonton.
+                  </p>
+                </div>
               </div>
             )}
 

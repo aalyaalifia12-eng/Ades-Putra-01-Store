@@ -158,12 +158,10 @@ export default function AdesBot({
           botOptions = ['22.5 cm (Size 36)', '23.5 cm (Size 38)', '24.5 cm (Size 40)', '25.5 cm (Size 42)'];
         }
       }
-      // 2. SANDAL & SEPATU ANAK LAKI-LAKI
+      // 2. SENDAL & SEPATU ANAK LAKI-LAKI
       else if (
-        lower.includes('anak laki') ||
-        lower.includes('cowok') ||
-        lower.includes('boy') ||
-        lower.includes('dino')
+        (lower.includes('anak laki') || lower.includes('cowok') || lower.includes('boy') || lower.includes('dino')) &&
+        (lower.includes('sendal') || lower.includes('sandal') || lower.includes('sepatu') || lower.includes('senadal') || true)
       ) {
         const found = products.filter(
           (p) =>
@@ -173,14 +171,14 @@ export default function AdesBot({
         );
         matchedProduct = found[0];
         botResponse =
-          `Koleksi Sandal & Sepatu Anak Laki-Laki di Ades Store 01:\n\n` +
+          `Koleksi Sendal & Sepatu Anak Laki-Laki di Ades Store 01:\n\n` +
           `1. Sandal Gunung Anak Laki Tali Kuat Anti-Selip - Nyaman untuk jalan dan kegiatan luar ruangan.\n` +
           `2. Sepatu Sneaker Anak Laki Dinosaurus LED Menyala - Lampu menyala saat melangkah, sol empuk lembut.\n` +
           `3. Sandal Selop Santai Anak Laki Karakter Lucu - Bahan karet elastis anti-licin tahan air.\n\n` +
           `Semua model tersedia size 24 sampai 35 dengan garansi retur size 7 hari!`;
-        botOptions = ['Lihat Sandal Anak Laki', 'Lihat Sepatu Dino LED', 'Tanya Ukuran Anak'];
+        botOptions = ['Lihat Sendal Anak Laki', 'Lihat Sepatu Dino LED', 'Tanya Ukuran Anak'];
       }
-      // 3. SANDAL & SEPATU ANAK PEREMPUAN
+      // 3. SENDAL & SEPATU ANAK PEREMPUAN
       else if (
         lower.includes('anak perempuan') ||
         lower.includes('cewek') ||
@@ -195,12 +193,12 @@ export default function AdesBot({
         );
         matchedProduct = found[0];
         botResponse =
-          `Koleksi Sandal & Sepatu Anak Perempuan (Princess) di Ades Store 01:\n\n` +
+          `Koleksi Sendal & Sepatu Anak Perempuan (Princess) di Ades Store 01:\n\n` +
           `1. Sandal Tali Pita Manis Anak Cewek - Desain feminin cantik dengan sol empuk anti-pegal.\n` +
           `2. Sepatu Flatshoes Princess Glitter Cantik - Cocok untuk pesta, jalan-jalan, dan acara keluarga.\n` +
           `3. Sandal Selop Jelly Pastel Anti-Air - Super lembut tidak bikin lecet kaki anak.\n\n` +
           `Tersedia size 24 sampai 35 dengan warna pastel cantik merah muda, ungu lilac, dan krem!`;
-        botOptions = ['Lihat Sandal Anak Perempuan', 'Lihat Flatshoes Princess', 'Panduan Ukuran'];
+        botOptions = ['Lihat Sendal Anak Perempuan', 'Lihat Flatshoes Princess', 'Panduan Ukuran'];
       }
       // 4. PENGIRIMAN, ANTAR CEPAT CIKAJANG & GARUT, KURIR
       else if (
@@ -242,7 +240,7 @@ export default function AdesBot({
           `Yuk mainkan mini-game Candy Crush sekarang untuk kumpulkan koin diskon sebanyak-banyaknya!`;
         botOptions = ['🍬 Main Game Candy Crush', 'Cek Saldo Poin Saya', '👑 Gabung VIP Member'];
       }
-      // 6. GARANSI RETUR 7 HARI & TUKAR UKURAN
+      // 6. GARANSI RETUR 7 HARI, ALAMAT TOKO & BIAYA PENANGANAN RP 10.000
       else if (
         lower.includes('retur') ||
         lower.includes('tukar') ||
@@ -252,10 +250,32 @@ export default function AdesBot({
       ) {
         botResponse =
           `GARANSI RETUR & TUKAR SIZE 7 HARI ADES STORE 01:\n\n` +
-          `• Bebas Tukar Ukuran: Jika sepatu atau sandal yang kamu beli kekecilan atau kebesaran, kamu bisa mengajukan tukar size dalam waktu 7 hari sejak barang diterima.\n` +
-          `• Garansi Cacat Pabrik: Jika barang yang diterima rusak atau tidak sesuai, kami ganti baru 100% tanpa ribet.\n` +
-          `• Caranya sangat mudah: Buka menu "Pesanan Saya", lalu klik tombol "Ajukan Retur / Tukar Barang" pada pesanan kamu, atau chat admin lewat WhatsApp.`;
-        botOptions = ['Cara Ajukan Retur', 'Hubungi WhatsApp Admin', 'Panduan Ukuran'];
+          `• Bebas Tukar Ukuran: Jika sepatu atau sandal kekecilan atau kebesaran, kamu bisa mengajukan tukar size dalam 7 hari.\n` +
+          `• Alamat Toko Tujuan Retur:\n` +
+          `  Ades Store 01 (Alya Alifia)\n` +
+          `  Jl. Raya Cikajang No. 45 (Depan Pasar Cikajang), Garut 44171\n` +
+          `  WhatsApp: 0821-2646-8980\n\n` +
+          `• Pilihan Kurir Pengembalian: J&T Express, JNE, GOTO (Kurir Cikajang & Garut Kilat), Ninja Xpress, atau Antar Langsung ke Toko.\n` +
+          `• Biaya Penanganan Retur: Rp 10.000 (untuk QC pemeriksaan kualitas & packing ulang paket baru).\n\n` +
+          `Caranya: Buka menu "Pesanan Saya", lalu klik "Ajukan Retur / Tukar" pada pesanan kamu!`;
+        botOptions = ['Alamat Toko Retur', 'Kurir Pengembalian', 'Hubungi CS Retur'];
+      }
+      // 6B. KOMISI BAGIKAN KE FACEBOOK & INSTAGRAM (+RP 1.000)
+      else if (
+        lower.includes('komisi') ||
+        lower.includes('share') ||
+        lower.includes('bagikan') ||
+        lower.includes('facebook') ||
+        lower.includes('ig') ||
+        lower.includes('instagram') ||
+        lower.includes('afiliasi')
+      ) {
+        botResponse =
+          `PROGRAM KOMISI BAGIKAN LINK PRODUK ADES STORE 01:\n\n` +
+          `• Bagikan Link ke Facebook atau Instagram: Kamu langsung mendapatkan KOMISI RP 1.000 per produk!\n` +
+          `• Komisi otomatis masuk ke saldo koin belanja di akun kamu dan bisa langsung digunakan sebagai potongan harga saat checkout.\n\n` +
+          `Caranya mudah: Buka produk yang kamu suka, lalu klik tombol "Share Facebook (+Rp 1.000)" atau "Share Instagram (+Rp 1.000)"!`;
+        botOptions = ['Cara Dapat Komisi Rp 1.000', 'Lihat Sepatu Populer', 'Cek Poin Koin'];
       }
       // 7. PEMBAYARAN, DANA, QRIS, COD
       else if (

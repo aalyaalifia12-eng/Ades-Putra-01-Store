@@ -118,6 +118,11 @@ export interface Order {
   notes?: string;
   discount_amount?: number;
   return_reason?: string;
+  return_courier?: string;
+  return_tracking_number?: string;
+  return_handling_fee?: number; // Biaya penanganan retur Rp 10.000
+  return_target_size?: string | number;
+  return_status?: 'PENGAJUAN' | 'DISETUJUI' | 'SELESAI';
   is_reviewed?: boolean;
   user_rating?: number;
   user_review?: string;

@@ -226,7 +226,7 @@ export default function UserProfileModal({
                 <span className="text-xl">🪙</span>
                 <div>
                   <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block">
-                    Saldo Koin Belanja
+                    Saldo Koin Belanja &amp; Komisi
                   </span>
                   <p className="text-lg font-black text-slate-900">
                     {currentUser.memberPoints.toLocaleString('id-ID')}{' '}
@@ -234,6 +234,11 @@ export default function UserProfileModal({
                       Poin (Setara Rp {currentUser.memberPoints.toLocaleString('id-ID')})
                     </span>
                   </p>
+                  {currentUser.commissionEarned && currentUser.commissionEarned > 0 && (
+                    <p className="text-[10px] text-emerald-700 font-bold mt-0.5">
+                      💸 Termasuk Komisi Share FB/IG: Rp {currentUser.commissionEarned.toLocaleString('id-ID')}
+                    </p>
+                  )}
                 </div>
               </div>
 

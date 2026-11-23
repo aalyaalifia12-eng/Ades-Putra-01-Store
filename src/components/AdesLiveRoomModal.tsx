@@ -114,6 +114,16 @@ export default function AdesLiveRoomModal({
   const [isMuted, setIsMuted] = useState(false);
   const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
   const [isVideoLoading, setIsVideoLoading] = useState(true);
+  const [isStoreLiveActive, setIsStoreLiveActive] = useState<boolean>(true);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ades_store_live_active');
+      if (saved !== null) {
+        setIsStoreLiveActive(saved === 'true');
+      }
+    } catch {}
+  }, [isOpen]);
 
   // Live Chat Stream
   const [chatInput, setChatInput] = useState('');
@@ -366,10 +376,16 @@ export default function AdesLiveRoomModal({
           {/* Right Top Controls */}
           <div className="flex items-center space-x-1.5">
             {/* Live Indicator Badge */}
-            <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase shadow-md animate-pulse">
-              <span className="w-2 h-2 rounded-full bg-white" />
-              <span>LIVE</span>
-            </div>
+            {isStoreLiveActive ? (
+              <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase shadow-md animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+                <span>LIVE</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-zinc-800 border border-zinc-600 text-zinc-300 text-[9px] font-black uppercase">
+                <span>OFFLINE / REKAMAN</span>
+              </div>
+            )}
 
             {/* Viewer Count */}
             <div className="flex items-center space-x-1 px-2 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold">

@@ -15,8 +15,13 @@ import {
   Sparkles,
   ArrowRight,
   Star,
+  Share2,
+  Copy,
+  ExternalLink,
+  Coins,
+  Gift,
 } from 'lucide-react';
-import { Product } from '@/types';
+import { Product, User } from '@/types';
 import { formatIDR } from '@/lib/utils';
 
 interface ProductDetailModalProps {
@@ -25,6 +30,8 @@ interface ProductDetailModalProps {
   onAddToCart: (product: Product, size: number | string, color: string, qty: number) => void;
   onDirectCheckout: (product: Product, size: number | string, color: string, qty: number) => void;
   onOpenSizeAssistant: () => void;
+  currentUser?: User | null;
+  onRewardCommission?: (amount: number, platform: string, productName: string) => void;
 }
 
 export default function ProductDetailModal({
@@ -33,6 +40,8 @@ export default function ProductDetailModal({
   onAddToCart,
   onDirectCheckout,
   onOpenSizeAssistant,
+  currentUser,
+  onRewardCommission,
 }: ProductDetailModalProps) {
   const isFootwear = product.category.startsWith('sepatu');
   const availableSizes: (number | string)[] =
@@ -44,9 +53,47 @@ export default function ProductDetailModal({
   const [selectedSize, setSelectedSize] = useState<number | string>(availableSizes[0] ?? (isFootwear ? 40 : 'All Size'));
   const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] || 'Default');
   const [qty, setQty] = useState<number>(1);
+  const [claimedPlatforms, setClaimedPlatforms] = useState<string[]>([]);
+  const [shareNotice, setShareNotice] = useState<string | null>(null);
 
   const displayPrice = product.promo_price || product.original_price;
   const isOutOfStock = product.stock <= 0;
+
+  // Handle Share to Facebook / Instagram and earn Rp 1.000 commission
+  const handleShareProduct = (platform: 'Facebook' | 'Instagram' | 'Salin Link') => {
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://adesstore01.com';
+    const shareUrl = `${siteUrl}/?product=${encodeURIComponent(product.id)}`;
+    const shareText = `Yuk cek koleksi ${product.name} di Ades Store 01 Cikajang & Garut! Harga promo cuma ${formatIDR(displayPrice)}, garansi retur 7 hari! Beli di sini: ${shareUrl}`;
+
+    if (platform === 'Facebook') {
+      const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+      window.open(fbUrl, '_blank', 'width=600,height=500');
+    } else if (platform === 'Instagram') {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(`${shareText}\n#AdesStore01 #SepatuCikajang #GarutShopping`);
+      }
+      window.open('https://www.instagram.com/', '_blank');
+      setShareNotice('✓ Teks promosi & link tersalin! Silakan tempel di Instagram Story atau DM Anda.');
+    } else {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareText);
+      }
+      setShareNotice('✓ Link produk berhasil disalin ke clipboard!');
+    }
+
+    // Award Rp 1.000 Commission
+    if (!claimedPlatforms.includes(platform)) {
+      setClaimedPlatforms((prev) => [...prev, platform]);
+      if (onRewardCommission) {
+        onRewardCommission(1000, platform, product.name);
+      }
+      setShareNotice(`🎉 Berhasil! Anda mendapatkan komisi Rp 1.000 karena membagikan ke ${platform}!`);
+    }
+
+    setTimeout(() => {
+      setShareNotice(null);
+    }, 4500);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/75 backdrop-blur-xs">
@@ -118,6 +165,67 @@ export default function ProductDetailModal({
                 {product.sold_count || 240}+ Terjual
               </span>
             </div>
+          </div>
+
+          {/* ============================================================== */}
+          {/* FITUR KOMISI BAGIKAN KE FACEBOOK & INSTAGRAM (+RP 1.000)       */}
+          {/* ============================================================== */}
+          <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-50 via-rose-50 to-red-50 border-2 border-red-200 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-1.5">
+                <Gift className="w-4 h-4 text-red-600 animate-bounce" />
+                <span className="text-xs font-black text-slate-900">
+                  Bagikan &amp; Dapat Komisi Rp 1.000!
+                </span>
+              </div>
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-red-600 text-white shadow-2xs">
+                +Rp 1.000
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-600 leading-tight">
+              Bagikan produk ini ke teman Anda di Facebook atau Instagram. Anda langsung dapat <b>komisi Rp 1.000</b> yang otomatis masuk ke saldo koin belanja!
+            </p>
+
+            {/* Social Share Buttons */}
+            <div className="grid grid-cols-2 gap-2 pt-0.5">
+              {/* Facebook Share Button */}
+              <button
+                type="button"
+                onClick={() => handleShareProduct('Facebook')}
+                className="py-2 px-2.5 rounded-xl bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-xs active:scale-95"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+                <span className="truncate">Share Facebook</span>
+                {claimedPlatforms.includes('Facebook') && (
+                  <Check className="w-3 h-3 text-emerald-300" />
+                )}
+              </button>
+
+              {/* Instagram Share Button */}
+              <button
+                type="button"
+                onClick={() => handleShareProduct('Instagram')}
+                className="py-2 px-2.5 rounded-xl bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-95 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-xs active:scale-95"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+                <span className="truncate">Share Instagram</span>
+                {claimedPlatforms.includes('Instagram') && (
+                  <Check className="w-3 h-3 text-emerald-300" />
+                )}
+              </button>
+            </div>
+
+            {/* Notice / Feedback Alert */}
+            {shareNotice && (
+              <div className="p-2 rounded-xl bg-white border border-red-300 text-[10px] font-bold text-red-700 animate-in fade-in duration-200">
+                {shareNotice}
+              </div>
+            )}
           </div>
 
           {/* Size Selector */}
@@ -239,11 +347,11 @@ export default function ProductDetailModal({
             </div>
           </div>
 
-          {/* Return Warranty Badge */}
+          {/* Return Warranty Badge with Store Address & Courier */}
           <div className="p-2.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center space-x-2 text-[11px]">
             <RotateCcw className="w-4 h-4 text-amber-600 flex-shrink-0" />
             <p>
-              <b>Garansi Retur Ukuran 7 Hari</b>: Bisa tukar size jika kekecilan/kebesaran.
+              <b>Garansi Retur Ukuran 7 Hari</b>: Bisa tukar size jika kekecilan/kebesaran. Penanganan retur cepat langsung di Store Cikajang.
             </p>
           </div>
         </div>

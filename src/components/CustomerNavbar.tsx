@@ -59,6 +59,16 @@ export default function CustomerNavbar({
   const isVip = currentUser?.isVip || false;
   const memberPoints = currentUser?.memberPoints || 0;
   const isGuest = !currentUser || currentUser.id === 'guest';
+  const [isStoreLive, setIsStoreLive] = useState(true);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ades_store_live_active');
+      if (saved !== null) {
+        setIsStoreLive(saved === 'true');
+      }
+    } catch {}
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
@@ -146,13 +156,23 @@ export default function CustomerNavbar({
             {onOpenLive && (
               <button
                 onClick={onOpenLive}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white transition-all shadow-md group animate-pulse"
-                title="Tonton Live Streaming Ades Store Cikajang & Klaim Diskon Live!"
+                className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl text-white transition-all shadow-md group ${
+                  isStoreLive
+                    ? 'bg-red-600 hover:bg-red-700 animate-pulse'
+                    : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
+                }`}
+                title={
+                  isStoreLive
+                    ? 'Tonton Live Streaming Ades Store Cikajang & Klaim Diskon Live!'
+                    : 'Lihat Video Rekaman Live & Etalase Produk Ades Store'
+                }
               >
-                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider">LIVE</span>
+                <span className={`w-2 h-2 rounded-full ${isStoreLive ? 'bg-white animate-ping' : 'bg-zinc-400'}`} />
+                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider">
+                  {isStoreLive ? 'LIVE' : 'LIVE OFFLINE'}
+                </span>
                 <span className="hidden sm:inline text-[9px] font-black bg-black/40 px-1.5 py-0.2 rounded-full text-white">
-                  248
+                  {isStoreLive ? '248' : 'Rekaman'}
                 </span>
               </button>
             )}

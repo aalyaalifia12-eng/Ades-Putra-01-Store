@@ -298,15 +298,31 @@ export default function ResponsiveAppRoot() {
     showToast('⭐ Terima kasih atas bintang 5! Bonus +2.000 Koin ditambahkan ke akun Anda!');
   };
 
-  const handleRequestReturn = (orderId: string, reason: string) => {
+  const handleRequestReturn = (
+    orderId: string,
+    reason: string,
+    courier?: string,
+    targetSize?: string | number,
+    trackingNo?: string
+  ) => {
     setOrders((prev) => {
       const updated = prev.map((o) =>
-        o.id === orderId ? { ...o, order_status: 'RETUR' as const, return_reason: reason } : o
+        o.id === orderId
+          ? {
+              ...o,
+              order_status: 'RETUR' as const,
+              return_reason: reason,
+              return_courier: courier || 'J&T Express',
+              return_target_size: targetSize || 'Sesuai Request',
+              return_tracking_number: trackingNo || '-',
+              return_handling_fee: 10000,
+            }
+          : o
       );
       localStorage.setItem('ades_orders', JSON.stringify(updated));
       return updated;
     });
-    showToast('📦 Pengajuan retur size dicatat. Silakan hubungi WhatsApp admin toko.');
+    showToast('📦 Pengajuan retur berhasil! Biaya penanganan Rp 10.000 & alamat toko telah dicatat.');
   };
 
   const handleVipUpgraded = (updatedUser: User) => {
@@ -327,6 +343,34 @@ export default function ResponsiveAppRoot() {
     } else {
       showToast(`🎉 Selamat! Anda memenangkan +${points.toLocaleString('id-ID')} Koin Hadiah Game!`);
     }
+  };
+
+  const handleRewardCommission = (amount: number, platform: string, productName: string) => {
+    if (currentUser) {
+      const updatedUser = {
+        ...currentUser,
+        memberPoints: (currentUser.memberPoints || 0) + amount,
+        commissionEarned: (currentUser.commissionEarned || 0) + amount,
+      };
+      setCurrentUser(updatedUser);
+      localStorage.setItem('ades_user', JSON.stringify(updatedUser));
+    } else {
+      // Create guest user profile with the earned commission points
+      const guestUser: User = {
+        id: `guest-${Date.now()}`,
+        name: 'Pelanggan Tamu',
+        email: 'tamu@adesstore01.com',
+        phone: '081234567890',
+        role: 'CUSTOMER',
+        isVip: false,
+        memberPoints: amount,
+        commissionEarned: amount,
+        created_at: new Date().toISOString(),
+      };
+      setCurrentUser(guestUser);
+      localStorage.setItem('ades_user', JSON.stringify(guestUser));
+    }
+    showToast(`🎉 Berhasil! Anda membagikan "${productName}" ke ${platform} dan dapat komisi Rp ${amount.toLocaleString('id-ID')}!`);
   };
 
   return (
@@ -552,6 +596,8 @@ export default function ResponsiveAppRoot() {
           onClose={() => setSelectedProduct(null)}
           onAddToCart={handleAddToCart}
           onDirectCheckout={handleDirectCheckout}
+          currentUser={currentUser}
+          onRewardCommission={handleRewardCommission}
           onOpenSizeAssistant={() => {
             setSelectedProduct(null);
             const chatTrigger = document.querySelector('button[title*="AdesBot"]') as HTMLButtonElement;

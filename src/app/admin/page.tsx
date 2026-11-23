@@ -50,6 +50,7 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'analytics' | 'banners' | 'live'>('orders');
   const [isLiveStudioOpen, setIsLiveStudioOpen] = useState(false);
+  const [isLiveActive, setIsLiveActive] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [banners, setBanners] = useState<BannerAd[]>([]);
@@ -114,6 +115,29 @@ export default function AdminDashboardPage() {
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3500);
+  };
+
+  // Sync Live Status with localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ades_store_live_active');
+      if (saved) {
+        setIsLiveActive(saved === 'true');
+      }
+    } catch {}
+  }, []);
+
+  const handleToggleLive = (active: boolean) => {
+    setIsLiveActive(active);
+    try {
+      localStorage.setItem('ades_store_live_active', active ? 'true' : 'false');
+      window.dispatchEvent(new Event('storage'));
+    } catch {}
+    if (active) {
+      showToast('🔴 Siaran Langsung Dimulai! Status: ON AIR', 'success');
+    } else {
+      showToast('⚪ Siaran Langsung Dimatikan. Status: OFFLINE', 'success');
+    }
   };
 
   // Play Pleasant Notification Bell Sound via Web Audio API
@@ -630,11 +654,15 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={() => setIsLiveStudioOpen(true)}
-              className="px-3 sm:px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black flex items-center space-x-1.5 transition-all shadow-md shadow-red-600/30 active:scale-95 animate-pulse"
-              title="Mulai Live TikTok Studio dengan Kamera"
+              className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-black flex items-center space-x-1.5 transition-all shadow-md active:scale-95 ${
+                isLiveActive
+                  ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/30 animate-pulse'
+                  : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-100'
+              }`}
+              title="Status Live Streaming TikTok Ades Store 01"
             >
               <Camera className="w-3.5 h-3.5" />
-              <span>Mulai Live TikTok</span>
+              <span>{isLiveActive ? '🔴 LIVE ON AIR' : '🔴 Mulai Live TikTok'}</span>
             </button>
 
             <Link
@@ -683,9 +711,9 @@ export default function AdminDashboardPage() {
             },
             {
               id: 'live',
-              label: '🔴 Live TikTok (Kamera)',
+              label: isLiveActive ? '🔴 Live ON AIR' : '🔴 Live TikTok (Kamera)',
               icon: Radio,
-              badge: 'Studio',
+              badge: isLiveActive ? 'LIVE' : 'OFFLINE',
             },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -1708,46 +1736,84 @@ export default function AdminDashboardPage() {
         {/* ================================================================= */}
         {activeTab === 'live' && (
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl border-2 border-red-500 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div
+              className={`bg-white p-6 rounded-3xl border-2 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all ${
+                isLiveActive ? 'border-red-500 bg-red-50/20' : 'border-slate-300'
+              }`}
+            >
               <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <div className="w-10 h-10 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-md">
-                    <Radio className="w-5 h-5 animate-pulse" />
+                <div className="flex items-center space-x-2.5">
+                  <div
+                    className={`w-11 h-11 rounded-2xl text-white flex items-center justify-center shadow-md flex-shrink-0 ${
+                      isLiveActive ? 'bg-red-600 animate-pulse' : 'bg-zinc-700'
+                    }`}
+                  >
+                    <Radio className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-black text-lg text-slate-900">
-                      Studio Live Streaming TikTok Ades Store 01
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      Buka siaran langsung interaktif dengan kamera laptop/HP, spill produk sepatu &amp; tas, dan jualan langsung ke penonton!
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-black text-lg text-slate-900">
+                        Studio Live Streaming TikTok Ades Store 01
+                      </h3>
+                      {isLiveActive ? (
+                        <span className="px-2.5 py-0.5 rounded-full bg-red-600 text-white font-black text-[10px] uppercase tracking-wider animate-pulse flex items-center space-x-1 shadow-xs">
+                          <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+                          <span>SEDANG LIVE ON AIR</span>
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-0.5 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 font-black text-[10px] uppercase tracking-wider">
+                          ⚪ SEDANG TIDAK MELAKUKAN SIARAN LANGSUNG
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {isLiveActive
+                        ? 'Siaran langsung kamera sedang aktif & terhubung ke penonton toko.'
+                        : 'Siaran toko saat ini sedang mati / tidak aktif. Penonton toko akan melihat status offline.'}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2 pt-2">
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold">
-                    <Camera className="w-3.5 h-3.5" />
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold">
+                    <Camera className="w-3.5 h-3.5 text-red-600" />
                     <span>Fitur Kamera Langsung (Webcam/HP)</span>
                   </span>
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold">
-                    <ShoppingBag className="w-3.5 h-3.5" />
+                    <ShoppingBag className="w-3.5 h-3.5 text-amber-600" />
                     <span>Pin Keranjang Kuning Live</span>
                   </span>
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
-                    <MessageCircle className="w-3.5 h-3.5" />
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Live Chat Real-time</span>
                   </span>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsLiveStudioOpen(true)}
-                className="px-6 py-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-sm shadow-xl shadow-red-600/30 flex items-center justify-center space-x-2.5 transition-all transform active:scale-95 flex-shrink-0 animate-pulse"
-              >
-                <Camera className="w-5 h-5" />
-                <span>Buka Kamera &amp; Mulai Live Sekarang &rarr;</span>
-              </button>
+              <div className="flex flex-col sm:flex-row items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsLiveStudioOpen(true)}
+                  className={`px-6 py-4 rounded-2xl font-black text-sm shadow-xl flex items-center justify-center space-x-2.5 transition-all transform active:scale-95 flex-shrink-0 ${
+                    isLiveActive
+                      ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/30 animate-pulse'
+                      : 'bg-slate-900 hover:bg-slate-800 text-white'
+                  }`}
+                >
+                  <Camera className="w-5 h-5" />
+                  <span>{isLiveActive ? 'Buka Live Studio (ON AIR)' : 'Buka Kamera & Mulai Live'}</span>
+                </button>
+
+                {isLiveActive && (
+                  <button
+                    type="button"
+                    onClick={() => handleToggleLive(false)}
+                    className="px-4 py-4 rounded-2xl border-2 border-red-500 bg-white hover:bg-red-50 text-red-600 font-black text-xs transition-all active:scale-95 whitespace-nowrap"
+                  >
+                    Matikan Siaran
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Quick Live Checklist & Guidelines */}
@@ -2342,6 +2408,8 @@ export default function AdminDashboardPage() {
         isOpen={isLiveStudioOpen}
         onClose={() => setIsLiveStudioOpen(false)}
         products={products}
+        isLiveActive={isLiveActive}
+        onToggleLive={handleToggleLive}
       />
     </div>
   );
