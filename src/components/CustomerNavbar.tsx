@@ -202,7 +202,14 @@ export default function CustomerNavbar({
               >
                 <span className={`w-2 h-2 rounded-full ${isStoreLive ? 'bg-white animate-ping' : 'bg-slate-400'}`} />
                 <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider">
-                  {isStoreLive ? 'LIVE' : 'Admin Sedang Tidak Melakukan Siaran Langsung'}
+                  {isStoreLive ? (
+                    'LIVE'
+                  ) : (
+                    <>
+                      <span className="hidden sm:inline">Admin Tidak Siaran</span>
+                      <span className="sm:hidden">OFFLINE</span>
+                    </>
+                  )}
                 </span>
                 {isStoreLive && (
                   <span className="hidden sm:inline text-[9px] font-black bg-black/40 px-1.5 py-0.2 rounded-full text-white">
@@ -353,7 +360,7 @@ export default function CustomerNavbar({
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Cari sepatu pria/wanita, tas sekolah TK-SMA, buku, sepatu gunung..."
+            placeholder="Cari sepatu, sandal, tas sekolah, dompet..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all"

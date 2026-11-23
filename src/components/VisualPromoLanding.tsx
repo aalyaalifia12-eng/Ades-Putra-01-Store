@@ -17,6 +17,7 @@ interface VisualPromoLandingProps {
 
 export default function VisualPromoLanding({
   onOpenCustomerLogin,
+  onExploreAsGuest,
 }: VisualPromoLandingProps) {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-black via-zinc-950 to-slate-950 text-white flex flex-col justify-between selection:bg-red-600 selection:text-white relative overflow-x-hidden">
@@ -144,18 +145,27 @@ export default function VisualPromoLanding({
               </p>
             </div>
 
-            {/* Tombol Aksi Masuk / Login Pelanggan */}
-            <div className="pt-2">
+            {/* Tombol Aksi Langsung ke Toko / Masuk Akun */}
+            <div className="pt-2 space-y-2.5">
               <button
-                onClick={onOpenCustomerLogin}
+                onClick={onExploreAsGuest}
                 className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-black text-sm uppercase tracking-wider shadow-xl shadow-red-600/40 flex items-center justify-center space-x-2.5 transition-all transform hover:scale-[1.01] active:scale-[0.98]"
               >
-                <LogIn className="w-5 h-5" />
-                <span>MASUK / LOGIN PELANGGAN</span>
+                <ShoppingBag className="w-5 h-5" />
+                <span>LIHAT KATALOG & BELANJA LANGSUNG</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
-              <p className="text-[11px] text-zinc-400 text-center font-medium mt-2">
-                Masuk dengan WhatsApp / Email untuk mulai belanja &amp; nikmati koin promo
+
+              <button
+                onClick={onOpenCustomerLogin}
+                className="w-full py-3 px-6 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 hover:text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition-all"
+              >
+                <LogIn className="w-4 h-4 text-red-500" />
+                <span>Masuk Akun Member / VIP (Opsional)</span>
+              </button>
+
+              <p className="text-[11px] text-zinc-400 text-center font-medium">
+                Terbuka untuk umum &bull; Tanpa wajib login &bull; COD &amp; Garansi Retur 7 Hari
               </p>
             </div>
           </div>

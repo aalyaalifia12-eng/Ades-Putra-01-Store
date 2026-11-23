@@ -202,7 +202,16 @@ export default function StoreContentSections({
             }`}
           >
             <Radio className={`w-4 h-4 ${isStoreLive ? 'text-red-600 animate-pulse' : 'text-zinc-400'}`} />
-            <span>{isStoreLive ? 'Gabung Live Room →' : '⚪ Admin Sedang Tidak Melakukan Siaran Langsung'}</span>
+            <span>
+              {isStoreLive ? (
+                'Gabung Live Room →'
+              ) : (
+                <>
+                  <span className="hidden sm:inline">⚪ Admin Sedang Tidak Siaran</span>
+                  <span className="sm:hidden">⚪ Siaran Offline</span>
+                </>
+              )}
+            </span>
           </button>
         </div>
       </div>

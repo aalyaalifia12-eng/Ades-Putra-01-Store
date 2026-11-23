@@ -449,7 +449,8 @@ export default function AdesLiveRoomModal({
             {/* Live Indicator Badge (1 Kamera Saja) */}
             <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase shadow-md animate-pulse">
               <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-              <span>LIVE KAMERA REAL TIME</span>
+              <span className="hidden sm:inline">LIVE KAMERA REAL TIME</span>
+              <span className="sm:hidden">LIVE</span>
             </div>
 
             {/* Viewer Count */}

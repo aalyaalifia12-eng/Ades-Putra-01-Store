@@ -24,8 +24,8 @@ import Link from 'next/link';
 type Screen = 'landing' | 'customer_login' | 'store';
 
 export default function ResponsiveAppRoot() {
-  // Screen-by-Screen State Navigation (Starts STRICTLY on visual promo landing!)
-  const [currentScreen, setCurrentScreen] = useState<Screen>('landing');
+  // Screen-by-Screen State Navigation (Terbuka langsung ke etalase toko untuk umum/publik)
+  const [currentScreen, setCurrentScreen] = useState<Screen>('store');
 
   // App Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -245,7 +245,7 @@ export default function ResponsiveAppRoot() {
   };
 
   const handleBackToLanding = () => {
-    setCurrentScreen('landing');
+    setCurrentScreen('store');
   };
 
   const handleLoginSuccess = (user: User) => {
@@ -273,8 +273,8 @@ export default function ResponsiveAppRoot() {
   const handleLogout = () => {
     localStorage.removeItem('ades_user');
     setCurrentUser(null);
-    setCurrentScreen('landing');
-    showToast('Berhasil keluar. Kembali ke halaman utama.');
+    setCurrentScreen('store');
+    showToast('Berhasil keluar. Anda kini berbelanja sebagai Pelanggan Tamu.');
   };
 
   // Cart Operations
@@ -482,6 +482,7 @@ export default function ResponsiveAppRoot() {
       {currentScreen === 'landing' && (
         <VisualPromoLanding
           onOpenCustomerLogin={handleOpenCustomerLogin}
+          onExploreAsGuest={() => setCurrentScreen('store')}
         />
       )}
 
@@ -531,7 +532,7 @@ export default function ResponsiveAppRoot() {
             />
 
             {/* Main Content Responsive max-w-6xl */}
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-5 space-y-5">
+            <main className="max-w-6xl mx-auto px-2.5 sm:px-6 py-3 sm:py-5 space-y-3.5 sm:space-y-5">
               {/* Iklan Promo Beranda: Spesial Ramadhan Diskon 20% & Back to School */}
               <PromoAdsBanner
                 onSelectCategory={(catId) => {
