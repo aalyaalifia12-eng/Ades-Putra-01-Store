@@ -104,10 +104,16 @@ export default function ProductDetailModal({
   };
 
   const handleCopyShareText = () => {
+    if (!isStatusClaimed) {
+      setIsStatusClaimed(true);
+      if (onRewardCommission) {
+        onRewardCommission(10, 'Status WhatsApp', product.name);
+      }
+    }
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareFullPost);
     }
-    setShareNotice('✓ Format postingan & link produk berhasil disalin!');
+    setShareNotice('✓ Teks & Link Produk Berhasil Disalin! +10 Poin Otomatis Masuk!');
     setTimeout(() => {
       setShareNotice(null);
     }, 4000);
