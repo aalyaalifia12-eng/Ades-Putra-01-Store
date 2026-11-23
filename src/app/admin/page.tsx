@@ -38,14 +38,18 @@ import {
   Pause,
   Volume2,
   VolumeX,
+  Radio,
+  Camera,
 } from 'lucide-react';
 import { Product, Order, ProductCategory, BannerAd } from '@/types';
 import { formatIDR, formatIndoDate } from '@/lib/utils';
 import { PRODUCT_CATEGORIES } from '@/lib/categories';
+import AdminLiveStudioModal from '@/components/AdminLiveStudioModal';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'analytics' | 'banners'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'analytics' | 'banners' | 'live'>('orders');
+  const [isLiveStudioOpen, setIsLiveStudioOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [banners, setBanners] = useState<BannerAd[]>([]);
@@ -622,6 +626,17 @@ export default function AdminDashboardPage() {
               </span>
             </div>
 
+            {/* Tombol Mulai Live TikTok Studio dengan Kamera */}
+            <button
+              type="button"
+              onClick={() => setIsLiveStudioOpen(true)}
+              className="px-3 sm:px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black flex items-center space-x-1.5 transition-all shadow-md shadow-red-600/30 active:scale-95 animate-pulse"
+              title="Mulai Live TikTok Studio dengan Kamera"
+            >
+              <Camera className="w-3.5 h-3.5" />
+              <span>Mulai Live TikTok</span>
+            </button>
+
             <Link
               href="/"
               className="px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-2xs"
@@ -665,6 +680,12 @@ export default function AdminDashboardPage() {
               label: `Iklan Beranda (${banners.length} Media)`,
               icon: Film,
               badge: banners.filter((b) => b.is_active).length > 0 ? `${banners.filter((b) => b.is_active).length} Aktif` : undefined,
+            },
+            {
+              id: 'live',
+              label: '🔴 Live TikTok (Kamera)',
+              icon: Radio,
+              badge: 'Studio',
             },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -1681,6 +1702,88 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
+
+        {/* ================================================================= */}
+        {/* TAB 5: LIVE STREAMING TIKTOK STUDIO (FITUR MULAI LIVE & KAMERA)   */}
+        {/* ================================================================= */}
+        {activeTab === 'live' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-3xl border-2 border-red-500 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <div className="w-10 h-10 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-md">
+                    <Radio className="w-5 h-5 animate-pulse" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-lg text-slate-900">
+                      Studio Live Streaming TikTok Ades Store 01
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Buka siaran langsung interaktif dengan kamera laptop/HP, spill produk sepatu &amp; tas, dan jualan langsung ke penonton!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold">
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>Fitur Kamera Langsung (Webcam/HP)</span>
+                  </span>
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold">
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    <span>Pin Keranjang Kuning Live</span>
+                  </span>
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>Live Chat Real-time</span>
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsLiveStudioOpen(true)}
+                className="px-6 py-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-sm shadow-xl shadow-red-600/30 flex items-center justify-center space-x-2.5 transition-all transform active:scale-95 flex-shrink-0 animate-pulse"
+              >
+                <Camera className="w-5 h-5" />
+                <span>Buka Kamera &amp; Mulai Live Sekarang &rarr;</span>
+              </button>
+            </div>
+
+            {/* Quick Live Checklist & Guidelines */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-2">
+                <div className="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-black text-sm">
+                  1
+                </div>
+                <h4 className="font-black text-sm text-slate-900">Izinkan Kamera &amp; Mic</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Pastikan browser Anda mengizinkan akses webcam atau kamera smartphone. Tersedia juga opsi video simulasi host jika kamera belum siap.
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-2">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-black text-sm">
+                  2
+                </div>
+                <h4 className="font-black text-sm text-slate-900">Pilih Produk Untuk Di-Spill</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Pilih produk sepatu atau tas dari etalase untuk disematkan (pinned) ke layar penonton agar mereka bisa langsung klik Beli di Live!
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-2">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-sm">
+                  3
+                </div>
+                <h4 className="font-black text-sm text-slate-900">Interaksi Chat Penonton</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Baca pertanyaan dan permintaan spill ukuran dari penonton, lalu ketik balasan langsung sebagai Host Ades Store 01.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* ================================================================= */}
@@ -2233,6 +2336,13 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Admin Live Studio Modal with Camera (TikTok Live Studio) */}
+      <AdminLiveStudioModal
+        isOpen={isLiveStudioOpen}
+        onClose={() => setIsLiveStudioOpen(false)}
+        products={products}
+      />
     </div>
   );
 }

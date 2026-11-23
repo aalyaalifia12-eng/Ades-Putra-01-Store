@@ -625,6 +625,8 @@ export default function ResponsiveAppRoot() {
         products={products}
         onOpenProduct={(p) => setSelectedProduct(p)}
         onOpenVipModal={() => setIsVipModalOpen(true)}
+        onOpenLive={() => setIsLiveModalOpen(true)}
+        onOpenGame={() => setIsGameModalOpen(true)}
       />
 
       {/* Game Candy Crush Modal (Match-3 Susah & Klaim Koin Potongan Belanja) */}
