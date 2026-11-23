@@ -8,16 +8,13 @@ import {
   Heart,
   ShoppingBag,
   Send,
-  Share2,
   Volume2,
   VolumeX,
   Sparkles,
-  Flame,
+  Camera,
   CheckCircle2,
   Tag,
   Star,
-  Video,
-  Bell,
   ArrowRight,
   MessageCircle,
 } from 'lucide-react';
@@ -58,59 +55,6 @@ interface FloatingHeart {
   x: number;
 }
 
-// 3 Real-Host Video Channels with verified fast video CDN and clear host identity
-const LIVE_STREAMS = [
-  {
-    id: 'stream-1',
-    title: 'Spill Koleksi Sepatu Sneakers & Loafer - Host Alya',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    hostName: 'Alya Alifia',
-    hostRole: 'Host Utama Live Ades Store 01',
-    hostAvatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=200&auto=format&fit=crop&q=80',
-    hostPhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80',
-    location: 'Studio Toko Cikajang, Garut',
-    currentTopic: 'Spill Insole Memory Foam Anti Pegal & Size 36-43',
-    quotes: [
-      'Halo warga Cikajang & Garut! Insole busa memory foam ini super empuk anti-pegal!',
-      'Mumpung lagi LIVE, klik Keranjang Kuning dapat diskon khusus & garansi retur size 7 hari!',
-      'Koin Candy Crush bisa dipakai buat potong harga Rp 1.000 lho kak!',
-      'Pengiriman kilat Cikajang & Garut bisa langsung kami antar sore ini juga!',
-    ],
-  },
-  {
-    id: 'stream-2',
-    title: 'Review Fisik Sol Empuk & Sepatu Olahraga Running - Host Asep',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    hostName: 'Asep Saepuloh',
-    hostRole: 'Co-Host Reviewer Sepatu Olahraga',
-    hostAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80',
-    hostPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80',
-    location: 'Gudang Display Garut Kota',
-    currentTopic: 'Uji Kelenturan Sol & Bahan Mesh Bernapas',
-    quotes: [
-      'Sol karet aslinya anti-slip ya, mantap banget dipakai lari santai atau naik gunung!',
-      'Jahitan sol rapi dan lemnya standar pabrik, awet dipakai bertahun-tahun.',
-      'Yang mau tanya ukuran dalam centimeter (cm) langsung ketik di chat ya!',
-    ],
-  },
-  {
-    id: 'stream-3',
-    title: 'Unboxing Sandal Slide Anak & Tas Sekolah TK/SD - Host Rina',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-    hostName: 'Rina Marlina',
-    hostRole: 'Host Spesial Sandal & Tas Anak',
-    hostAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
-    hostPhoto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80',
-    location: 'Outlet Ades Cikajang',
-    currentTopic: 'Review Sandal Anak Cowok/Cewek & Tas Ransel',
-    quotes: [
-      'Bunda yang cari sandal anak cowok atau cewek, model ini solnya lentur aman gak bikin lecet!',
-      'Tas ransel sekolahnya muat buku tema besar dan tempat bekal!',
-      'Bisa bayar COD di tempat waktu kurir sampai depan rumah ya bunda!',
-    ],
-  },
-];
-
 export default function AdesLiveRoomModal({
   isOpen,
   onClose,
@@ -119,131 +63,147 @@ export default function AdesLiveRoomModal({
   onDirectCheckout,
   currentUser,
 }: AdesLiveRoomModalProps) {
-  // Active Stream Channel
-  const [activeStreamIndex, setActiveStreamIndex] = useState(0);
-  const activeStream = LIVE_STREAMS[activeStreamIndex];
+  // Live State
+  const [isStoreLiveActive, setIsStoreLiveActive] = useState<boolean>(true);
+  const [adminLiveFrame, setAdminLiveFrame] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState<boolean>(true);
 
-  // Pinned Product showcased in live
+  // Viewer & Likes count
+  const [viewerCount, setViewerCount] = useState<number>(385);
+  const [likesCount, setLikesCount] = useState<number>(2450);
+  const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
+
+  // Pinned Product Index (Keranjang Kuning)
   const [pinnedProductIndex, setPinnedProductIndex] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<number | string>(39);
+  const [isProductTrayOpen, setIsProductTrayOpen] = useState(false);
+  const [selectedSize, setSelectedSize] = useState<number | string>(40);
   const [selectedColor, setSelectedColor] = useState<string>('Hitam');
 
-  // Live Stats
-  const [viewerCount, setViewerCount] = useState(418);
-  const [likesCount, setLikesCount] = useState(3140);
-  const [isMuted, setIsMuted] = useState(false);
-  const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
-  const [isVideoLoading, setIsVideoLoading] = useState(true);
-  const [hostQuoteIndex, setHostQuoteIndex] = useState(0);
-
-  // Store Live Active Status (Controlled by Admin)
-  const [isStoreLiveActive, setIsStoreLiveActive] = useState<boolean>(true);
-
-  // Live Chat Stream
+  // Chat
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
-      id: 'c1',
-      sender: 'Siti Rahmawati (Cikajang)',
-      message: 'Kak spill sneakers putih size 39 dong, solnya empuk gak?',
-      timestamp: '15:10',
+      id: 'c-1',
+      sender: 'Siti Aminah (Cikajang)',
+      message: 'Min spill sneakers memory foam ukuran 39 dong!',
+      timestamp: '15:20',
     },
     {
-      id: 'c2',
-      sender: 'Alya (Host Ades Store)',
-      message: 'Halo Kak Siti! Ini lagi di-spill langsung ya, busa insole memory foam super empuk anti pegal!',
+      id: 'c-2',
+      sender: 'Admin Ades Store 01',
+      message: 'Halo semua warga Cikajang & Garut! Silakan tanya ukuran & klik Keranjang Kuning ya!',
       isHost: true,
-      timestamp: '15:11',
+      timestamp: '15:21',
     },
     {
-      id: 'c3',
-      sender: 'Asep Kurnia (Garut Kota)',
-      message: 'Bisa antar kilat sore ini ke Samarang min?',
-      timestamp: '15:12',
+      id: 'c-3',
+      sender: 'Dadan Saepuloh',
+      message: 'Bisa langsung antar sore ini ke daerah Cisurupan min?',
+      timestamp: '15:22',
     },
     {
-      id: 'c4',
-      sender: 'Rina Marlina',
-      message: 'Baru aja checkout sandal anak lakinya min, makasih diskon livenya!',
-      isBuyer: true,
-      timestamp: '15:12',
-    },
-    {
-      id: 'c5',
-      sender: 'Budi Santoso',
-      message: 'Sepatu gunungnya anti air & anti licin gak min?',
-      timestamp: '15:13',
+      id: 'c-4',
+      sender: 'Admin Ades Store 01',
+      message: 'Bisa banget Kak Dadan! Antar cepat Cikajang & Garut langsung sampai!',
+      isHost: true,
+      timestamp: '15:22',
     },
   ]);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
-  // 1. Check live status from localStorage and server API
+  // Sync Live Status and Real-time Camera Feed from Admin
   useEffect(() => {
+    if (!isOpen) return;
+
+    // 1. Check local storage
     try {
-      const saved = localStorage.getItem('ades_store_live_active');
-      if (saved !== null) {
-        setIsStoreLiveActive(saved === 'true');
+      const savedLive = localStorage.getItem('ades_store_live_active');
+      if (savedLive !== null) {
+        setIsStoreLiveActive(savedLive === 'true');
+      }
+      const savedFrame = localStorage.getItem('ades_live_latest_frame');
+      if (savedFrame) {
+        setAdminLiveFrame(savedFrame);
+        setIsConnecting(false);
       }
     } catch {}
 
+    // 2. Fetch from backend API
     fetch('/api/live')
-      .then((r) => r.json())
+      .then((res) => res.json())
       .then((data) => {
         if (data && typeof data.is_active === 'boolean') {
           setIsStoreLiveActive(data.is_active);
-          try {
-            localStorage.setItem('ades_store_live_active', data.is_active ? 'true' : 'false');
-          } catch {}
+          if (data.latest_frame) {
+            setAdminLiveFrame(data.latest_frame);
+            setIsConnecting(false);
+          }
         }
       })
       .catch(() => {});
-  }, [isOpen]);
 
-  // Listen for storage changes across tabs (e.g. when Admin toggles live)
-  useEffect(() => {
-    const handleStorage = () => {
-      try {
-        const saved = localStorage.getItem('ades_store_live_active');
-        if (saved !== null) {
-          setIsStoreLiveActive(saved === 'true');
+    // 3. Listen to real-time BroadcastChannel from AdminLiveStudioModal
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel('ades_live_stream_channel');
+      channel.onmessage = (event) => {
+        if (event.data?.type === 'LIVE_FRAME' && event.data.frame) {
+          setAdminLiveFrame(event.data.frame);
+          setIsConnecting(false);
+          setIsStoreLiveActive(true);
+        } else if (event.data?.type === 'LIVE_STOPPED') {
+          setIsStoreLiveActive(false);
+          setAdminLiveFrame(null);
         }
-      } catch {}
+      };
+    } catch {}
+
+    // 4. Poll fallback every 1.5 seconds for multi-device sync
+    const pollInterval = setInterval(() => {
+      fetch('/api/live')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && typeof data.is_active === 'boolean') {
+            setIsStoreLiveActive(data.is_active);
+            if (data.is_active && data.latest_frame) {
+              setAdminLiveFrame(data.latest_frame);
+              setIsConnecting(false);
+            }
+          }
+        })
+        .catch(() => {});
+    }, 1500);
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'ades_store_live_active' && e.newValue !== null) {
+        setIsStoreLiveActive(e.newValue === 'true');
+      }
+      if (e.key === 'ades_live_latest_frame' && e.newValue) {
+        setAdminLiveFrame(e.newValue);
+        setIsConnecting(false);
+      }
     };
     window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
+
+    return () => {
+      clearInterval(pollInterval);
+      window.removeEventListener('storage', handleStorage);
+      if (channel) {
+        try {
+          channel.close();
+        } catch {}
+      }
+    };
+  }, [isOpen]);
 
   const showcaseProducts = products.length > 0 ? products : [];
   const currentProduct = showcaseProducts[pinnedProductIndex] || showcaseProducts[0];
-
-  // Rotate Host Spoken Quotes every 4 seconds
-  useEffect(() => {
-    if (!isOpen || !isStoreLiveActive) return;
-    const quoteInterval = setInterval(() => {
-      setHostQuoteIndex((prev) => (prev + 1) % activeStream.quotes.length);
-    }, 4500);
-    return () => clearInterval(quoteInterval);
-  }, [isOpen, isStoreLiveActive, activeStreamIndex]);
 
   // Auto-scroll chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // AutoPlay video when open
-  useEffect(() => {
-    if (isOpen && isStoreLiveActive && videoRef.current) {
-      videoRef.current.play().catch(() => {
-        if (videoRef.current) {
-          videoRef.current.muted = true;
-          setIsMuted(true);
-          videoRef.current.play().catch(() => {});
-        }
-      });
-    }
-  }, [isOpen, activeStreamIndex, isStoreLiveActive]);
 
   // Rolling automatic realistic comments from local shoppers (TikTok style)
   useEffect(() => {
@@ -252,11 +212,11 @@ export default function AdesLiveRoomModal({
     const mockIncomingComments = [
       { sender: 'Dewi Lestari (Bayongbong)', message: 'Kak warna cream ready size 38?' },
       { sender: 'Irfan Hakim', message: 'Keren banget modelnya, cocok buat kerja & kuliah!' },
-      { sender: 'Alya (Host Ades Store)', message: 'Semua size 36-43 ready ya, klik Keranjang Kuning mumpung diskon Live!', isHost: true },
-      { sender: 'Nurul Hidayah', message: 'Koin Candy Crush bisa dipake potong harga gak kak?' },
-      { sender: 'Alya (Host Ades Store)', message: 'Bisa banget Kak Nurul! 10.000 koin = Rp 1.000 potongan langsung!', isHost: true },
+      { sender: 'Admin Ades Store 01', message: 'Semua size 36-43 ready ya, klik Keranjang Kuning mumpung diskon Live!', isHost: true },
+      { sender: 'Nurul Hidayah', message: 'Bisa tukar ukuran kalau kebesaran min?' },
+      { sender: 'Admin Ades Store 01', message: 'Bisa banget Kak! Ada garansi retur tukar barang & size 7 hari!', isHost: true },
       { sender: 'Andi Pratama', message: 'Toko fisiknya di Cikajang sebelah mana min?' },
-      { sender: 'Alya (Host Ades Store)', message: 'Jl. Raya Cikajang dekat pasar, depan plang Ades Store 01 ya Kak Andi!', isHost: true },
+      { sender: 'Admin Ades Store 01', message: 'Jl. Raya Cikajang dekat pasar, depan plang Ades Store 01 ya Kak Andi!', isHost: true },
       { sender: 'Wulan Guritno (Garut)', message: 'Sandal slide cloudnya udah mendarat, beneran empuk banget!' },
     ];
 
@@ -276,7 +236,7 @@ export default function AdesLiveRoomModal({
       } else {
         index = 0;
       }
-    }, 4000);
+    }, 4500);
 
     return () => clearInterval(interval);
   }, [isOpen, isStoreLiveActive]);
@@ -297,62 +257,51 @@ export default function AdesLiveRoomModal({
 
   // =========================================================================
   // KONDISI 1: JIKA ADMIN MEMATIKAN LIVE (STATUS OFFLINE)
-  // Menampilkan layar jelas: "ADMIN SEDANG TIDAK MELAKUKAN SIARAN LANGSUNG"
+  // Menampilkan tulisan jelas: "ADMIN SEDANG TIDAK MELAKUKAN SIARAN LANGSUNG"
   // =========================================================================
   if (!isStoreLiveActive) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
-        <div className="relative w-full max-w-md bg-slate-950 rounded-3xl p-6 sm:p-8 border-2 border-red-500 shadow-2xl text-center space-y-5 animate-in zoom-in-95 duration-200 text-white">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 border-2 border-red-500 shadow-2xl text-center space-y-5 animate-in zoom-in-95 duration-200 text-slate-900">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-400 hover:text-white hover:bg-zinc-800 flex items-center justify-center transition-all"
+            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all"
             title="Tutup"
           >
             <X className="w-5 h-5" />
           </button>
 
           {/* Offline Icon */}
-          <div className="w-20 h-20 rounded-3xl bg-zinc-900/90 border-2 border-red-500 mx-auto flex items-center justify-center text-red-500 shadow-xl relative">
-            <Radio className="w-10 h-10 opacity-30" />
+          <div className="w-20 h-20 rounded-3xl bg-red-50 border-2 border-red-500 mx-auto flex items-center justify-center text-red-600 shadow-xl relative">
+            <Radio className="w-10 h-10 opacity-40" />
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="w-14 h-1 bg-red-600 rotate-45 rounded-full shadow-md" />
             </div>
           </div>
 
           <div className="space-y-2">
-            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-400 text-[10px] font-black uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-zinc-500" />
-              <span>SIARAN SEDANG NONAKTIF</span>
+            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-300 text-slate-600 text-[10px] font-black uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-slate-400" />
+              <span>SIARAN NONAKTIF</span>
             </span>
 
-            <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight">
+            <h3 className="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-tight">
               ADMIN SEDANG TIDAK MELAKUKAN SIARAN LANGSUNG
             </h3>
 
-            <p className="text-xs text-zinc-400 leading-relaxed max-w-sm mx-auto">
-              Saat ini pengelola toko Ades Store 01 sedang tidak melakukan siaran langsung. Anda tetap dapat berbelanja koleksi lengkap sepatu sneakers, sandal empuk, dan tas di etalase kami dengan diskon s/d 30%!
+            <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto">
+              Admin Ades Store 01 saat ini sedang tidak melakukan siaran langsung. Anda tetap dapat melihat dan memesan koleksi sepatu, sandal, dan tas sekolah langsung di katalog etalase toko kami!
             </p>
           </div>
 
           {/* Action Buttons */}
-          <div className="space-y-2.5 pt-2">
+          <div className="space-y-2 pt-2">
             <button
               onClick={onClose}
-              className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-red-600/30 flex items-center justify-center space-x-2 transition-all transform active:scale-95"
+              className="w-full py-3.5 px-5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-red-600/30 flex items-center justify-center space-x-2 transition-all transform active:scale-95"
             >
               <ShoppingBag className="w-4 h-4" />
-              <span>JELAJAHI KATALOG PRODUK PROMO</span>
-            </button>
-
-            <button
-              onClick={() => {
-                alert('✓ Pengingat telah aktif! Kami akan memberitahu Anda via notifikasi begitu Admin Ades Store 01 memulai siaran langsung berikutnya.');
-                onClose();
-              }}
-              className="w-full py-3 px-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold text-xs flex items-center justify-center space-x-2 transition-all"
-            >
-              <Bell className="w-4 h-4 text-amber-400" />
-              <span>Nyalakan Pengingat Live Selanjutnya</span>
+              <span>KEMBALI BELANJA DI ETALASE TOKO</span>
             </button>
           </div>
         </div>
@@ -361,7 +310,7 @@ export default function AdesLiveRoomModal({
   }
 
   // =========================================================================
-  // KONDISI 2: LIVE AKTIF DENGAN TAMPILAN ORANG / HOST YANG JELAS SEDANG LIVE
+  // KONDISI 2: LIVE AKTIF DENGAN 1 KAMERA REAL TIME DARI LIVE ADMIN
   // =========================================================================
   const handleLike = () => {
     setLikesCount((prev) => prev + 1);
@@ -398,8 +347,8 @@ export default function AdesLiveRoomModal({
         ...prev,
         {
           id: `host-reply-${Date.now()}`,
-          sender: `${activeStream.hostName} (Host Live)`,
-          message: `Makasih pertanyaannya Kak ${currentUser?.name || 'Tamu'}! Pesanan langsung kami proses & siap kirim antar cepat Cikajang/Garut atau ekspedisi ya!`,
+          sender: 'Admin Ades Store 01 (Host Live)',
+          message: `Terima kasih atas pertanyaannya Kak ${currentUser?.name || 'Tamu'}! Pesanan langsung kami proses & siap antar cepat Cikajang & Garut ya!`,
           isHost: true,
           timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         },
@@ -407,72 +356,43 @@ export default function AdesLiveRoomModal({
     }, 2000);
   };
 
+  const displayPrice = currentProduct?.promo_price || currentProduct?.price || 0;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
-      {/* TikTok Live Screen Container */}
+      {/* TikTok Live Screen Container (1 Kamera Saja) */}
       <div className="relative w-full sm:max-w-md h-[100dvh] sm:h-[90vh] bg-black sm:rounded-3xl overflow-hidden border-0 sm:border-2 sm:border-red-500 shadow-2xl flex flex-col justify-between text-white animate-in zoom-in-95 duration-200 select-none">
         
         {/* ================================================================ */}
-        {/* BACKGROUND & HOST STAGE: ORANG SEDANG LIVE DI DEPAN KAMERA       */}
+        {/* BACKGROUND: 1 KAMERA REAL-TIME LANGSUNG DARI LIVE ADMIN          */}
         {/* ================================================================ */}
-        <div className="absolute inset-0 z-0 overflow-hidden bg-black flex items-center justify-center">
-          {/* 1. Streaming Video Layer */}
-          <video
-            ref={videoRef}
-            src={activeStream.videoUrl}
-            autoPlay
-            loop
-            muted={isMuted}
-            playsInline
-            onLoadedData={() => setIsVideoLoading(false)}
-            className="w-full h-full object-cover object-center filter brightness-90"
-          />
-
-          {/* 2. Real Host Persona Showcase Card Overlay (Jaminan Selalu Ada Orang Sedang Live) */}
-          <div className="absolute inset-x-0 top-16 bottom-44 pointer-events-none flex flex-col items-center justify-center p-4">
-            {/* Visual Kartu Host Siaran Langsung */}
-            <div className="relative w-52 sm:w-60 h-72 sm:h-80 rounded-3xl overflow-hidden border-2 border-red-500/80 shadow-2xl bg-gradient-to-t from-black via-zinc-900/60 to-transparent flex flex-col justify-end p-3 animate-in fade-in duration-500">
-              <img
-                src={activeStream.hostPhoto}
-                alt={activeStream.hostName}
-                className="absolute inset-0 w-full h-full object-cover object-top filter brightness-105 pointer-events-none"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-
-              {/* Host Badge & Live Mic Indicator */}
-              <div className="relative z-10 space-y-1">
-                <div className="flex items-center space-x-1.5">
-                  <span className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-md">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                    <span>HOST SEDANG SIARAN</span>
-                  </span>
-                  <div className="flex items-center space-x-0.5 bg-black/60 px-1.5 py-0.5 rounded-full text-emerald-400 text-[9px] font-bold">
-                    <span className="w-1 h-2 bg-emerald-400 animate-pulse" />
-                    <span className="w-1 h-3 bg-emerald-400 animate-bounce" />
-                    <span className="w-1 h-1.5 bg-emerald-400 animate-pulse" />
-                    <span className="text-[8px] text-white ml-1">MIC ON</span>
-                  </div>
-                </div>
-
-                <p className="text-xs font-black text-white leading-tight">
-                  {activeStream.hostName}
+        <div className="absolute inset-0 z-0 overflow-hidden bg-zinc-950 flex items-center justify-center">
+          {adminLiveFrame ? (
+            /* Video Real-Time Kamera Admin */
+            <img
+              src={adminLiveFrame}
+              alt="Video Siaran Langsung Real Time Admin Ades Store 01"
+              className="w-full h-full object-cover object-center filter brightness-100 contrast-105"
+            />
+          ) : (
+            /* Menghubungkan ke Kamera Real-time Admin */
+            <div className="flex flex-col items-center justify-center text-center p-6 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-red-600/20 border-2 border-red-500 flex items-center justify-center animate-pulse">
+                <Camera className="w-8 h-8 text-red-500" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-black text-white">
+                  Menghubungkan ke Kamera Real-Time Admin...
                 </p>
-                <p className="text-[10px] text-zinc-300 font-medium leading-tight">
-                  {activeStream.currentTopic}
+                <p className="text-xs text-zinc-400 max-w-xs">
+                  Siaran langsung kamera utama dari Studio Toko Ades Putra 01 Cikajang & Garut.
                 </p>
               </div>
             </div>
+          )}
 
-            {/* Balon Ucapan Host yang Berbicara Langsung (Real-time Live Host Talk Bubble) */}
-            <div className="mt-2.5 max-w-xs bg-black/80 backdrop-blur-md border border-red-500/60 rounded-2xl px-3.5 py-2 shadow-xl animate-in slide-in-from-bottom-2 text-center pointer-events-auto">
-              <p className="text-[11px] font-bold text-amber-200 leading-snug">
-                🗣️ <span className="text-white font-black">{activeStream.hostName}:</span> &ldquo;{activeStream.quotes[hostQuoteIndex]}&rdquo;
-              </p>
-            </div>
-          </div>
-
-          {/* Vignette gradients */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/70 pointer-events-none" />
+          {/* Vignette Gradients */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/60 pointer-events-none" />
 
           {/* Floating Hearts Animation */}
           <div className="absolute bottom-28 right-6 pointer-events-none z-30">
@@ -493,43 +413,43 @@ export default function AdesLiveRoomModal({
         </div>
 
         {/* ================================================================ */}
-        {/* TOP BAR: HOST AVATAR, LIVE BADGE, VIEWER COUNT & CONTROLS        */}
+        {/* TOP BAR: HOST INFO, 1 KAMERA REAL-TIME BADGE, & CLOSE            */}
         {/* ================================================================ */}
         <div className="relative z-30 p-3 sm:p-4 flex items-center justify-between pointer-events-auto">
           {/* Host Profile Info */}
           <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-white/20">
             <div className="relative">
-              <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-red-500 bg-white flex-shrink-0">
+              <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-red-500 bg-white flex-shrink-0">
                 <img
-                  src={activeStream.hostAvatar}
-                  alt={activeStream.hostName}
-                  className="w-full h-full object-cover"
+                  src="/logo.png"
+                  alt="Ades Store 01"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-600 rounded-full border-2 border-black animate-ping" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-black animate-ping" />
             </div>
 
             <div className="pr-1">
               <div className="flex items-center space-x-1">
                 <span className="font-black text-xs text-white leading-none">
-                  {activeStream.hostName}
+                  Ades Putra 01
                 </span>
-                <span className="text-[8px] font-black uppercase px-1.5 py-0.2 rounded-full bg-red-600 text-white">
-                  HOST
+                <span className="text-[8px] font-black uppercase px-1 py-0.2 rounded-full bg-red-600 text-white">
+                  ADMIN LIVE
                 </span>
               </div>
               <p className="text-[9px] text-zinc-300 leading-none mt-0.5">
-                {activeStream.location}
+                Studio Toko Cikajang, Garut
               </p>
             </div>
           </div>
 
           {/* Right Top Controls */}
           <div className="flex items-center space-x-1.5">
-            {/* Live Indicator Badge */}
+            {/* Live Indicator Badge (1 Kamera Saja) */}
             <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase shadow-md animate-pulse">
               <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-              <span>LIVE</span>
+              <span>LIVE KAMERA REAL TIME</span>
             </div>
 
             {/* Viewer Count */}
@@ -537,19 +457,6 @@ export default function AdesLiveRoomModal({
               <Eye className="w-3.5 h-3.5 text-zinc-300" />
               <span>{viewerCount}</span>
             </div>
-
-            {/* Audio Toggle */}
-            <button
-              onClick={() => setIsMuted(!isMuted)}
-              className="p-2 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all active:scale-95"
-              title={isMuted ? 'Nyalakan Audio' : 'Matikan Audio'}
-            >
-              {isMuted ? (
-                <VolumeX className="w-4 h-4 text-red-400" />
-              ) : (
-                <Volume2 className="w-4 h-4 text-emerald-400 animate-pulse" />
-              )}
-            </button>
 
             {/* Close Modal */}
             <button
@@ -562,33 +469,13 @@ export default function AdesLiveRoomModal({
           </div>
         </div>
 
-        {/* Live Channel Switcher Pills (Ganti Sudut Kamera / Host) */}
-        <div className="relative z-20 px-3 flex items-center space-x-1.5 overflow-x-auto no-scrollbar pointer-events-auto">
-          {LIVE_STREAMS.map((s, idx) => (
-            <button
-              key={s.id}
-              onClick={() => {
-                setActiveStreamIndex(idx);
-                setIsVideoLoading(true);
-              }}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap transition-all border ${
-                activeStreamIndex === idx
-                  ? 'bg-red-600 text-white border-red-400 shadow-md'
-                  : 'bg-black/50 text-zinc-300 border-white/20 hover:bg-black/70'
-              }`}
-            >
-              📹 Kamera {idx + 1}: {s.hostName}
-            </button>
-          ))}
-        </div>
-
         {/* ================================================================ */}
-        {/* BOTTOM AREA: LIVE CHAT STREAM, PINNED PRODUCT & CONTROLS         */}
+        {/* BOTTOM AREA: LIVE CHAT STREAM, KERANJANG KUNING & CONTROLS       */}
         {/* ================================================================ */}
         <div className="relative z-30 p-3 sm:p-4 space-y-2.5 flex flex-col justify-end pointer-events-auto">
           
           {/* 1. REAL-TIME COMMENTS STREAM (TIKTOK STYLE AUTO-SCROLL) */}
-          <div className="h-32 sm:h-36 overflow-y-auto no-scrollbar space-y-1.5 pr-8 mask-gradient">
+          <div className="h-28 sm:h-32 overflow-y-auto no-scrollbar space-y-1.5 pr-8">
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -640,12 +527,12 @@ export default function AdesLiveRoomModal({
                   <h4 className="font-black text-xs text-white truncate">
                     {currentProduct.name}
                   </h4>
-                  <div className="flex items-center space-x-1.5 mt-0.5">
-                    <span className="font-black text-xs text-amber-300">
-                      {formatIDR(currentProduct.promo_price || currentProduct.original_price)}
+                  <div className="flex items-baseline space-x-1.5 mt-0.5">
+                    <span className="font-black text-sm text-red-500">
+                      {formatIDR(displayPrice)}
                     </span>
                     {currentProduct.promo_price && (
-                      <span className="text-[9px] text-zinc-400 line-through">
+                      <span className="text-[10px] text-zinc-400 line-through">
                         {formatIDR(currentProduct.original_price)}
                       </span>
                     )}
@@ -653,62 +540,141 @@ export default function AdesLiveRoomModal({
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center space-x-1.5 flex-shrink-0">
+              {/* Action: Beli Langsung saat Live */}
+              <div className="flex items-center space-x-1 flex-shrink-0">
                 <button
-                  onClick={() => {
-                    onAddToCart(currentProduct, selectedSize, selectedColor, 1);
-                  }}
-                  className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-amber-300 border border-amber-400/40 transition-all shadow-xs"
-                  title="Tambah ke Keranjang"
+                  type="button"
+                  onClick={() => setIsProductTrayOpen(true)}
+                  className="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs shadow-md flex items-center space-x-1 transition-all active:scale-95"
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => {
-                    onDirectCheckout(currentProduct, selectedSize, selectedColor, 1);
-                  }}
-                  className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95 whitespace-nowrap"
-                >
-                  Beli Sekarang &rarr;
+                  <ShoppingBag className="w-3.5 h-3.5 fill-current" />
+                  <span>Beli</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* 3. INPUT BAR CHAT & LOVE TAP BUTTON */}
-          <div className="flex items-center space-x-2">
-            <form onSubmit={handleSendMessage} className="flex-1 flex items-center space-x-1.5">
+          {/* 3. BOTTOM CONTROLS: CHAT INPUT & LIKE HEART BUTTON */}
+          <div className="flex items-center space-x-2 pt-1">
+            <button
+              onClick={() => setIsProductTrayOpen(true)}
+              className="relative p-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-lg flex-shrink-0 transition-transform active:scale-90"
+              title="Keranjang Kuning Live"
+            >
+              <ShoppingBag className="w-5 h-5 fill-current" />
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white rounded-full text-[9px] font-black flex items-center justify-center border border-white">
+                {showcaseProducts.length}
+              </span>
+            </button>
+
+            <form onSubmit={handleSendMessage} className="flex-1 flex items-center relative">
               <input
                 type="text"
+                placeholder="Tanya ukuran atau spill produk..."
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Ketik komentar / tanya spill ukuran kaki..."
-                className="flex-1 px-3.5 py-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-xs placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full bg-black/60 border border-white/20 focus:border-red-500 rounded-2xl py-2 pl-3 pr-9 text-xs text-white placeholder-zinc-400 focus:outline-none"
               />
               <button
                 type="submit"
-                disabled={!chatInput.trim()}
-                className="w-9 h-9 rounded-full bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white flex items-center justify-center transition-all shadow-md flex-shrink-0"
+                className="absolute right-2 text-zinc-300 hover:text-white transition-colors"
               >
                 <Send className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Like Heart Button (TikTok Style) */}
             <button
               onClick={handleLike}
-              className="relative p-2.5 rounded-full bg-red-600/80 hover:bg-red-600 border border-red-400 text-white shadow-lg transition-transform active:scale-125 flex-shrink-0"
-              title="Kirim Love / Like Live"
+              className="p-2.5 rounded-2xl bg-black/60 border border-white/20 hover:border-red-500 text-rose-500 shadow-lg flex-shrink-0 transition-transform active:scale-90 flex items-center justify-center"
+              title="Kirim Love"
             >
-              <Heart className="w-5 h-5 fill-current animate-pulse text-white" />
-              <span className="absolute -top-1 -right-1 bg-amber-400 text-slate-900 text-[8px] font-black px-1 rounded-full">
-                {likesCount > 999 ? `${(likesCount / 1000).toFixed(1)}k` : likesCount}
-              </span>
+              <Heart className="w-5 h-5 fill-current" />
             </button>
           </div>
-
         </div>
+
+        {/* ================================================================ */}
+        {/* TRAY: DAFTAR ETALASE PRODUK LIVE (KERANJANG KUNING TIKTOK)       */}
+        {/* ================================================================ */}
+        {isProductTrayOpen && (
+          <div className="absolute inset-0 z-40 bg-black/70 backdrop-blur-xs flex flex-col justify-end animate-in fade-in duration-200">
+            <div className="bg-slate-900 border-t-2 border-red-500 rounded-t-3xl max-h-[75%] p-4 flex flex-col space-y-3 animate-in slide-in-from-bottom duration-200">
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
+                <div className="flex items-center space-x-2">
+                  <span className="text-amber-400">🛍️</span>
+                  <h4 className="font-black text-sm text-white uppercase tracking-wider">
+                    Etalase Keranjang Kuning Live ({showcaseProducts.length})
+                  </h4>
+                </div>
+                <button
+                  onClick={() => setIsProductTrayOpen(false)}
+                  className="p-1.5 rounded-xl bg-zinc-800 text-zinc-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Product List */}
+              <div className="overflow-y-auto space-y-2.5 max-h-60 pr-1">
+                {showcaseProducts.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className={`p-2.5 rounded-2xl border transition-all flex items-center justify-between gap-2 ${
+                      pinnedProductIndex === idx
+                        ? 'bg-zinc-800 border-amber-400'
+                        : 'bg-zinc-900/80 border-zinc-800 hover:border-zinc-700'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <div className="w-12 h-12 rounded-xl bg-white overflow-hidden flex-shrink-0">
+                        <img
+                          src={p.image_url}
+                          alt={p.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-black text-xs text-white truncate">{p.name}</p>
+                        <p className="text-xs font-black text-red-500 mt-0.5">
+                          {formatIDR(p.promo_price || p.price)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-1.5 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPinnedProductIndex(idx);
+                          setIsProductTrayOpen(false);
+                        }}
+                        className="px-2 py-1 rounded-lg bg-zinc-800 border border-zinc-700 text-[10px] font-bold text-zinc-200"
+                      >
+                        Pilih
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onDirectCheckout(
+                            p,
+                            p.sizes?.[0] || 40,
+                            p.colors?.[0] || 'Hitam',
+                            1
+                          );
+                          setIsProductTrayOpen(false);
+                          onClose();
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase shadow-xs"
+                      >
+                        Beli Langsung
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

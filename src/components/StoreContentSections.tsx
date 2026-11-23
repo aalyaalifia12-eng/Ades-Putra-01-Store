@@ -188,7 +188,13 @@ export default function StoreContentSections({
 
           <button
             type="button"
-            onClick={onOpenLive}
+            onClick={() => {
+              if (!isStoreLive) {
+                alert('Admin sedang tidak melakukan siaran langsung.');
+                return;
+              }
+              onOpenLive();
+            }}
             className={`flex-shrink-0 px-5 py-3 rounded-2xl font-black text-xs shadow-lg flex items-center justify-center space-x-2 transition-all transform active:scale-95 self-start md:self-center ${
               isStoreLive
                 ? 'bg-white hover:bg-red-50 text-red-600 shadow-black/20'
@@ -196,7 +202,7 @@ export default function StoreContentSections({
             }`}
           >
             <Radio className={`w-4 h-4 ${isStoreLive ? 'text-red-600 animate-pulse' : 'text-zinc-400'}`} />
-            <span>{isStoreLive ? 'Gabung Live Room →' : 'Cek Status Live →'}</span>
+            <span>{isStoreLive ? 'Gabung Live Room →' : '⚪ Admin Sedang Tidak Melakukan Siaran Langsung'}</span>
           </button>
         </div>
       </div>

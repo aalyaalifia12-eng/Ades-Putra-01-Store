@@ -53,13 +53,14 @@ export default function ProductDetailModal({
   const [selectedSize, setSelectedSize] = useState<number | string>(availableSizes[0] ?? (isFootwear ? 40 : 'All Size'));
   const [selectedColor, setSelectedColor] = useState<string>(product.colors?.[0] || 'Default');
   const [qty, setQty] = useState<number>(1);
-  const [claimedPlatforms, setClaimedPlatforms] = useState<string[]>([]);
+  const [hasOpenedWhatsApp, setHasOpenedWhatsApp] = useState(false);
+  const [isStatusClaimed, setIsStatusClaimed] = useState(false);
   const [shareNotice, setShareNotice] = useState<string | null>(null);
 
   const displayPrice = product.promo_price || product.original_price;
   const isOutOfStock = product.stock <= 0;
 
-  // Pre-formatted full share text with product details and link at the bottom
+  // Pre-formatted full share text for WhatsApp Status with product details and link at the bottom
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://ades-putra-01-store.vercel.app';
   const shareProductUrl = `${siteUrl}/?product=${encodeURIComponent(product.id)}`;
   const shareFullPost = `👟 *${product.name}*\n` +
@@ -68,40 +69,35 @@ export default function ProductDetailModal({
     `🛡️ Garansi Bebas Tukar Ukuran 7 Hari!\n\n` +
     `👉 Cek Detail & Beli Produk di Sini:\n${shareProductUrl}`;
 
-  // Handle Share to Facebook / Instagram / WhatsApp and earn Rp 1.000 commission
-  const handleShareProduct = (platform: 'Facebook' | 'Instagram' | 'WhatsApp' | 'Salin Link') => {
-    if (platform === 'Facebook') {
-      const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareProductUrl)}&quote=${encodeURIComponent(shareFullPost)}`;
-      window.open(fbUrl, '_blank', 'width=600,height=500');
-    } else if (platform === 'WhatsApp') {
-      const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareFullPost)}`;
-      window.open(waUrl, '_blank');
-      setShareNotice('✓ Membuka WhatsApp! Produk & link otomatis ter-post di kolom chat.');
-    } else if (platform === 'Instagram') {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(`${shareFullPost}\n\n#AdesStore01 #SepatuCikajang #GarutShopping`);
-      }
-      window.open('https://www.instagram.com/', '_blank');
-      setShareNotice('✓ Teks postingan & link produk berhasil disalin! Silakan tempel di Instagram Story/Feed/DM Anda.');
-    } else {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(shareFullPost);
-      }
-      setShareNotice('✓ Postingan lengkap beserta link produk di bawah berhasil disalin!');
-    }
+  // Handle Share directly to WhatsApp Status
+  const handleOpenWhatsAppStatus = () => {
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareFullPost)}`;
+    window.open(waUrl, '_blank');
+    setHasOpenedWhatsApp(true);
+    setShareNotice('✓ Membuka WhatsApp! Silakan kirim ke Status WhatsApp Anda, lalu klik tombol klaim 10 poin di bawah.');
+  };
 
-    // Award Rp 1.000 Commission
-    if (!claimedPlatforms.includes(platform)) {
-      setClaimedPlatforms((prev) => [...prev, platform]);
-      if (onRewardCommission) {
-        onRewardCommission(1000, platform, product.name);
-      }
-      setShareNotice(`🎉 Berhasil! Anda mendapatkan komisi Rp 1.000 karena membagikan ke ${platform}!`);
+  // Claim 10 Points after posting to WA Status
+  const handleClaimWhatsAppPoints = () => {
+    if (isStatusClaimed) return;
+    setIsStatusClaimed(true);
+    if (onRewardCommission) {
+      onRewardCommission(10, 'Status WhatsApp', product.name);
     }
-
+    setShareNotice('🎉 Selamat! 10 Poin Member berhasil ditambahkan ke akun Anda!');
     setTimeout(() => {
       setShareNotice(null);
-    }, 4500);
+    }, 5000);
+  };
+
+  const handleCopyShareText = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareFullPost);
+    }
+    setShareNotice('✓ Format postingan & link produk berhasil disalin!');
+    setTimeout(() => {
+      setShareNotice(null);
+    }, 4000);
   };
 
   return (
@@ -177,80 +173,77 @@ export default function ProductDetailModal({
           </div>
 
           {/* ============================================================== */}
-          {/* FITUR KOMISI BAGIKAN KE FACEBOOK, IG & WHATSAPP (+RP 1.000)   */}
+          {/* FITUR BAGIKAN KE STATUS WHATSAPP (+10 POIN MEMBER)             */}
           {/* ============================================================== */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-50 via-rose-50 to-red-50 border-2 border-red-300 shadow-2xs space-y-2.5">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 border-2 border-emerald-300 shadow-2xs space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1.5">
-                <Gift className="w-4 h-4 text-red-600 animate-bounce" />
+                <Gift className="w-4 h-4 text-emerald-600 animate-bounce" />
                 <span className="text-xs font-black text-slate-900">
-                  Bagikan Link &amp; Dapat Komisi Rp 1.000!
+                  Bagikan ke Status WhatsApp
                 </span>
               </div>
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-red-600 text-white shadow-2xs">
-                +Rp 1.000 Koin
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-2xs">
+                +10 Poin Member
               </span>
             </div>
 
             <p className="text-[11px] text-slate-600 leading-tight">
-              Bagikan produk ini ke Facebook, Instagram, atau WhatsApp. Postingan otomatis terisi data produk beserta <b>link produk di bawahnya</b>. Anda langsung dapat <b>komisi Rp 1.000</b>!
+              Bagikan langsung produk ini ke <b>Status WhatsApp</b> Anda. Setelah status terkirim, Anda langsung mendapatkan <b>10 Poin Potongan Harga</b>!
             </p>
 
-            {/* Social Share Buttons */}
-            <div className="grid grid-cols-3 gap-1.5 pt-0.5">
-              {/* Facebook Share Button */}
-              <button
-                type="button"
-                onClick={() => handleShareProduct('Facebook')}
-                className="py-2 px-2 rounded-xl bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs flex items-center justify-center space-x-1 transition-all shadow-xs active:scale-95"
-              >
-                <svg className="w-3.5 h-3.5 fill-current flex-shrink-0" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-                <span className="truncate">Facebook</span>
-                {claimedPlatforms.includes('Facebook') && <Check className="w-3 h-3 text-emerald-300 ml-0.5" />}
-              </button>
+            {/* Tombol Utama: Bagikan ke Status WA */}
+            <button
+              type="button"
+              onClick={handleOpenWhatsAppStatus}
+              className="w-full py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-black text-xs flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
+            >
+              <svg className="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+              </svg>
+              <span>Bagikan Langsung ke Status WA</span>
+            </button>
 
-              {/* Instagram Share Button */}
-              <button
-                type="button"
-                onClick={() => handleShareProduct('Instagram')}
-                className="py-2 px-2 rounded-xl bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-95 text-white font-bold text-xs flex items-center justify-center space-x-1 transition-all shadow-xs active:scale-95"
-              >
-                <svg className="w-3.5 h-3.5 fill-current flex-shrink-0" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                </svg>
-                <span className="truncate">Instagram</span>
-                {claimedPlatforms.includes('Instagram') && <Check className="w-3 h-3 text-emerald-300 ml-0.5" />}
-              </button>
+            {/* Konfirmasi Pengiriman Status WA untuk Klaim 10 Poin */}
+            {hasOpenedWhatsApp && !isStatusClaimed && (
+              <div className="p-3 rounded-xl bg-white border-2 border-emerald-400 space-y-2 animate-in slide-in-from-top-2">
+                <p className="text-xs font-black text-emerald-950 flex items-center space-x-1.5">
+                  <span>❓ Apakah Anda sudah mengirim ke Status WhatsApp?</span>
+                </p>
+                <p className="text-[10px] text-slate-600 leading-tight">
+                  Kirim status lalu klik tombol di bawah agar <b>10 Poin</b> langsung masuk ke saldo akun Anda.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleClaimWhatsAppPoints}
+                  className="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center justify-center space-x-1.5 transition-all active:scale-95"
+                >
+                  <Check className="w-4 h-4 text-white" />
+                  <span>Saya Sudah Kirim Status — Klaim 10 Poin!</span>
+                </button>
+              </div>
+            )}
 
-              {/* WhatsApp Share Button */}
-              <button
-                type="button"
-                onClick={() => handleShareProduct('WhatsApp')}
-                className="py-2 px-2 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs flex items-center justify-center space-x-1 transition-all shadow-xs active:scale-95"
-              >
-                <svg className="w-3.5 h-3.5 fill-current flex-shrink-0" viewBox="0 0 24 24">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
-                </svg>
-                <span className="truncate">WhatsApp</span>
-                {claimedPlatforms.includes('WhatsApp') && <Check className="w-3 h-3 text-emerald-300 ml-0.5" />}
-              </button>
-            </div>
+            {isStatusClaimed && (
+              <div className="p-2.5 rounded-xl bg-emerald-100 border border-emerald-400 text-emerald-900 text-xs font-black flex items-center space-x-2">
+                <Check className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+                <span>✓ Poin Berhasil Diklaim! (+10 Poin Member Aktif)</span>
+              </div>
+            )}
 
             {/* PREVIEW POSTINGAN OTOMATIS BESERTA LINK PRODUK DI BAWAH */}
-            <div className="p-2.5 rounded-xl bg-white border border-red-200 text-left space-y-1.5 shadow-2xs">
+            <div className="p-2.5 rounded-xl bg-white border border-emerald-200 text-left space-y-1.5 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-red-600 uppercase tracking-wide flex items-center space-x-1">
+                <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wide flex items-center space-x-1">
                   <span>📋 Otomatis Ter-Post Beserta Link di Bawah:</span>
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleShareProduct('Salin Link')}
-                  className="inline-flex items-center space-x-1 text-[10px] font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded-md transition-colors"
+                  onClick={handleCopyShareText}
+                  className="inline-flex items-center space-x-1 text-[10px] font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-md transition-colors"
                 >
                   <Copy className="w-3 h-3" />
-                  <span>Salin Post &amp; Link</span>
+                  <span>Salin Teks &amp; Link</span>
                 </button>
               </div>
 
@@ -260,8 +253,8 @@ export default function ProductDetailModal({
                 <p>💰 Harga Promo: {formatIDR(displayPrice)}</p>
                 <p>🚚 Pengiriman Kilat J&amp;T, JNE, Ninja &amp; Kurir Toko Cikajang/Garut</p>
                 <p>🛡️ Garansi Bebas Tukar Ukuran 7 Hari!</p>
-                <p className="pt-1 text-red-600 font-bold break-all">
-                  👉 Beli &amp; Cek Produk di Sini: <br />
+                <p className="pt-1 text-emerald-700 font-bold break-all">
+                  👉 Cek &amp; Beli Produk di Sini: <br />
                   <span className="underline">{shareProductUrl}</span>
                 </p>
               </div>

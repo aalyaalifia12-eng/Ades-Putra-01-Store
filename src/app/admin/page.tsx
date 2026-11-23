@@ -131,13 +131,24 @@ export default function AdminDashboardPage() {
     setIsLiveActive(active);
     try {
       localStorage.setItem('ades_store_live_active', active ? 'true' : 'false');
+      if (!active) {
+        localStorage.removeItem('ades_live_latest_frame');
+      }
       window.dispatchEvent(new Event('storage'));
+    } catch {}
+
+    try {
+      const ch = new BroadcastChannel('ades_live_stream_channel');
+      if (!active) {
+        ch.postMessage({ type: 'LIVE_STOPPED' });
+      }
+      ch.close();
     } catch {}
 
     fetch('/api/live', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ active }),
+      body: JSON.stringify({ active, frame: active ? undefined : null }),
     }).catch(() => {});
 
     if (active) {

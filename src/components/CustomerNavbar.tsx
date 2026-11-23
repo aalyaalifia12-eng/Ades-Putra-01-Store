@@ -93,6 +93,16 @@ export default function CustomerNavbar({
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
+  const handleLiveButtonClick = () => {
+    if (!isStoreLive) {
+      alert('Admin sedang tidak melakukan siaran langsung.');
+      return;
+    }
+    if (onOpenLive) {
+      onOpenLive();
+    }
+  };
+
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
       {/* Top Banner: Promo Ticker */}
@@ -178,25 +188,27 @@ export default function CustomerNavbar({
             {/* Live Streaming Shopping Button */}
             {onOpenLive && (
               <button
-                onClick={onOpenLive}
-                className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl text-white transition-all shadow-md group ${
+                onClick={handleLiveButtonClick}
+                className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl transition-all shadow-md group ${
                   isStoreLive
-                    ? 'bg-red-600 hover:bg-red-700 animate-pulse'
-                    : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
+                    ? 'bg-red-600 hover:bg-red-700 text-white animate-pulse'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'
                 }`}
                 title={
                   isStoreLive
                     ? 'Tonton Live Streaming Ades Store Cikajang & Klaim Diskon Live!'
-                    : 'Admin sedang tidak melakukan siaran langsung (Klik untuk melihat info)'
+                    : 'Admin sedang tidak melakukan siaran langsung'
                 }
               >
-                <span className={`w-2 h-2 rounded-full ${isStoreLive ? 'bg-white animate-ping' : 'bg-zinc-500'}`} />
-                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider">
-                  {isStoreLive ? 'LIVE' : 'LIVE OFFLINE'}
+                <span className={`w-2 h-2 rounded-full ${isStoreLive ? 'bg-white animate-ping' : 'bg-slate-400'}`} />
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                  {isStoreLive ? 'LIVE' : 'Admin Sedang Tidak Melakukan Siaran Langsung'}
                 </span>
-                <span className="hidden sm:inline text-[9px] font-black bg-black/40 px-1.5 py-0.2 rounded-full text-white">
-                  {isStoreLive ? '418' : 'Offline'}
-                </span>
+                {isStoreLive && (
+                  <span className="hidden sm:inline text-[9px] font-black bg-black/40 px-1.5 py-0.2 rounded-full text-white">
+                    418
+                  </span>
+                )}
               </button>
             )}
 

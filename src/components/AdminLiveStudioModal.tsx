@@ -237,6 +237,82 @@ export default function AdminLiveStudioModal({
     return () => clearInterval(interval);
   }, [isOpen, isLiveActive]);
 
+  // Real-time camera frame broadcaster to Customer view (BroadcastChannel + LocalStorage + API)
+  useEffect(() => {
+    if (!isOpen || !isLiveActive) {
+      try {
+        localStorage.removeItem('ades_live_latest_frame');
+      } catch {}
+      return;
+    }
+
+    let canvas: HTMLCanvasElement | null = document.createElement('canvas');
+    canvas.width = 480;
+    canvas.height = 640;
+    let ctx = canvas.getContext('2d');
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel('ades_live_stream_channel');
+    } catch {}
+
+    let lastApiPost = 0;
+
+    const frameTimer = setInterval(() => {
+      const vid = videoRef.current;
+      if (!vid || vid.readyState < 2 || !ctx || !canvas) return;
+
+      try {
+        ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+        const frameData = canvas.toDataURL('image/jpeg', 0.55);
+
+        // 1. BroadcastChannel (0ms delay to open viewer tabs)
+        if (channel) {
+          channel.postMessage({
+            type: 'LIVE_FRAME',
+            frame: frameData,
+            timestamp: Date.now(),
+          });
+        }
+
+        // 2. LocalStorage for same-browser viewers
+        try {
+          localStorage.setItem('ades_live_latest_frame', frameData);
+        } catch {}
+
+        // 3. API server sync every 2 seconds for multi-device viewers
+        const now = Date.now();
+        if (now - lastApiPost > 2000) {
+          lastApiPost = now;
+          fetch('/api/live', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              active: true,
+              title: 'Live Streaming Ades Store 01',
+              host: 'Admin Ades Store 01',
+              frame: frameData,
+            }),
+          }).catch(() => {});
+        }
+      } catch (e) {
+        // ignore cross-origin draw exceptions if external video
+      }
+    }, 120);
+
+    return () => {
+      clearInterval(frameTimer);
+      canvas = null;
+      ctx = null;
+      if (channel) {
+        try {
+          channel.postMessage({ type: 'LIVE_STOPPED' });
+          channel.close();
+        } catch {}
+      }
+    };
+  }, [isOpen, isLiveActive, cameraActive, isSimulationMode]);
+
   // Host Sends Message in Live
   const handleSendHostMessage = (e: React.FormEvent) => {
     e.preventDefault();

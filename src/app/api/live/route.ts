@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
 
-// In-memory global state for Live streaming status
-let globalLiveState = {
-  is_active: true,
-  title: 'Ades Live Shopping Spill Sepatu & Sandal Cikajang Garut',
-  host: 'Alya Alifia',
+// In-memory global state for Live streaming status and Admin's real-time camera feed
+let globalLiveState: {
+  is_active: boolean;
+  title: string;
+  host: string;
+  latest_frame: string | null;
+  updated_at: string;
+} = {
+  is_active: false, // Default to false / offline until Admin starts live
+  title: 'Siaran Langsung Toko Ades Store 01 Cikajang',
+  host: 'Admin Toko (Alya Alifia)',
+  latest_frame: null,
   updated_at: new Date().toISOString(),
 };
 
@@ -18,12 +25,13 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { active, title, host } = body;
+    const { active, title, host, frame } = body;
 
     globalLiveState = {
-      is_active: typeof active === 'boolean' ? active : !globalLiveState.is_active,
+      is_active: typeof active === 'boolean' ? active : globalLiveState.is_active,
       title: title || globalLiveState.title,
       host: host || globalLiveState.host,
+      latest_frame: frame !== undefined ? frame : globalLiveState.latest_frame,
       updated_at: new Date().toISOString(),
     };
 
@@ -31,8 +39,8 @@ export async function POST(request: Request) {
       success: true,
       ...globalLiveState,
       message: globalLiveState.is_active
-        ? 'Siaran langsung toko berhasil dimulai.'
-        : 'Siaran langsung toko telah dimatikan.',
+        ? 'Siaran langsung toko aktif.'
+        : 'Admin sedang tidak melakukan siaran langsung.',
     });
   } catch (err: any) {
     return NextResponse.json(

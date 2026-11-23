@@ -52,6 +52,70 @@ export default function ResponsiveAppRoot() {
   const [isGameModalOpen, setIsGameModalOpen] = useState(false);
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
+  const [isStoreLiveActive, setIsStoreLiveActive] = useState<boolean>(true);
+
+  // Sync Live Status with localStorage, backend, and BroadcastChannel
+  useEffect(() => {
+    try {
+      const savedLive = localStorage.getItem('ades_store_live_active');
+      if (savedLive !== null) {
+        setIsStoreLiveActive(savedLive === 'true');
+      }
+    } catch {}
+
+    fetch('/api/live')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && typeof data.is_active === 'boolean') {
+          setIsStoreLiveActive(data.is_active);
+          try {
+            localStorage.setItem('ades_store_live_active', data.is_active ? 'true' : 'false');
+          } catch {}
+        }
+      })
+      .catch(() => {});
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel('ades_live_stream_channel');
+      channel.onmessage = (event) => {
+        if (event.data?.type === 'LIVE_FRAME') {
+          setIsStoreLiveActive(true);
+        } else if (event.data?.type === 'LIVE_STOPPED') {
+          setIsStoreLiveActive(false);
+          setIsLiveModalOpen(false);
+        }
+      };
+    } catch {}
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'ades_store_live_active' && e.newValue !== null) {
+        const active = e.newValue === 'true';
+        setIsStoreLiveActive(active);
+        if (!active) {
+          setIsLiveModalOpen(false);
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      if (channel) {
+        try {
+          channel.close();
+        } catch {}
+      }
+    };
+  }, []);
+
+  const handleOpenLive = () => {
+    if (!isStoreLiveActive) {
+      showToast('⚪ Admin sedang tidak melakukan siaran langsung saat ini.');
+      return;
+    }
+    setIsLiveModalOpen(true);
+  };
 
   // Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -397,7 +461,7 @@ export default function ResponsiveAppRoot() {
       setCurrentUser(guestUser);
       localStorage.setItem('ades_user', JSON.stringify(guestUser));
     }
-    showToast(`🎉 Berhasil! Anda membagikan "${productName}" ke ${platform} dan dapat komisi Rp ${amount.toLocaleString('id-ID')}!`);
+    showToast(`🎉 Berhasil! Anda membagikan "${productName}" ke ${platform} dan dapat +${amount} Poin Member!`);
   };
 
   return (
@@ -457,7 +521,7 @@ export default function ResponsiveAppRoot() {
               }}
               onOpenGame={() => setIsGameModalOpen(true)}
               onOpenNotifications={() => setIsNotificationsModalOpen(true)}
-              onOpenLive={() => setIsLiveModalOpen(true)}
+              onOpenLive={handleOpenLive}
               onLogout={handleLogout}
               onSwitchToLogin={() => setCurrentScreen('customer_login')}
               searchQuery={searchQuery}
@@ -542,7 +606,7 @@ export default function ResponsiveAppRoot() {
 
               {/* Konten Tambahan: Live Shopping Promo Banner, Testimoni Warga Cikajang & Garut, Size Chart & Tips Perawatan */}
               <StoreContentSections
-                onOpenLive={() => setIsLiveModalOpen(true)}
+                onOpenLive={handleOpenLive}
                 onOpenVipModal={() => setIsVipModalOpen(true)}
               />
 
@@ -700,7 +764,7 @@ export default function ResponsiveAppRoot() {
         products={products}
         onOpenProduct={(p) => setSelectedProduct(p)}
         onOpenVipModal={() => setIsVipModalOpen(true)}
-        onOpenLive={() => setIsLiveModalOpen(true)}
+        onOpenLive={handleOpenLive}
         onOpenGame={() => setIsGameModalOpen(true)}
       />
 
@@ -724,7 +788,7 @@ export default function ResponsiveAppRoot() {
         }}
         onOpenLive={() => {
           setIsNotificationsModalOpen(false);
-          setIsLiveModalOpen(true);
+          handleOpenLive();
         }}
         onSelectProduct={(p) => {
           setIsNotificationsModalOpen(false);
@@ -756,7 +820,7 @@ export default function ResponsiveAppRoot() {
           cart={cart}
           latestProduct={products[0] || null}
           onOpenCart={() => setIsCartOpen(true)}
-          onOpenLive={() => setIsLiveModalOpen(true)}
+          onOpenLive={handleOpenLive}
           onSelectProduct={(p) => setSelectedProduct(p)}
         />
       )}
