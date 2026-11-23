@@ -245,7 +245,7 @@ export default function ResponsiveAppRoot() {
   };
 
   const handleBackToLanding = () => {
-    setCurrentScreen('store');
+    setCurrentScreen('landing');
   };
 
   const handleLoginSuccess = (user: User) => {
@@ -273,8 +273,8 @@ export default function ResponsiveAppRoot() {
   const handleLogout = () => {
     localStorage.removeItem('ades_user');
     setCurrentUser(null);
-    setCurrentScreen('store');
-    showToast('Berhasil keluar. Anda kini berbelanja sebagai Pelanggan Tamu.');
+    setCurrentScreen('landing');
+    showToast('Berhasil keluar. Kembali ke halaman utama.');
   };
 
   // Cart Operations
@@ -482,7 +482,6 @@ export default function ResponsiveAppRoot() {
       {currentScreen === 'landing' && (
         <VisualPromoLanding
           onOpenCustomerLogin={handleOpenCustomerLogin}
-          onExploreAsGuest={() => setCurrentScreen('store')}
         />
       )}
 
