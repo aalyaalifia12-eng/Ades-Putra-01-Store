@@ -130,3 +130,21 @@ export interface CartItem {
   selectedColor: string;
   qty: number;
 }
+
+export interface BannerAd {
+  id: string;
+  title: string;
+  tagline?: string;
+  badge?: string;
+  description: string;
+  media_type: 'image' | 'video'; // Foto atau Video
+  media_url: string; // URL foto atau URL video mp4/stream
+  target_category?: ProductCategory;
+  cta_text?: string;
+  promo_code?: string;
+  discount_highlight?: string;
+  bg_gradient?: string;
+  is_active: boolean;
+  order: number;
+  created_at: string;
+}

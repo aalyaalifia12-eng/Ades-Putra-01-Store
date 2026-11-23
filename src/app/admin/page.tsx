@@ -31,16 +31,24 @@ import {
   AlertTriangle,
   Minus,
   Check,
+  Video,
+  Image as ImageIcon,
+  Film,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
-import { Product, Order, ProductCategory } from '@/types';
+import { Product, Order, ProductCategory, BannerAd } from '@/types';
 import { formatIDR, formatIndoDate } from '@/lib/utils';
 import { PRODUCT_CATEGORIES } from '@/lib/categories';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'analytics'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'analytics' | 'banners'>('orders');
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [banners, setBanners] = useState<BannerAd[]>([]);
   const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -78,6 +86,23 @@ export default function AdminDashboardPage() {
   const [formDescription, setFormDescription] = useState('');
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Banner Ads State
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
+  const [editingBanner, setEditingBanner] = useState<BannerAd | null>(null);
+  const [bannerTitle, setBannerTitle] = useState('');
+  const [bannerTagline, setBannerTagline] = useState('');
+  const [bannerBadge, setBannerBadge] = useState('PROMO ADES STORE');
+  const [bannerDescription, setBannerDescription] = useState('');
+  const [bannerMediaType, setBannerMediaType] = useState<'image' | 'video'>('image');
+  const [bannerMediaUrl, setBannerMediaUrl] = useState('');
+  const [bannerTargetCategory, setBannerTargetCategory] = useState<ProductCategory>('sepatu_pria');
+  const [bannerCtaText, setBannerCtaText] = useState('Lihat Promo →');
+  const [bannerPromoCode, setBannerPromoCode] = useState('');
+  const [bannerDiscountHighlight, setBannerDiscountHighlight] = useState('DISKON 20%');
+  const [bannerBgGradient, setBannerBgGradient] = useState('from-red-950 via-rose-900 to-slate-950');
+  const [bannerIsActive, setBannerIsActive] = useState(true);
+  const [bannerSubmitting, setBannerSubmitting] = useState(false);
 
   // Toast
   const [toast, setToast] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
@@ -123,13 +148,15 @@ export default function AdminDashboardPage() {
   const fetchData = async (isBackgroundPoll = false) => {
     if (!isBackgroundPoll) setLoading(true);
     try {
-      const [resProd, resOrd, resAna] = await Promise.all([
+      const [resProd, resOrd, resAna, resBan] = await Promise.all([
         fetch('/api/products').then((r) => r.json()),
         fetch('/api/orders').then((r) => r.json()),
         fetch('/api/admin/analytics').then((r) => r.json()),
+        fetch('/api/banners?all=true').then((r) => r.json()).catch(() => ({ success: false })),
       ]);
 
       if (resProd.success) setProducts(resProd.products || []);
+      if (resBan && resBan.success) setBanners(resBan.banners || []);
 
       if (resOrd.success) {
         const newOrders: Order[] = resOrd.orders || [];
@@ -301,6 +328,123 @@ export default function AdminDashboardPage() {
       }
     } catch (err: any) {
       showToast(err.message || 'Gagal menghapus.', 'error');
+    }
+  };
+
+  // =========================================================================
+  // BANNER ADS HANDLERS (FOTO & VIDEO BERANDA)
+  // =========================================================================
+  const handleOpenAddBanner = () => {
+    setEditingBanner(null);
+    setBannerTitle('');
+    setBannerTagline('Diskon Spesial');
+    setBannerBadge('🔥 PROMO TERBARU');
+    setBannerDescription('');
+    setBannerMediaType('image');
+    setBannerMediaUrl('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80');
+    setBannerTargetCategory('sepatu_pria');
+    setBannerCtaText('Lihat Promo →');
+    setBannerPromoCode('ADESKILAT');
+    setBannerDiscountHighlight('DISKON 20%');
+    setBannerBgGradient('from-red-950 via-rose-900 to-slate-950');
+    setBannerIsActive(true);
+    setIsBannerModalOpen(true);
+  };
+
+  const handleOpenEditBanner = (b: BannerAd) => {
+    setEditingBanner(b);
+    setBannerTitle(b.title);
+    setBannerTagline(b.tagline || '');
+    setBannerBadge(b.badge || '');
+    setBannerDescription(b.description || '');
+    setBannerMediaType(b.media_type || 'image');
+    setBannerMediaUrl(b.media_url);
+    setBannerTargetCategory(b.target_category || 'sepatu_pria');
+    setBannerCtaText(b.cta_text || 'Lihat Promo →');
+    setBannerPromoCode(b.promo_code || '');
+    setBannerDiscountHighlight(b.discount_highlight || 'DISKON 20%');
+    setBannerBgGradient(b.bg_gradient || 'from-red-950 via-rose-900 to-slate-950');
+    setBannerIsActive(b.is_active);
+    setIsBannerModalOpen(true);
+  };
+
+  const handleSaveBanner = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bannerTitle.trim() || !bannerMediaUrl.trim()) {
+      showToast('Judul iklan dan URL media (foto/video) wajib diisi.', 'error');
+      return;
+    }
+
+    setBannerSubmitting(true);
+    try {
+      const payload = {
+        title: bannerTitle,
+        tagline: bannerTagline,
+        badge: bannerBadge,
+        description: bannerDescription,
+        media_type: bannerMediaType,
+        media_url: bannerMediaUrl,
+        target_category: bannerTargetCategory,
+        cta_text: bannerCtaText,
+        promo_code: bannerPromoCode,
+        discount_highlight: bannerDiscountHighlight,
+        bg_gradient: bannerBgGradient,
+        is_active: bannerIsActive,
+      };
+
+      const url = editingBanner ? `/api/banners/${editingBanner.id}` : '/api/banners';
+      const method = editingBanner ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        showToast(data.error || 'Gagal menyimpan iklan.', 'error');
+        return;
+      }
+
+      showToast(editingBanner ? 'Iklan berhasil diperbarui!' : 'Iklan beranda baru berhasil ditambahkan!');
+      setIsBannerModalOpen(false);
+      fetchData(true);
+    } catch (err: any) {
+      showToast(err.message || 'Terjadi kesalahan sistem.', 'error');
+    } finally {
+      setBannerSubmitting(false);
+    }
+  };
+
+  const handleDeleteBanner = async (b: BannerAd) => {
+    if (!confirm(`Hapus iklan "${b.title}" dari beranda?`)) return;
+    try {
+      const res = await fetch(`/api/banners/${b.id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Iklan berhasil dihapus.');
+        fetchData(true);
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Gagal menghapus iklan.', 'error');
+    }
+  };
+
+  const handleToggleBannerActive = async (b: BannerAd) => {
+    try {
+      const res = await fetch(`/api/banners/${b.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !b.is_active }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Iklan ${!b.is_active ? 'diaktifkan' : 'dinonaktifkan'}.`);
+        fetchData(true);
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Gagal mengubah status.', 'error');
     }
   };
 
@@ -515,6 +659,12 @@ export default function AdminDashboardPage() {
               id: 'analytics',
               label: 'Laporan Penjualan',
               icon: BarChart3,
+            },
+            {
+              id: 'banners',
+              label: `Iklan Beranda (${banners.length} Media)`,
+              icon: Film,
+              badge: banners.filter((b) => b.is_active).length > 0 ? `${banners.filter((b) => b.is_active).length} Aktif` : undefined,
             },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -1374,6 +1524,163 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
+
+        {/* ================================================================= */}
+        {/* TAB 4: KELOLA IKLAN BERANDA (FOTO & VIDEO)                       */}
+        {/* ================================================================= */}
+        {activeTab === 'banners' && (
+          <div className="space-y-6">
+            {/* Header Tab Iklan */}
+            <div className="bg-white p-5 rounded-3xl border-2 border-red-500 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <Film className="w-5 h-5 text-red-600" />
+                  <h3 className="font-black text-base sm:text-lg text-slate-900">
+                    Manajemen Iklan Beranda &bull; Foto &amp; Video
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Atur banner promo beranda toko: bisa upload foto produk atau video review sepatu/tas.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleOpenAddBanner}
+                className="px-4 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-xs shadow-md shadow-red-600/30 flex items-center justify-center space-x-2 transition-all transform active:scale-95 self-start sm:self-center"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Tambah Iklan Baru</span>
+              </button>
+            </div>
+
+            {/* Grid Daftar Iklan */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {banners.map((b) => (
+                <div
+                  key={b.id}
+                  className={`bg-white rounded-3xl border-2 transition-all overflow-hidden flex flex-col justify-between shadow-xs ${
+                    b.is_active ? 'border-red-500/80 hover:border-red-600' : 'border-slate-200 opacity-60'
+                  }`}
+                >
+                  <div>
+                    {/* Media Container: Foto atau Video */}
+                    <div className="relative aspect-video w-full bg-slate-950 overflow-hidden">
+                      {b.media_type === 'video' ? (
+                        <div className="relative w-full h-full">
+                          <video
+                            src={b.media_url}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute top-2.5 left-2.5 inline-flex items-center space-x-1 text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-red-600 text-white shadow-md">
+                            <Video className="w-3 h-3" />
+                            <span>Video</span>
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="relative w-full h-full">
+                          <img
+                            src={b.media_url}
+                            alt={b.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute top-2.5 left-2.5 inline-flex items-center space-x-1 text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-black/70 text-white shadow-md backdrop-blur-xs">
+                            <ImageIcon className="w-3 h-3 text-amber-300" />
+                            <span>Foto</span>
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Active Status Badge */}
+                      <span
+                        className={`absolute top-2.5 right-2.5 text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-md ${
+                          b.is_active
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-slate-700 text-slate-300'
+                        }`}
+                      >
+                        {b.is_active ? '● Tayang di Beranda' : '○ Nonaktif'}
+                      </span>
+                    </div>
+
+                    {/* Content Detail */}
+                    <div className="p-4 space-y-2.5">
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200 truncate">
+                          {b.badge || 'PROMO'}
+                        </span>
+                        {b.discount_highlight && (
+                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">
+                            {b.discount_highlight}
+                          </span>
+                        )}
+                      </div>
+
+                      <h4 className="font-black text-sm text-slate-900 leading-snug line-clamp-2">
+                        {b.title}
+                      </h4>
+
+                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                        {b.description}
+                      </p>
+
+                      <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px] text-slate-600">
+                        {b.promo_code && (
+                          <span className="font-mono font-bold bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                            Kupon: <b>{b.promo_code}</b>
+                          </span>
+                        )}
+                        {b.target_category && (
+                          <span className="font-medium bg-slate-100 px-2 py-0.5 rounded border border-slate-200 capitalize">
+                            Kategori: {b.target_category.replace(/_/g, ' ')}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions Footer */}
+                  <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleBannerActive(b)}
+                      className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-colors ${
+                        b.is_active
+                          ? 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+                          : 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700'
+                      }`}
+                    >
+                      {b.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+                    </button>
+
+                    <div className="flex items-center space-x-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditBanner(b)}
+                        className="p-1.5 rounded-xl bg-white text-slate-700 hover:text-red-600 hover:bg-red-50 border border-slate-200 transition-colors"
+                        title="Edit Iklan"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteBanner(b)}
+                        className="p-1.5 rounded-xl bg-white text-slate-700 hover:text-red-600 hover:bg-red-100 border border-slate-200 transition-colors"
+                        title="Hapus Iklan"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       {/* ================================================================= */}
@@ -1638,6 +1945,288 @@ export default function AdminDashboardPage() {
                   className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black shadow-md shadow-red-600/30 transition-all"
                 >
                   {formSubmitting ? 'Menyimpan...' : 'Simpan Produk'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================================================================= */}
+      {/* MODAL ADD / EDIT IKLAN BERANDA (FOTO & VIDEO)                     */}
+      {/* ================================================================= */}
+      {isBannerModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+          <div className="bg-white w-full max-w-lg rounded-3xl border-2 border-red-500 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+            <div className="px-5 py-3.5 bg-white border-b-2 border-red-500 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Film className="w-5 h-5 text-red-600" />
+                <h3 className="font-black text-slate-900 text-sm">
+                  {editingBanner ? 'Edit Iklan Beranda' : 'Tambah Iklan Beranda Baru'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsBannerModalOpen(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-red-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveBanner} className="p-5 overflow-y-auto space-y-3.5 text-xs">
+              {/* Media Type Selector: Foto vs Video */}
+              <div>
+                <label className="font-bold text-slate-800 block mb-1">
+                  Pilih Format Media Iklan:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setBannerMediaType('image')}
+                    className={`py-2 px-3 rounded-xl border-2 font-black flex items-center justify-center space-x-1.5 transition-all ${
+                      bannerMediaType === 'image'
+                        ? 'border-red-600 bg-red-50 text-red-700 shadow-xs'
+                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    <span>Foto / Gambar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setBannerMediaType('video')}
+                    className={`py-2 px-3 rounded-xl border-2 font-black flex items-center justify-center space-x-1.5 transition-all ${
+                      bannerMediaType === 'video'
+                        ? 'border-red-600 bg-red-50 text-red-700 shadow-xs'
+                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Video className="w-4 h-4" />
+                    <span>Video (MP4 / Web Video)</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Media URL Input */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-slate-800">
+                    URL {bannerMediaType === 'video' ? 'Video (MP4)' : 'Foto / Gambar'}:
+                  </label>
+                  {/* Preset quick buttons */}
+                  <div className="flex items-center space-x-1">
+                    {bannerMediaType === 'video' ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setBannerMediaUrl(
+                            'https://assets.mixkit.co/videos/preview/mixkit-hands-tying-running-shoes-42994-large.mp4'
+                          )
+                        }
+                        className="text-[10px] text-red-600 font-bold hover:underline"
+                      >
+                        Contoh Video
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setBannerMediaUrl(
+                            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80'
+                          )
+                        }
+                        className="text-[10px] text-red-600 font-bold hover:underline"
+                      >
+                        Contoh Foto
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <input
+                  type="url"
+                  required
+                  value={bannerMediaUrl}
+                  onChange={(e) => setBannerMediaUrl(e.target.value)}
+                  placeholder={
+                    bannerMediaType === 'video'
+                      ? 'https://.../video.mp4'
+                      : 'https://images.unsplash.com/...'
+                  }
+                  className="w-full px-3 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-900 font-mono text-xs focus:border-red-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Live Media Preview Box */}
+              {bannerMediaUrl && (
+                <div className="aspect-video w-full rounded-2xl overflow-hidden border-2 border-slate-200 bg-slate-900 relative">
+                  {bannerMediaType === 'video' ? (
+                    <video
+                      src={bannerMediaUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={bannerMediaUrl}
+                      alt="Preview Iklan"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  <span className="absolute bottom-2 left-2 text-[9px] font-black uppercase px-2 py-0.5 rounded bg-black/70 text-white backdrop-blur-xs">
+                    Live Preview ({bannerMediaType})
+                  </span>
+                </div>
+              )}
+
+              {/* Title & Tagline */}
+              <div>
+                <label className="font-bold text-slate-800 block mb-1">
+                  Judul Iklan Promo:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={bannerTitle}
+                  onChange={(e) => setBannerTitle(e.target.value)}
+                  placeholder="Contoh: Spesial Ramadhan Diskon 20% Sepatu & Tas!"
+                  className="w-full px-3 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-900 font-bold focus:border-red-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Badge Teks (Pill):
+                  </label>
+                  <input
+                    type="text"
+                    value={bannerBadge}
+                    onChange={(e) => setBannerBadge(e.target.value)}
+                    placeholder="Contoh: 🌙 SPESIAL RAMADHAN"
+                    className="w-full px-3 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-900 font-bold focus:border-red-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Tagline Subtitle:
+                  </label>
+                  <input
+                    type="text"
+                    value={bannerTagline}
+                    onChange={(e) => setBannerTagline(e.target.value)}
+                    placeholder="Contoh: Diskon Berkah Lebaran"
+                    className="w-full px-3 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-900 font-medium focus:border-red-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="font-bold text-slate-800 block mb-1">
+                  Deskripsi Singkat:
+                </label>
+                <textarea
+                  rows={2}
+                  value={bannerDescription}
+                  onChange={(e) => setBannerDescription(e.target.value)}
+                  placeholder="Jelaskan penawaran menarik kepada pembeli..."
+                  className="w-full px-3 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-900 text-xs focus:border-red-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Target Category & Promo Code */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Kategori Terkait (Link Klik):
+                  </label>
+                  <select
+                    value={bannerTargetCategory}
+                    onChange={(e) => setBannerTargetCategory(e.target.value as ProductCategory)}
+                    className="w-full py-2 px-3 rounded-xl bg-white border-2 border-slate-200 text-slate-900 font-bold text-xs focus:border-red-500 focus:outline-none"
+                  >
+                    {PRODUCT_CATEGORIES.filter((c) => c.id !== 'all').map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Kode Kupon (Opsional):
+                  </label>
+                  <input
+                    type="text"
+                    value={bannerPromoCode}
+                    onChange={(e) => setBannerPromoCode(e.target.value)}
+                    placeholder="Contoh: RAMADHAN20"
+                    className="w-full px-3 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-900 font-mono font-bold focus:border-red-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Discount Highlight & CTA Text */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Highlight Diskon:
+                  </label>
+                  <input
+                    type="text"
+                    value={bannerDiscountHighlight}
+                    onChange={(e) => setBannerDiscountHighlight(e.target.value)}
+                    placeholder="Contoh: DISKON 20%"
+                    className="w-full px-3 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-900 font-bold focus:border-red-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Teks Tombol Aksi (CTA):
+                  </label>
+                  <input
+                    type="text"
+                    value={bannerCtaText}
+                    onChange={(e) => setBannerCtaText(e.target.value)}
+                    placeholder="Contoh: Belanja Sekarang →"
+                    className="w-full px-3 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-900 font-bold focus:border-red-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Active Toggle */}
+              <div className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <input
+                  type="checkbox"
+                  id="toggleBannerActive"
+                  checked={bannerIsActive}
+                  onChange={(e) => setBannerIsActive(e.target.checked)}
+                  className="w-4 h-4 rounded accent-red-600 cursor-pointer"
+                />
+                <label htmlFor="toggleBannerActive" className="font-bold text-slate-800 cursor-pointer">
+                  Tayangkan Iklan ini di Beranda Toko (Aktif)
+                </label>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsBannerModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 font-bold"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={bannerSubmitting}
+                  className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black shadow-md shadow-red-600/30 transition-all flex items-center space-x-1.5"
+                >
+                  <span>{bannerSubmitting ? 'Menyimpan...' : 'Simpan Iklan'}</span>
                 </button>
               </div>
             </form>

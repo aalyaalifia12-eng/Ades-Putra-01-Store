@@ -13,6 +13,10 @@ import MyOrdersModal, { OrderTab } from '@/components/MyOrdersModal';
 import PromoAdsBanner from '@/components/PromoAdsBanner';
 import CandyCrushGameModal from '@/components/CandyCrushGameModal';
 import AdesBot from '@/components/AdesBot';
+import SmartReminderToast from '@/components/SmartReminderToast';
+import CustomerNotificationsModal from '@/components/CustomerNotificationsModal';
+import AdesLiveRoomModal from '@/components/AdesLiveRoomModal';
+import StoreContentSections from '@/components/StoreContentSections';
 import { Product, CartItem, User, Order } from '@/types';
 import { Crown, Tag, Truck, RotateCcw, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -46,6 +50,8 @@ export default function ResponsiveAppRoot() {
   const [isVipModalOpen, setIsVipModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isGameModalOpen, setIsGameModalOpen] = useState(false);
+  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
+  const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
 
   // Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -370,6 +376,7 @@ export default function ResponsiveAppRoot() {
               currentUser={currentUser}
               cartCount={cart.reduce((s, i) => s + i.qty, 0)}
               ordersCount={orders.length}
+              notificationsCount={(cart.length > 0 ? 1 : 0) + (products.length > 0 ? 1 : 0)}
               onOpenCart={() => setIsCartOpen(true)}
               onOpenVipModal={() => setIsVipModalOpen(true)}
               onOpenProfile={() => setIsProfileModalOpen(true)}
@@ -378,6 +385,8 @@ export default function ResponsiveAppRoot() {
                 setIsOrdersModalOpen(true);
               }}
               onOpenGame={() => setIsGameModalOpen(true)}
+              onOpenNotifications={() => setIsNotificationsModalOpen(true)}
+              onOpenLive={() => setIsLiveModalOpen(true)}
               onLogout={handleLogout}
               onSwitchToLogin={() => setCurrentScreen('customer_login')}
               searchQuery={searchQuery}
@@ -459,6 +468,12 @@ export default function ResponsiveAppRoot() {
                   onSelectProduct={(p) => setSelectedProduct(p)}
                 />
               )}
+
+              {/* Konten Tambahan: Live Shopping Promo Banner, Testimoni Warga Cikajang & Garut, Size Chart & Tips Perawatan */}
+              <StoreContentSections
+                onOpenLive={() => setIsLiveModalOpen(true)}
+                onOpenVipModal={() => setIsVipModalOpen(true)}
+              />
 
               {/* Quick Benefits Guarantee Bar */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 text-xs">
@@ -620,11 +635,60 @@ export default function ResponsiveAppRoot() {
         currentPoints={currentUser?.memberPoints || 0}
       />
 
+      {/* Pusat Notifikasi & Pengingat Belanja Customer */}
+      <CustomerNotificationsModal
+        isOpen={isNotificationsModalOpen}
+        onClose={() => setIsNotificationsModalOpen(false)}
+        cart={cart}
+        products={products}
+        onOpenCart={() => {
+          setIsNotificationsModalOpen(false);
+          setIsCartOpen(true);
+        }}
+        onOpenLive={() => {
+          setIsNotificationsModalOpen(false);
+          setIsLiveModalOpen(true);
+        }}
+        onSelectProduct={(p) => {
+          setIsNotificationsModalOpen(false);
+          setSelectedProduct(p);
+        }}
+        onOpenOrders={() => {
+          setIsNotificationsModalOpen(false);
+          setIsOrdersModalOpen(true);
+        }}
+        onOpenGame={() => {
+          setIsNotificationsModalOpen(false);
+          setIsGameModalOpen(true);
+        }}
+      />
+
+      {/* Fitur Live Streaming Shopping Room (Ades Store 01 Live) */}
+      <AdesLiveRoomModal
+        isOpen={isLiveModalOpen}
+        onClose={() => setIsLiveModalOpen(false)}
+        products={products}
+        currentUser={currentUser}
+        onAddToCart={handleAddToCart}
+        onDirectCheckout={handleDirectCheckout}
+      />
+
+      {/* Smart Automated Shopping Reminder Toast (Produk Baru Masuk & Cart Abandonment) */}
+      {currentScreen === 'store' && (
+        <SmartReminderToast
+          cart={cart}
+          latestProduct={products[0] || null}
+          onOpenCart={() => setIsCartOpen(true)}
+          onOpenLive={() => setIsLiveModalOpen(true)}
+          onSelectProduct={(p) => setSelectedProduct(p)}
+        />
+      )}
+
       {/* Floating Game Candy Crush Button (Clean White dengan Red Line) */}
       {currentScreen === 'store' && (
         <button
           onClick={() => setIsGameModalOpen(true)}
-          className="fixed bottom-20 left-4 z-40 bg-white border-2 border-red-500 hover:border-red-600 text-slate-900 rounded-full px-3.5 py-2 shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 active:scale-95 flex items-center space-x-2 group"
+          className="hidden sm:flex fixed bottom-20 left-4 z-40 bg-white border-2 border-red-500 hover:border-red-600 text-slate-900 rounded-full px-3.5 py-2 shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 active:scale-95 items-center space-x-2 group"
           title="Mainkan Game Candy Crush & Kumpulkan Koin Diskon!"
         >
           <span className="text-xl animate-bounce">🍬</span>

@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { Product, User, Order } from '@/types';
+import { Product, User, Order, BannerAd } from '@/types';
 import { ALL_SEEDED_PRODUCTS } from '@/lib/products_seed';
 
 export interface DatabaseSchema {
   users: User[];
   products: Product[];
   orders: Order[];
+  banners: BannerAd[];
   meta: {
     last_order_counter: number;
     last_order_date: string;
@@ -195,11 +196,69 @@ const initialOrders: Order[] = [
   },
 ];
 
+export const initialBanners: BannerAd[] = [
+  {
+    id: 'banner-ramadhan',
+    title: 'Spesial Ramadhan: Diskon 20% Sepatu & Tas Baru!',
+    tagline: 'Diskon 20% Berkah Lebaran',
+    badge: '🌙 SPESIAL RAMADHAN 1447 H',
+    description:
+      'Sambut bulan suci & silaturahmi dengan gaya maksimal! Koleksi Sepatu Pria & Wanita Elegan, Sandal Terawih Empuk, dan Tas Mudik Terbaru.',
+    media_type: 'image',
+    media_url: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop&q=80',
+    target_category: 'sepatu_pria',
+    cta_text: 'Belanja Koleksi Ramadhan →',
+    promo_code: 'RAMADHAN20',
+    discount_highlight: 'DISKON 20%',
+    bg_gradient: 'from-emerald-950 via-teal-900 to-slate-950',
+    is_active: true,
+    order: 1,
+    created_at: '2026-03-01T00:00:00.000Z',
+  },
+  {
+    id: 'banner-video-showcase',
+    title: 'Video Review: Sneakers Sport Sol Empuk Anti Selip',
+    tagline: 'Spill Langsung dari Toko Cikajang',
+    badge: '🎥 VIDEO PREVIEW PRODUK',
+    description:
+      'Lihat detail sol empuk, jahitan kuat, dan kenyamanan melangkah dengan sepatu sneakers sport Ades Store 01. Garansi retur 7 hari!',
+    media_type: 'video',
+    media_url: 'https://assets.mixkit.co/videos/preview/mixkit-hands-tying-running-shoes-42994-large.mp4',
+    target_category: 'sepatu_olahraga',
+    cta_text: 'Lihat Sneakers Olahraga →',
+    promo_code: 'ADESKILAT',
+    discount_highlight: 'SUPER EMPUK',
+    bg_gradient: 'from-rose-950 via-red-900 to-slate-950',
+    is_active: true,
+    order: 2,
+    created_at: '2026-03-02T00:00:00.000Z',
+  },
+  {
+    id: 'banner-back-to-school',
+    title: 'Back to School Hemat s/d 30%: Sepatu, Tas & Buku!',
+    tagline: 'Tahun Ajaran Baru Semangat Baru',
+    badge: '🎒 PROMO BACK TO SCHOOL',
+    description:
+      'Paket lengkap sekolah TK, SD, SMP & SMA! Sepatu hitam standar sekolah, tas ransel ergonomis cewek/cowok, dan buku tulis paket hemat.',
+    media_type: 'image',
+    media_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&auto=format&fit=crop&q=80',
+    target_category: 'tas_sekolah_tk_sd',
+    cta_text: 'Belanja Perlengkapan Sekolah →',
+    promo_code: 'SEKOLAH30',
+    discount_highlight: 'HEMAT 30%',
+    bg_gradient: 'from-blue-950 via-indigo-900 to-slate-950',
+    is_active: true,
+    order: 3,
+    created_at: '2026-03-03T00:00:00.000Z',
+  },
+];
+
 function getInitialDatabase(): DatabaseSchema {
   return {
     users: initialUsers,
     products: initialProducts,
     orders: initialOrders,
+    banners: initialBanners,
     meta: {
       last_order_counter: 4,
       last_order_date: new Date().toISOString().slice(0, 10).replace(/-/g, ''),
@@ -212,6 +271,9 @@ let isWriting = false;
 
 export function getDb(): DatabaseSchema {
   if (inMemoryDb) {
+    if (!inMemoryDb.banners || inMemoryDb.banners.length === 0) {
+      inMemoryDb.banners = [...initialBanners];
+    }
     return inMemoryDb;
   }
 
@@ -220,6 +282,9 @@ export function getDb(): DatabaseSchema {
     if (fs.existsSync(DB_FILE)) {
       const content = fs.readFileSync(DB_FILE, 'utf-8');
       inMemoryDb = JSON.parse(content);
+      if (!inMemoryDb!.banners || inMemoryDb!.banners.length === 0) {
+        inMemoryDb!.banners = [...initialBanners];
+      }
       return inMemoryDb!;
     }
   } catch (err) {
@@ -232,6 +297,9 @@ export function getDb(): DatabaseSchema {
     if (fs.existsSync(seedFile)) {
       const content = fs.readFileSync(seedFile, 'utf-8');
       inMemoryDb = JSON.parse(content);
+      if (!inMemoryDb!.banners || inMemoryDb!.banners.length === 0) {
+        inMemoryDb!.banners = [...initialBanners];
+      }
       try {
         if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
         fs.writeFileSync(DB_FILE, content, 'utf-8');

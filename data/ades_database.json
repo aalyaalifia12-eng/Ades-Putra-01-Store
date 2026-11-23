@@ -1205,5 +1205,58 @@
     "meta":  {
                  "last_order_counter":  4,
                  "last_order_date":  "20261103"
-             }
+             },
+    "banners":  [
+                    {
+                        "badge":  "🌙 SPESIAL RAMADHAN 1447 H",
+                        "id":  "banner-ramadhan",
+                        "created_at":  "2026-03-01T00:00:00.000Z",
+                        "discount_highlight":  "DISKON 20%",
+                        "cta_text":  "Belanja Koleksi Ramadhan →",
+                        "title":  "Spesial Ramadhan: Diskon 20% Sepatu \u0026 Tas Baru!",
+                        "media_url":  "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800\u0026auto=format\u0026fit=crop\u0026q=80",
+                        "is_active":  true,
+                        "tagline":  "Diskon 20% Berkah Lebaran",
+                        "description":  "Sambut bulan suci \u0026 silaturahmi dengan gaya maksimal! Koleksi Sepatu Pria \u0026 Wanita Elegan, Sandal Terawih Empuk, dan Tas Mudik Terbaru.",
+                        "target_category":  "sepatu_pria",
+                        "order":  1,
+                        "bg_gradient":  "from-emerald-950 via-teal-900 to-slate-950",
+                        "media_type":  "image",
+                        "promo_code":  "RAMADHAN20"
+                    },
+                    {
+                        "badge":  "🎥 VIDEO PREVIEW PRODUK",
+                        "id":  "banner-video-showcase",
+                        "created_at":  "2026-03-02T00:00:00.000Z",
+                        "discount_highlight":  "SUPER EMPUK",
+                        "cta_text":  "Lihat Sneakers Olahraga →",
+                        "title":  "Video Review: Sneakers Sport Sol Empuk Anti Selip",
+                        "media_url":  "https://assets.mixkit.co/videos/preview/mixkit-hands-tying-running-shoes-42994-large.mp4",
+                        "is_active":  true,
+                        "tagline":  "Spill Langsung dari Toko Cikajang",
+                        "description":  "Lihat detail sol empuk, jahitan kuat, dan kenyamanan melangkah dengan sepatu sneakers sport Ades Store 01. Garansi retur 7 hari!",
+                        "target_category":  "sepatu_olahraga",
+                        "order":  2,
+                        "bg_gradient":  "from-rose-950 via-red-900 to-slate-950",
+                        "media_type":  "video",
+                        "promo_code":  "ADESKILAT"
+                    },
+                    {
+                        "badge":  "🎒 PROMO BACK TO SCHOOL",
+                        "id":  "banner-back-to-school",
+                        "created_at":  "2026-03-03T00:00:00.000Z",
+                        "discount_highlight":  "HEMAT 30%",
+                        "cta_text":  "Belanja Perlengkapan Sekolah →",
+                        "title":  "Back to School Hemat s/d 30%: Sepatu, Tas \u0026 Buku!",
+                        "media_url":  "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800\u0026auto=format\u0026fit=crop\u0026q=80",
+                        "is_active":  true,
+                        "tagline":  "Tahun Ajaran Baru Semangat Baru",
+                        "description":  "Paket lengkap sekolah TK, SD, SMP \u0026 SMA! Sepatu hitam standar sekolah, tas ransel ergonomis cewek/cowok, dan buku tulis paket hemat.",
+                        "target_category":  "tas_sekolah_tk_sd",
+                        "order":  3,
+                        "bg_gradient":  "from-blue-950 via-indigo-900 to-slate-950",
+                        "media_type":  "image",
+                        "promo_code":  "SEKOLAH30"
+                    }
+                ]
 }

@@ -11,6 +11,8 @@ import {
   LogOut,
   LogIn,
   Package,
+  Bell,
+  Radio,
 } from 'lucide-react';
 import { User as UserType } from '@/types';
 import { PRODUCT_CATEGORIES } from '@/lib/categories';
@@ -19,11 +21,14 @@ interface CustomerNavbarProps {
   currentUser: UserType | null;
   cartCount: number;
   ordersCount?: number;
+  notificationsCount?: number;
   onOpenCart: () => void;
   onOpenVipModal: () => void;
   onOpenProfile?: () => void;
   onOpenOrders?: () => void;
   onOpenGame?: () => void;
+  onOpenNotifications?: () => void;
+  onOpenLive?: () => void;
   onLogout: () => void;
   onSwitchToLogin?: () => void;
   searchQuery: string;
@@ -36,11 +41,14 @@ export default function CustomerNavbar({
   currentUser,
   cartCount,
   ordersCount = 0,
+  notificationsCount = 0,
   onOpenCart,
   onOpenVipModal,
   onOpenProfile,
   onOpenOrders,
   onOpenGame,
+  onOpenNotifications,
+  onOpenLive,
   onLogout,
   onSwitchToLogin,
   searchQuery,
@@ -72,51 +80,51 @@ export default function CustomerNavbar({
       </div>
 
       {/* Main Responsive Bar */}
-      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 space-y-2">
-        <div className="flex items-center justify-between gap-2">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5 space-y-2">
+        <div className="flex items-center justify-between gap-1.5 sm:gap-2">
           {/* Logo & Store Branding */}
-          <div className="flex items-center space-x-2">
-            <div className="h-9 w-9 rounded-xl bg-white p-0.5 border border-slate-200 shadow-xs flex items-center justify-center overflow-hidden flex-shrink-0">
+          <div className="flex items-center space-x-2 min-w-0">
+            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-white p-0.5 border border-slate-200 shadow-xs flex items-center justify-center overflow-hidden flex-shrink-0">
               <img
                 src="/logo.png"
                 alt="Ades Store 01"
                 className="h-full w-full object-contain"
               />
             </div>
-            <div>
-              <div className="flex items-center space-x-1.5">
-                <span className="font-black text-base text-slate-900 tracking-tight leading-none">
+            <div className="min-w-0">
+              <div className="flex items-center space-x-1 sm:space-x-1.5">
+                <span className="font-black text-sm sm:text-base text-slate-900 tracking-tight leading-none truncate">
                   Ades Store <span className="text-red-600">01</span>
                 </span>
                 {/* Status Badge */}
                 {isVip ? (
-                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-2xs">
+                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-2xs flex-shrink-0">
                     <Crown className="w-2.5 h-2.5 text-amber-100" />
                     <span>VIP</span>
                   </span>
                 ) : !isGuest ? (
-                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-emerald-600 text-white shadow-2xs">
+                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-emerald-600 text-white shadow-2xs flex-shrink-0">
                     <User className="w-2.5 h-2.5" />
-                    <span>Member</span>
+                    <span className="hidden xs:inline">Member</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                  <span className="inline-flex items-center space-x-0.5 text-[8px] uppercase font-black px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-700 flex-shrink-0">
                     <span>Tamu</span>
                   </span>
                 )}
               </div>
-              <p className="text-[9px] text-slate-400 font-medium leading-none mt-0.5">
+              <p className="text-[9px] text-slate-400 font-medium leading-none mt-0.5 truncate hidden xs:block">
                 Langkah Nyaman, Gaya Maksimal
               </p>
             </div>
           </div>
 
-          {/* Right Action Icons & VIP Widget */}
-          <div className="flex items-center space-x-1.5">
-            {/* Indikator Pojok Kanan Atas: Widget Saldo Poin Member (Real-time) */}
+          {/* Right Action Icons */}
+          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
+            {/* Desktop-only: Indikator Saldo Poin Member (Di HP tampil di sub-bar bawah) */}
             <div
               onClick={onOpenVipModal}
-              className={`cursor-pointer flex items-center space-x-1.5 px-2 py-1 rounded-xl border transition-all shadow-2xs ${
+              className={`hidden md:flex cursor-pointer items-center space-x-1.5 px-2 py-1 rounded-xl border transition-all shadow-2xs ${
                 isVip
                   ? 'bg-gradient-to-r from-amber-50 to-amber-100/90 border-amber-300 text-amber-950 hover:border-amber-400'
                   : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -134,19 +142,47 @@ export default function CustomerNavbar({
               </div>
             </div>
 
-            {/* Game Candy Crush Button */}
+            {/* Live Streaming Shopping Button */}
+            {onOpenLive && (
+              <button
+                onClick={onOpenLive}
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white transition-all shadow-md group animate-pulse"
+                title="Tonton Live Streaming Ades Store Cikajang & Klaim Diskon Live!"
+              >
+                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider">LIVE</span>
+                <span className="hidden sm:inline text-[9px] font-black bg-black/40 px-1.5 py-0.2 rounded-full text-white">
+                  248
+                </span>
+              </button>
+            )}
+
+            {/* Notification Bell Button */}
+            {onOpenNotifications && (
+              <button
+                onClick={onOpenNotifications}
+                className="relative p-1.5 sm:p-2 rounded-xl border border-slate-200 hover:border-red-400 bg-white text-slate-700 transition-all shadow-2xs"
+                title="Pusat Notifikasi & Pengingat Belanja"
+              >
+                <Bell className="w-4 h-4 text-slate-800" />
+                {notificationsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-black flex items-center justify-center shadow-xs animate-bounce">
+                    {notificationsCount}
+                  </span>
+                )}
+              </button>
+            )}
+
+            {/* Desktop-only: Game Candy Crush Button (Di HP tampil di sub-bar bawah) */}
             {onOpenGame && (
               <button
                 onClick={onOpenGame}
-                className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border-2 border-red-500 bg-white hover:bg-red-50 text-slate-900 transition-all shadow-xs group"
+                className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border-2 border-red-500 bg-white hover:bg-red-50 text-slate-900 transition-all shadow-xs group"
                 title="Main Game Candy Crush & Kumpulkan Koin Diskon!"
               >
                 <span className="text-sm animate-pulse">🍬</span>
-                <span className="hidden sm:inline text-xs font-black text-red-600">
+                <span className="text-xs font-black text-red-600">
                   Game Koin
-                </span>
-                <span className="text-[8px] font-black uppercase px-1 rounded bg-red-600 text-white">
-                  Diskon
                 </span>
               </button>
             )}
@@ -154,7 +190,7 @@ export default function CustomerNavbar({
             {/* Cart Button */}
             <button
               onClick={onOpenCart}
-              className="relative p-2 rounded-xl border border-slate-200 hover:border-red-400 bg-white text-slate-700 transition-all shadow-2xs"
+              className="relative p-1.5 sm:p-2 rounded-xl border border-slate-200 hover:border-red-400 bg-white text-slate-700 transition-all shadow-2xs"
               title="Keranjang Belanja"
             >
               <ShoppingBag className="w-4 h-4 text-slate-800" />
@@ -165,11 +201,11 @@ export default function CustomerNavbar({
               )}
             </button>
 
-            {/* My Orders Button */}
+            {/* Desktop-only: My Orders Button (Di HP tampil di sub-bar bawah) */}
             <button
               onClick={onOpenOrders}
-              className="relative flex items-center space-x-1 px-2 py-1.5 rounded-xl border border-slate-200 hover:border-red-400 bg-white text-slate-800 transition-all shadow-2xs group"
-              title="Pesanan Saya (Semua, Perlu Dibayar, Untuk Dikirim, Akan Diterima, Untuk Diulas, Retur)"
+              className="hidden sm:flex relative items-center space-x-1 px-2 py-1.5 rounded-xl border border-slate-200 hover:border-red-400 bg-white text-slate-800 transition-all shadow-2xs group"
+              title="Pesanan Saya"
             >
               <Package className="w-4 h-4 text-slate-700 group-hover:text-red-600" />
               <span className="hidden md:inline text-xs font-black">Pesanan</span>
@@ -185,7 +221,7 @@ export default function CustomerNavbar({
               {currentUser && !isGuest ? (
                 <button
                   onClick={onOpenProfile}
-                  className="flex items-center space-x-1.5 p-1 sm:px-2.5 sm:py-1 rounded-xl border border-slate-200 hover:border-red-400 bg-white transition-all shadow-2xs group"
+                  className="flex items-center space-x-1.5 p-1 sm:px-2 sm:py-1 rounded-xl border border-slate-200 hover:border-red-400 bg-white transition-all shadow-2xs group"
                   title="Buka Profil Saya & Pengaturan Alamat"
                 >
                   <div className="w-6 h-6 rounded-full overflow-hidden border border-slate-300 bg-slate-100 flex-shrink-0">
@@ -198,22 +234,64 @@ export default function CustomerNavbar({
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <span className="hidden sm:inline text-xs font-bold text-slate-800 max-w-[90px] truncate group-hover:text-red-600">
-                    {currentUser.name}
+                  <span className="hidden lg:inline text-xs font-bold text-slate-800 max-w-[80px] truncate group-hover:text-red-600">
+                    {currentUser.name.split(' ')[0]}
                   </span>
                 </button>
               ) : (
                 <button
-                  onClick={onSwitchToLogin || onLogout}
-                  className="px-2.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[10px] font-black transition-colors flex items-center space-x-1 shadow-xs"
-                  title="Masuk Akun Member"
+                  onClick={onSwitchToLogin}
+                  className="px-2.5 py-1 sm:py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs transition-all shadow-xs flex items-center space-x-1"
                 >
-                  <LogIn className="w-3 h-3" />
-                  <span>Masuk</span>
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span className="text-[11px] sm:text-xs">Masuk</span>
                 </button>
               )}
             </div>
           </div>
+        </div>
+
+        {/* Khusus Layar HP (Mobile-Only Quick Action Bar): Saldo Poin, Game Koin, dan Pesanan Saya */}
+        <div className="flex sm:hidden items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100 text-xs">
+          {/* Poin Widget HP */}
+          <button
+            onClick={onOpenVipModal}
+            className={`flex-1 flex items-center justify-center space-x-1 py-1 px-2 rounded-xl border transition-all text-left ${
+              isVip
+                ? 'bg-amber-50 border-amber-300 text-amber-950'
+                : 'bg-slate-50 border-slate-200 text-slate-700'
+            }`}
+          >
+            <span>🪙</span>
+            <span className="text-[10px] font-black truncate">
+              {memberPoints.toLocaleString('id-ID')} Poin
+            </span>
+          </button>
+
+          {/* Game Candy Crush HP */}
+          {onOpenGame && (
+            <button
+              onClick={onOpenGame}
+              className="flex-1 flex items-center justify-center space-x-1 py-1 px-2 rounded-xl bg-white border border-red-500 text-red-600 shadow-2xs"
+            >
+              <span className="animate-pulse">🍬</span>
+              <span className="text-[10px] font-black whitespace-nowrap">Game Koin</span>
+            </button>
+          )}
+
+          {/* Pesanan Saya HP */}
+          <button
+            onClick={onOpenOrders}
+            className="flex-1 flex items-center justify-center space-x-1 py-1 px-2 rounded-xl bg-white border border-slate-200 text-slate-800 shadow-2xs"
+          >
+            <Package className="w-3.5 h-3.5 text-slate-700" />
+            <span className="text-[10px] font-black whitespace-nowrap">Pesanan</span>
+            {ordersCount > 0 && (
+              <span className="w-3.5 h-3.5 rounded-full bg-amber-500 text-slate-950 text-[8px] font-black flex items-center justify-center">
+                {ordersCount}
+              </span>
+            )}
+          </button>
         </div>
 
         {/* Search Bar Input */}
