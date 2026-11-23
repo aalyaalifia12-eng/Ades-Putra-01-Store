@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Radio,
   Star,
@@ -26,6 +26,36 @@ export default function StoreContentSections({
   onOpenVipModal,
 }: StoreContentSectionsProps) {
   const [activeGuideTab, setActiveGuideTab] = useState<'size_chart' | 'care_tips'>('size_chart');
+  const [isStoreLive, setIsStoreLive] = useState(true);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ades_store_live_active');
+      if (saved !== null) {
+        setIsStoreLive(saved === 'true');
+      }
+    } catch {}
+
+    fetch('/api/live')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && typeof d.is_active === 'boolean') {
+          setIsStoreLive(d.is_active);
+        }
+      })
+      .catch(() => {});
+
+    const handleStorage = () => {
+      try {
+        const saved = localStorage.getItem('ades_store_live_active');
+        if (saved !== null) {
+          setIsStoreLive(saved === 'true');
+        }
+      } catch {}
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   // Customer Reviews from Cikajang & Garut
   const REVIEWS = [
@@ -96,7 +126,13 @@ export default function StoreContentSections({
       {/* ============================================================== */}
       {/* 1. BANNER PROMO LIVE STREAMING ADES STORE 01                   */}
       {/* ============================================================== */}
-      <div className="relative rounded-3xl bg-gradient-to-r from-red-600 via-rose-600 to-red-800 p-4 sm:p-5 text-white shadow-xl overflow-hidden border-2 border-red-400">
+      <div
+        className={`relative rounded-3xl p-4 sm:p-5 text-white shadow-xl overflow-hidden border-2 transition-all ${
+          isStoreLive
+            ? 'bg-gradient-to-r from-red-600 via-rose-600 to-red-800 border-red-400'
+            : 'bg-gradient-to-r from-slate-900 via-zinc-900 to-black border-red-500/60'
+        }`}
+      >
         <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -109,26 +145,43 @@ export default function StoreContentSections({
                   className="w-full h-full object-cover rounded-xl"
                 />
               </div>
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white" />
+              <span
+                className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
+                  isStoreLive ? 'bg-emerald-400 animate-ping' : 'bg-zinc-500'
+                }`}
+              />
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
-                <div className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-black/40 text-white text-[10px] font-black uppercase tracking-wider backdrop-blur-md">
-                  <span className="w-2 h-2 rounded-full bg-red-400 animate-ping" />
-                  <span>SEDANG LIVE</span>
-                </div>
-                <span className="text-[10px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full flex items-center space-x-1">
-                  <Flame className="w-3 h-3 text-red-600" />
-                  <span>248 Menonton</span>
-                </span>
+                {isStoreLive ? (
+                  <>
+                    <div className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-black/40 text-white text-[10px] font-black uppercase tracking-wider backdrop-blur-md">
+                      <span className="w-2 h-2 rounded-full bg-red-400 animate-ping" />
+                      <span>SEDANG LIVE</span>
+                    </div>
+                    <span className="text-[10px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full flex items-center space-x-1">
+                      <Flame className="w-3 h-3 text-red-600" />
+                      <span>418 Menonton</span>
+                    </span>
+                  </>
+                ) : (
+                  <div className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-300 text-[10px] font-black uppercase tracking-wider border border-zinc-700">
+                    <span className="w-2 h-2 rounded-full bg-zinc-500" />
+                    <span>SIARAN OFFLINE</span>
+                  </div>
+                )}
               </div>
 
               <h3 className="text-base sm:text-lg font-black leading-tight">
-                🔴 Ades Live Shopping: Spill Ukuran &amp; Review Sepatu Langsung!
+                {isStoreLive
+                  ? '🔴 Ades Live Shopping: Spill Ukuran & Review Sepatu Langsung!'
+                  : '⚪ Admin Sedang Tidak Melakukan Siaran Langsung'}
               </h3>
               <p className="text-xs text-rose-100 max-w-xl">
-                Tonton host <b>Alya</b> spill detail sepatu, sandal empuk &amp; tas sekolah dari store fisik Cikajang. Dapatkan <b>Harga Khusus Live</b> + Garansi Retur Size 7 Hari!
+                {isStoreLive
+                  ? 'Tonton host Alya spill detail sepatu, sandal empuk & tas sekolah dari store fisik Cikajang. Dapatkan Harga Khusus Live + Garansi Retur Size 7 Hari!'
+                  : 'Saat ini pengelola toko Ades Store 01 sedang tidak melakukan siaran langsung. Klik tombol untuk info siaran atau belanja langsung di etalase produk!'}
               </p>
             </div>
           </div>
@@ -136,10 +189,14 @@ export default function StoreContentSections({
           <button
             type="button"
             onClick={onOpenLive}
-            className="flex-shrink-0 px-5 py-3 rounded-2xl bg-white hover:bg-red-50 text-red-600 font-black text-xs shadow-lg shadow-black/20 flex items-center justify-center space-x-2 transition-all transform active:scale-95 self-start md:self-center"
+            className={`flex-shrink-0 px-5 py-3 rounded-2xl font-black text-xs shadow-lg flex items-center justify-center space-x-2 transition-all transform active:scale-95 self-start md:self-center ${
+              isStoreLive
+                ? 'bg-white hover:bg-red-50 text-red-600 shadow-black/20'
+                : 'bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-white shadow-black/30'
+            }`}
           >
-            <Radio className="w-4 h-4 text-red-600 animate-pulse" />
-            <span>Gabung Live Room &rarr;</span>
+            <Radio className={`w-4 h-4 ${isStoreLive ? 'text-red-600 animate-pulse' : 'text-zinc-400'}`} />
+            <span>{isStoreLive ? 'Gabung Live Room →' : 'Cek Status Live →'}</span>
           </button>
         </div>
       </div>

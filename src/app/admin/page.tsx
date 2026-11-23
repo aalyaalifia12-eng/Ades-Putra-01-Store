@@ -133,6 +133,13 @@ export default function AdminDashboardPage() {
       localStorage.setItem('ades_store_live_active', active ? 'true' : 'false');
       window.dispatchEvent(new Event('storage'));
     } catch {}
+
+    fetch('/api/live', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active }),
+    }).catch(() => {});
+
     if (active) {
       showToast('🔴 Siaran Langsung Dimulai! Status: ON AIR', 'success');
     } else {

@@ -6,22 +6,20 @@ import {
   Radio,
   Eye,
   Heart,
-  MessageSquare,
   ShoppingBag,
   Send,
   Share2,
   Volume2,
   VolumeX,
   Sparkles,
-  ArrowRight,
   Flame,
   CheckCircle2,
-  Crown,
   Tag,
   Star,
   Video,
-  Play,
-  RotateCcw,
+  Bell,
+  ArrowRight,
+  MessageCircle,
 } from 'lucide-react';
 import { Product, User } from '@/types';
 import { formatIDR } from '@/lib/utils';
@@ -60,34 +58,56 @@ interface FloatingHeart {
   x: number;
 }
 
-// Preset live streaming video channels showing real persons showcasing shoes & fashion live
+// 3 Real-Host Video Channels with verified fast video CDN and clear host identity
 const LIVE_STREAMS = [
   {
     id: 'stream-1',
-    title: 'Spill Langsung Sepatu Sneakers & Sandal Anak - Host Alya',
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-tying-her-sneakers-shoes-42993-large.mp4',
+    title: 'Spill Koleksi Sepatu Sneakers & Loafer - Host Alya',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     hostName: 'Alya Alifia',
-    hostRole: 'Host Live Ades Store 01',
-    hostAvatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=150&auto=format&fit=crop&q=80',
+    hostRole: 'Host Utama Live Ades Store 01',
+    hostAvatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=200&auto=format&fit=crop&q=80',
+    hostPhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80',
     location: 'Studio Toko Cikajang, Garut',
+    currentTopic: 'Spill Insole Memory Foam Anti Pegal & Size 36-43',
+    quotes: [
+      'Halo warga Cikajang & Garut! Insole busa memory foam ini super empuk anti-pegal!',
+      'Mumpung lagi LIVE, klik Keranjang Kuning dapat diskon khusus & garansi retur size 7 hari!',
+      'Koin Candy Crush bisa dipakai buat potong harga Rp 1.000 lho kak!',
+      'Pengiriman kilat Cikajang & Garut bisa langsung kami antar sore ini juga!',
+    ],
   },
   {
     id: 'stream-2',
-    title: 'Review Fisik Sol Empuk & Sepatu Olahraga Running',
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-tying-running-shoes-42994-large.mp4',
+    title: 'Review Fisik Sol Empuk & Sepatu Olahraga Running - Host Asep',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     hostName: 'Asep Saepuloh',
-    hostRole: 'Co-Host Reviewer Toko',
-    hostAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-    location: 'Gudang Display Garut',
+    hostRole: 'Co-Host Reviewer Sepatu Olahraga',
+    hostAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80',
+    hostPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80',
+    location: 'Gudang Display Garut Kota',
+    currentTopic: 'Uji Kelenturan Sol & Bahan Mesh Bernapas',
+    quotes: [
+      'Sol karet aslinya anti-slip ya, mantap banget dipakai lari santai atau naik gunung!',
+      'Jahitan sol rapi dan lemnya standar pabrik, awet dipakai bertahun-tahun.',
+      'Yang mau tanya ukuran dalam centimeter (cm) langsung ketik di chat ya!',
+    ],
   },
   {
     id: 'stream-3',
-    title: 'Unboxing Sepatu Sekolah & Tas Ransel TK/SD/SMA',
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-unboxing-a-pair-of-shoes-42996-large.mp4',
-    hostName: 'Alya & Tim',
-    hostRole: 'Spill Paket Back to School',
-    hostAvatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=150&auto=format&fit=crop&q=80',
-    location: 'Store Cikajang Garut',
+    title: 'Unboxing Sandal Slide Anak & Tas Sekolah TK/SD - Host Rina',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+    hostName: 'Rina Marlina',
+    hostRole: 'Host Spesial Sandal & Tas Anak',
+    hostAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
+    hostPhoto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80',
+    location: 'Outlet Ades Cikajang',
+    currentTopic: 'Review Sandal Anak Cowok/Cewek & Tas Ransel',
+    quotes: [
+      'Bunda yang cari sandal anak cowok atau cewek, model ini solnya lentur aman gak bikin lecet!',
+      'Tas ransel sekolahnya muat buku tema besar dan tempat bekal!',
+      'Bisa bayar COD di tempat waktu kurir sampai depan rumah ya bunda!',
+    ],
   },
 ];
 
@@ -109,21 +129,15 @@ export default function AdesLiveRoomModal({
   const [selectedColor, setSelectedColor] = useState<string>('Hitam');
 
   // Live Stats
-  const [viewerCount, setViewerCount] = useState(382);
-  const [likesCount, setLikesCount] = useState(2840);
+  const [viewerCount, setViewerCount] = useState(418);
+  const [likesCount, setLikesCount] = useState(3140);
   const [isMuted, setIsMuted] = useState(false);
   const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
   const [isVideoLoading, setIsVideoLoading] = useState(true);
-  const [isStoreLiveActive, setIsStoreLiveActive] = useState<boolean>(true);
+  const [hostQuoteIndex, setHostQuoteIndex] = useState(0);
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('ades_store_live_active');
-      if (saved !== null) {
-        setIsStoreLiveActive(saved === 'true');
-      }
-    } catch {}
-  }, [isOpen]);
+  // Store Live Active Status (Controlled by Admin)
+  const [isStoreLiveActive, setIsStoreLiveActive] = useState<boolean>(true);
 
   // Live Chat Stream
   const [chatInput, setChatInput] = useState('');
@@ -165,19 +179,63 @@ export default function AdesLiveRoomModal({
   const chatEndRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // 1. Check live status from localStorage and server API
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ades_store_live_active');
+      if (saved !== null) {
+        setIsStoreLiveActive(saved === 'true');
+      }
+    } catch {}
+
+    fetch('/api/live')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && typeof data.is_active === 'boolean') {
+          setIsStoreLiveActive(data.is_active);
+          try {
+            localStorage.setItem('ades_store_live_active', data.is_active ? 'true' : 'false');
+          } catch {}
+        }
+      })
+      .catch(() => {});
+  }, [isOpen]);
+
+  // Listen for storage changes across tabs (e.g. when Admin toggles live)
+  useEffect(() => {
+    const handleStorage = () => {
+      try {
+        const saved = localStorage.getItem('ades_store_live_active');
+        if (saved !== null) {
+          setIsStoreLiveActive(saved === 'true');
+        }
+      } catch {}
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
   const showcaseProducts = products.length > 0 ? products : [];
   const currentProduct = showcaseProducts[pinnedProductIndex] || showcaseProducts[0];
+
+  // Rotate Host Spoken Quotes every 4 seconds
+  useEffect(() => {
+    if (!isOpen || !isStoreLiveActive) return;
+    const quoteInterval = setInterval(() => {
+      setHostQuoteIndex((prev) => (prev + 1) % activeStream.quotes.length);
+    }, 4500);
+    return () => clearInterval(quoteInterval);
+  }, [isOpen, isStoreLiveActive, activeStreamIndex]);
 
   // Auto-scroll chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Handle Video Loading & AutoPlay
+  // AutoPlay video when open
   useEffect(() => {
-    if (isOpen && videoRef.current) {
+    if (isOpen && isStoreLiveActive && videoRef.current) {
       videoRef.current.play().catch(() => {
-        // Autoplay policy might require muted initially
         if (videoRef.current) {
           videoRef.current.muted = true;
           setIsMuted(true);
@@ -185,11 +243,11 @@ export default function AdesLiveRoomModal({
         }
       });
     }
-  }, [isOpen, activeStreamIndex]);
+  }, [isOpen, activeStreamIndex, isStoreLiveActive]);
 
-  // Incoming automatic realistic comments rolling in (like TikTok Live)
+  // Rolling automatic realistic comments from local shoppers (TikTok style)
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !isStoreLiveActive) return;
 
     const mockIncomingComments = [
       { sender: 'Dewi Lestari (Bayongbong)', message: 'Kak warna cream ready size 38?' },
@@ -198,38 +256,30 @@ export default function AdesLiveRoomModal({
       { sender: 'Nurul Hidayah', message: 'Koin Candy Crush bisa dipake potong harga gak kak?' },
       { sender: 'Alya (Host Ades Store)', message: 'Bisa banget Kak Nurul! 10.000 koin = Rp 1.000 potongan langsung!', isHost: true },
       { sender: 'Andi Pratama', message: 'Toko fisiknya di Cikajang sebelah mana min?' },
-      { sender: 'Alya (Host Ades Store)', message: 'Dekat pasar Cikajang ya kak, bisa ambil di toko juga gratis ongkir!', isHost: true },
-      { sender: 'Fitri Handayani', message: 'Wah gratis ongkir, langsung CO sepatu sekolah anak!' },
-      { sender: 'Rizky Ramadhan', message: 'Garansi retur kalau kekecilan ada kan min?' },
-      { sender: 'Alya (Host Ades Store)', message: 'Garansi retur 7 hari bebas tukar size Kak Rizky, belanja tenang!', isHost: true },
+      { sender: 'Alya (Host Ades Store)', message: 'Jl. Raya Cikajang dekat pasar, depan plang Ades Store 01 ya Kak Andi!', isHost: true },
+      { sender: 'Wulan Guritno (Garut)', message: 'Sandal slide cloudnya udah mendarat, beneran empuk banget!' },
     ];
 
     let index = 0;
     const interval = setInterval(() => {
       if (index < mockIncomingComments.length) {
         const item = mockIncomingComments[index];
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `auto-${Date.now()}-${Math.random()}`,
-            sender: item.sender,
-            message: item.message,
-            isHost: item.isHost,
-            timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-          },
-        ]);
-        // Viewer count fluctuation
-        setViewerCount((v) => Math.max(120, v + Math.floor(Math.random() * 7) - 3));
-        // Random like burst
-        setLikesCount((l) => l + Math.floor(Math.random() * 4) + 1);
+        const newMsg: ChatMessage = {
+          id: `cmt-${Date.now()}-${Math.random()}`,
+          sender: item.sender,
+          message: item.message,
+          isHost: item.isHost,
+          timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        };
+        setMessages((prev) => [...prev.slice(-25), newMsg]);
         index++;
       } else {
-        index = 0; // Loop comments
+        index = 0;
       }
-    }, 3800);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, [isOpen]);
+  }, [isOpen, isStoreLiveActive]);
 
   // Sync selected size & color when product changes
   useEffect(() => {
@@ -245,7 +295,74 @@ export default function AdesLiveRoomModal({
 
   if (!isOpen) return null;
 
-  // Handle Add Like (Floating hearts animation like TikTok)
+  // =========================================================================
+  // KONDISI 1: JIKA ADMIN MEMATIKAN LIVE (STATUS OFFLINE)
+  // Menampilkan layar jelas: "ADMIN SEDANG TIDAK MELAKUKAN SIARAN LANGSUNG"
+  // =========================================================================
+  if (!isStoreLiveActive) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="relative w-full max-w-md bg-slate-950 rounded-3xl p-6 sm:p-8 border-2 border-red-500 shadow-2xl text-center space-y-5 animate-in zoom-in-95 duration-200 text-white">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-400 hover:text-white hover:bg-zinc-800 flex items-center justify-center transition-all"
+            title="Tutup"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {/* Offline Icon */}
+          <div className="w-20 h-20 rounded-3xl bg-zinc-900/90 border-2 border-red-500 mx-auto flex items-center justify-center text-red-500 shadow-xl relative">
+            <Radio className="w-10 h-10 opacity-30" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="w-14 h-1 bg-red-600 rotate-45 rounded-full shadow-md" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-400 text-[10px] font-black uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-zinc-500" />
+              <span>SIARAN SEDANG NONAKTIF</span>
+            </span>
+
+            <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight">
+              ADMIN SEDANG TIDAK MELAKUKAN SIARAN LANGSUNG
+            </h3>
+
+            <p className="text-xs text-zinc-400 leading-relaxed max-w-sm mx-auto">
+              Saat ini pengelola toko Ades Store 01 sedang tidak melakukan siaran langsung. Anda tetap dapat berbelanja koleksi lengkap sepatu sneakers, sandal empuk, dan tas di etalase kami dengan diskon s/d 30%!
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-2.5 pt-2">
+            <button
+              onClick={onClose}
+              className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-red-600/30 flex items-center justify-center space-x-2 transition-all transform active:scale-95"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>JELAJAHI KATALOG PRODUK PROMO</span>
+            </button>
+
+            <button
+              onClick={() => {
+                alert('✓ Pengingat telah aktif! Kami akan memberitahu Anda via notifikasi begitu Admin Ades Store 01 memulai siaran langsung berikutnya.');
+                onClose();
+              }}
+              className="w-full py-3 px-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold text-xs flex items-center justify-center space-x-2 transition-all"
+            >
+              <Bell className="w-4 h-4 text-amber-400" />
+              <span>Nyalakan Pengingat Live Selanjutnya</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // KONDISI 2: LIVE AKTIF DENGAN TAMPILAN ORANG / HOST YANG JELAS SEDANG LIVE
+  // =========================================================================
   const handleLike = () => {
     setLikesCount((prev) => prev + 1);
     const heartColors = ['#ef4444', '#f43f5e', '#ec4899', '#f59e0b', '#3b82f6', '#8b5cf6'];
@@ -261,7 +378,6 @@ export default function AdesLiveRoomModal({
     }, 1400);
   };
 
-  // Send User Chat
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
@@ -277,19 +393,18 @@ export default function AdesLiveRoomModal({
     setMessages((prev) => [...prev, newMsg]);
     setChatInput('');
 
-    // Host responds in real-time
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
         {
           id: `host-reply-${Date.now()}`,
-          sender: 'Alya (Host Ades Store)',
+          sender: `${activeStream.hostName} (Host Live)`,
           message: `Makasih pertanyaannya Kak ${currentUser?.name || 'Tamu'}! Pesanan langsung kami proses & siap kirim antar cepat Cikajang/Garut atau ekspedisi ya!`,
           isHost: true,
           timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
-    }, 2200);
+    }, 2000);
   };
 
   return (
@@ -298,9 +413,10 @@ export default function AdesLiveRoomModal({
       <div className="relative w-full sm:max-w-md h-[100dvh] sm:h-[90vh] bg-black sm:rounded-3xl overflow-hidden border-0 sm:border-2 sm:border-red-500 shadow-2xl flex flex-col justify-between text-white animate-in zoom-in-95 duration-200 select-none">
         
         {/* ================================================================ */}
-        {/* BACKGROUND: REAL LIVE STREAMING VIDEO (ORANG SEDANG LIVE)         */}
+        {/* BACKGROUND & HOST STAGE: ORANG SEDANG LIVE DI DEPAN KAMERA       */}
         {/* ================================================================ */}
         <div className="absolute inset-0 z-0 overflow-hidden bg-black flex items-center justify-center">
+          {/* 1. Streaming Video Layer */}
           <video
             ref={videoRef}
             src={activeStream.videoUrl}
@@ -309,21 +425,56 @@ export default function AdesLiveRoomModal({
             muted={isMuted}
             playsInline
             onLoadedData={() => setIsVideoLoading(false)}
-            className="w-full h-full object-cover object-center filter brightness-95"
+            className="w-full h-full object-cover object-center filter brightness-90"
           />
 
-          {/* Fallback gradient vignette */}
+          {/* 2. Real Host Persona Showcase Card Overlay (Jaminan Selalu Ada Orang Sedang Live) */}
+          <div className="absolute inset-x-0 top-16 bottom-44 pointer-events-none flex flex-col items-center justify-center p-4">
+            {/* Visual Kartu Host Siaran Langsung */}
+            <div className="relative w-52 sm:w-60 h-72 sm:h-80 rounded-3xl overflow-hidden border-2 border-red-500/80 shadow-2xl bg-gradient-to-t from-black via-zinc-900/60 to-transparent flex flex-col justify-end p-3 animate-in fade-in duration-500">
+              <img
+                src={activeStream.hostPhoto}
+                alt={activeStream.hostName}
+                className="absolute inset-0 w-full h-full object-cover object-top filter brightness-105 pointer-events-none"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+
+              {/* Host Badge & Live Mic Indicator */}
+              <div className="relative z-10 space-y-1">
+                <div className="flex items-center space-x-1.5">
+                  <span className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-md">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                    <span>HOST SEDANG SIARAN</span>
+                  </span>
+                  <div className="flex items-center space-x-0.5 bg-black/60 px-1.5 py-0.5 rounded-full text-emerald-400 text-[9px] font-bold">
+                    <span className="w-1 h-2 bg-emerald-400 animate-pulse" />
+                    <span className="w-1 h-3 bg-emerald-400 animate-bounce" />
+                    <span className="w-1 h-1.5 bg-emerald-400 animate-pulse" />
+                    <span className="text-[8px] text-white ml-1">MIC ON</span>
+                  </div>
+                </div>
+
+                <p className="text-xs font-black text-white leading-tight">
+                  {activeStream.hostName}
+                </p>
+                <p className="text-[10px] text-zinc-300 font-medium leading-tight">
+                  {activeStream.currentTopic}
+                </p>
+              </div>
+            </div>
+
+            {/* Balon Ucapan Host yang Berbicara Langsung (Real-time Live Host Talk Bubble) */}
+            <div className="mt-2.5 max-w-xs bg-black/80 backdrop-blur-md border border-red-500/60 rounded-2xl px-3.5 py-2 shadow-xl animate-in slide-in-from-bottom-2 text-center pointer-events-auto">
+              <p className="text-[11px] font-bold text-amber-200 leading-snug">
+                🗣️ <span className="text-white font-black">{activeStream.hostName}:</span> &ldquo;{activeStream.quotes[hostQuoteIndex]}&rdquo;
+              </p>
+            </div>
+          </div>
+
+          {/* Vignette gradients */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/70 pointer-events-none" />
 
-          {/* Loading Indicator */}
-          {isVideoLoading && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-10 space-y-2">
-              <div className="w-10 h-10 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-xs font-bold text-white">Menghubungkan ke Live Host...</p>
-            </div>
-          )}
-
-          {/* Floating Hearts Animation Container (TikTok Style) */}
+          {/* Floating Hearts Animation */}
           <div className="absolute bottom-28 right-6 pointer-events-none z-30">
             {floatingHearts.map((h) => (
               <div
@@ -342,7 +493,7 @@ export default function AdesLiveRoomModal({
         </div>
 
         {/* ================================================================ */}
-        {/* TOP BAR OVERLAY: HOST PROFILE, LIVE BADGE & VIEWER COUNTER        */}
+        {/* TOP BAR: HOST AVATAR, LIVE BADGE, VIEWER COUNT & CONTROLS        */}
         {/* ================================================================ */}
         <div className="relative z-30 p-3 sm:p-4 flex items-center justify-between pointer-events-auto">
           {/* Host Profile Info */}
@@ -376,16 +527,10 @@ export default function AdesLiveRoomModal({
           {/* Right Top Controls */}
           <div className="flex items-center space-x-1.5">
             {/* Live Indicator Badge */}
-            {isStoreLiveActive ? (
-              <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase shadow-md animate-pulse">
-                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                <span>LIVE</span>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-zinc-800 border border-zinc-600 text-zinc-300 text-[9px] font-black uppercase">
-                <span>OFFLINE / REKAMAN</span>
-              </div>
-            )}
+            <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase shadow-md animate-pulse">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+              <span>LIVE</span>
+            </div>
 
             {/* Viewer Count */}
             <div className="flex items-center space-x-1 px-2 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold">
@@ -443,40 +588,24 @@ export default function AdesLiveRoomModal({
         <div className="relative z-30 p-3 sm:p-4 space-y-2.5 flex flex-col justify-end pointer-events-auto">
           
           {/* 1. REAL-TIME COMMENTS STREAM (TIKTOK STYLE AUTO-SCROLL) */}
-          <div className="h-36 sm:h-40 overflow-y-auto no-scrollbar space-y-1.5 pr-8 mask-gradient">
+          <div className="h-32 sm:h-36 overflow-y-auto no-scrollbar space-y-1.5 pr-8 mask-gradient">
             {messages.map((m) => (
               <div
                 key={m.id}
-                className={`flex items-start space-x-1.5 text-xs p-1.5 rounded-2xl max-w-[85%] backdrop-blur-md ${
+                className={`flex items-start space-x-1.5 text-xs p-1.5 rounded-2xl max-w-[88%] backdrop-blur-md ${
                   m.isHost
-                    ? 'bg-red-950/80 border border-red-500/80 text-white'
+                    ? 'bg-red-600/90 text-white border border-red-400 shadow-md'
                     : m.isBuyer
-                    ? 'bg-emerald-950/80 border border-emerald-500/80 text-white'
-                    : 'bg-black/50 text-zinc-100 border border-white/10'
+                    ? 'bg-amber-500/90 text-slate-950 font-bold border border-amber-300'
+                    : 'bg-black/65 text-zinc-100 border border-white/10'
                 }`}
               >
-                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] flex-shrink-0 font-bold">
-                  {m.isHost ? '👑' : m.isBuyer ? '🛍️' : '💬'}
-                </div>
                 <div className="min-w-0">
                   <div className="flex items-center space-x-1">
-                    <span
-                      className={`font-black text-[10px] truncate ${
-                        m.isHost ? 'text-amber-300' : m.isBuyer ? 'text-emerald-300' : 'text-zinc-300'
-                      }`}
-                    >
+                    <span className="font-black text-[10px] text-amber-300 leading-tight">
                       {m.sender}
                     </span>
-                    {m.isHost && (
-                      <span className="text-[7px] font-black uppercase px-1 py-0.2 rounded bg-red-600 text-white">
-                        HOST
-                      </span>
-                    )}
-                    {m.isBuyer && (
-                      <span className="text-[7px] font-black uppercase px-1 py-0.2 rounded bg-emerald-600 text-white">
-                        BELI
-                      </span>
-                    )}
+                    <span className="text-[8px] text-zinc-400">{m.timestamp}</span>
                   </div>
                   <p className="text-[11px] leading-tight text-white mt-0.5 break-words">
                     {m.message}
@@ -513,11 +642,11 @@ export default function AdesLiveRoomModal({
                   </h4>
                   <div className="flex items-center space-x-1.5 mt-0.5">
                     <span className="font-black text-xs text-amber-300">
-                      {formatIDR(currentProduct.promo_price || currentProduct.price)}
+                      {formatIDR(currentProduct.promo_price || currentProduct.original_price)}
                     </span>
                     {currentProduct.promo_price && (
                       <span className="text-[9px] text-zinc-400 line-through">
-                        {formatIDR(currentProduct.price)}
+                        {formatIDR(currentProduct.original_price)}
                       </span>
                     )}
                   </div>
@@ -538,50 +667,48 @@ export default function AdesLiveRoomModal({
                 <button
                   onClick={() => {
                     onDirectCheckout(currentProduct, selectedSize, selectedColor, 1);
-                    onClose();
                   }}
-                  className="px-3 py-2 rounded-xl bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white font-black text-xs shadow-lg transition-all active:scale-95 flex items-center space-x-1 whitespace-nowrap"
+                  className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95 whitespace-nowrap"
                 >
-                  <span>Beli Langsung</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  Beli Sekarang &rarr;
                 </button>
               </div>
             </div>
           )}
 
-          {/* 3. INTERACTION BAR: CHAT INPUT & LIKE BUTTON (TIKTOK STYLE) */}
+          {/* 3. INPUT BAR CHAT & LOVE TAP BUTTON */}
           <div className="flex items-center space-x-2">
             <form onSubmit={handleSendMessage} className="flex-1 flex items-center space-x-1.5">
               <input
                 type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Tanya ukuran / spill sepatu di komentar..."
-                className="flex-1 px-3 py-2 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="Ketik komentar / tanya spill ukuran kaki..."
+                className="flex-1 px-3.5 py-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-xs placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
               <button
                 type="submit"
                 disabled={!chatInput.trim()}
-                className="p-2 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all disabled:opacity-40 flex-shrink-0"
+                className="w-9 h-9 rounded-full bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white flex items-center justify-center transition-all shadow-md flex-shrink-0"
               >
                 <Send className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Big Heart Like Button */}
+            {/* Like Heart Button (TikTok Style) */}
             <button
               onClick={handleLike}
-              className="relative p-2.5 rounded-full bg-gradient-to-tr from-rose-600 to-red-500 text-white shadow-lg active:scale-125 transition-transform group flex items-center justify-center flex-shrink-0"
-              title="Kirim Like Hati"
+              className="relative p-2.5 rounded-full bg-red-600/80 hover:bg-red-600 border border-red-400 text-white shadow-lg transition-transform active:scale-125 flex-shrink-0"
+              title="Kirim Love / Like Live"
             >
               <Heart className="w-5 h-5 fill-current animate-pulse text-white" />
-              <span className="absolute -top-1 -right-1 bg-black text-white text-[8px] font-black px-1 rounded-full border border-red-400">
+              <span className="absolute -top-1 -right-1 bg-amber-400 text-slate-900 text-[8px] font-black px-1 rounded-full">
                 {likesCount > 999 ? `${(likesCount / 1000).toFixed(1)}k` : likesCount}
               </span>
             </button>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   );

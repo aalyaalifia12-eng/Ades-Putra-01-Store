@@ -68,6 +68,29 @@ export default function CustomerNavbar({
         setIsStoreLive(saved === 'true');
       }
     } catch {}
+
+    fetch('/api/live')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && typeof data.is_active === 'boolean') {
+          setIsStoreLive(data.is_active);
+          try {
+            localStorage.setItem('ades_store_live_active', data.is_active ? 'true' : 'false');
+          } catch {}
+        }
+      })
+      .catch(() => {});
+
+    const handleStorage = () => {
+      try {
+        const saved = localStorage.getItem('ades_store_live_active');
+        if (saved !== null) {
+          setIsStoreLive(saved === 'true');
+        }
+      } catch {}
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   return (
@@ -164,15 +187,15 @@ export default function CustomerNavbar({
                 title={
                   isStoreLive
                     ? 'Tonton Live Streaming Ades Store Cikajang & Klaim Diskon Live!'
-                    : 'Lihat Video Rekaman Live & Etalase Produk Ades Store'
+                    : 'Admin sedang tidak melakukan siaran langsung (Klik untuk melihat info)'
                 }
               >
-                <span className={`w-2 h-2 rounded-full ${isStoreLive ? 'bg-white animate-ping' : 'bg-zinc-400'}`} />
+                <span className={`w-2 h-2 rounded-full ${isStoreLive ? 'bg-white animate-ping' : 'bg-zinc-500'}`} />
                 <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider">
                   {isStoreLive ? 'LIVE' : 'LIVE OFFLINE'}
                 </span>
                 <span className="hidden sm:inline text-[9px] font-black bg-black/40 px-1.5 py-0.2 rounded-full text-white">
-                  {isStoreLive ? '248' : 'Rekaman'}
+                  {isStoreLive ? '418' : 'Offline'}
                 </span>
               </button>
             )}
