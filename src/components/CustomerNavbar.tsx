@@ -29,6 +29,7 @@ interface CustomerNavbarProps {
   onOpenGame?: () => void;
   onOpenNotifications?: () => void;
   onOpenLive?: () => void;
+  onBackToLanding?: () => void;
   onLogout: () => void;
   onSwitchToLogin?: () => void;
   searchQuery: string;
@@ -49,6 +50,7 @@ export default function CustomerNavbar({
   onOpenGame,
   onOpenNotifications,
   onOpenLive,
+  onBackToLanding,
   onLogout,
   onSwitchToLogin,
   searchQuery,
@@ -125,9 +127,13 @@ export default function CustomerNavbar({
       {/* Main Responsive Bar */}
       <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5 space-y-2">
         <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-          {/* Logo & Store Branding */}
-          <div className="flex items-center space-x-2 min-w-0">
-            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-white p-0.5 border border-slate-200 shadow-xs flex items-center justify-center overflow-hidden flex-shrink-0">
+          {/* Logo & Store Branding (Klik untuk kembali ke Landing Page Promo) */}
+          <div
+            onClick={onBackToLanding}
+            className="flex items-center space-x-2 min-w-0 cursor-pointer group"
+            title="Kembali ke Halaman Promo Awal"
+          >
+            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-white p-0.5 border border-slate-200 shadow-xs flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform">
               <img
                 src="/logo.png"
                 alt="Ades Store 01"
@@ -136,7 +142,7 @@ export default function CustomerNavbar({
             </div>
             <div className="min-w-0">
               <div className="flex items-center space-x-1 sm:space-x-1.5">
-                <span className="font-black text-sm sm:text-base text-slate-900 tracking-tight leading-none truncate">
+                <span className="font-black text-sm sm:text-base text-slate-900 tracking-tight leading-none truncate group-hover:text-red-600 transition-colors">
                   Ades Store <span className="text-red-600">01</span>
                 </span>
                 {/* Status Badge */}

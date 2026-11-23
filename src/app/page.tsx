@@ -24,8 +24,8 @@ import Link from 'next/link';
 type Screen = 'landing' | 'customer_login' | 'store';
 
 export default function ResponsiveAppRoot() {
-  // Screen-by-Screen State Navigation (Terbuka langsung ke etalase toko untuk umum/publik)
-  const [currentScreen, setCurrentScreen] = useState<Screen>('store');
+  // Screen-by-Screen State Navigation (Mulai dari Halaman Landing Page Visual Promo)
+  const [currentScreen, setCurrentScreen] = useState<Screen>('landing');
 
   // App Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -523,6 +523,7 @@ export default function ResponsiveAppRoot() {
               onOpenGame={() => setIsGameModalOpen(true)}
               onOpenNotifications={() => setIsNotificationsModalOpen(true)}
               onOpenLive={handleOpenLive}
+              onBackToLanding={() => setCurrentScreen('landing')}
               onLogout={handleLogout}
               onSwitchToLogin={() => setCurrentScreen('customer_login')}
               searchQuery={searchQuery}
