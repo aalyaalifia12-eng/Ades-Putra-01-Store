@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   User as UserIcon,
@@ -72,7 +72,7 @@ export default function UserProfileModal({
   const [isSaved, setIsSaved] = useState(false);
 
   // Sync state whenever modal opens or currentUser updates
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentUser) {
       setName(currentUser.name || '');
       setPhone(currentUser.phone || '');
